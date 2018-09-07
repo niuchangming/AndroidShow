@@ -6,21 +6,21 @@ import java.util.Date;
 
 public class AuthInfo {
 
-    public String mobile;
-    public String dialNo;
-    public String apiToken;
-    public int role;
-    public String accountType;
-    public String nickName;
-    public String userCode;
+    String mobile;
+    String dialNo;
+    String apiToken;
+    int role;
+    String accountType;
+    String nickName;
+    String userCode;
 
-    public String fbAccessToken;
-    public String fbUserId;
-    public Date fbExpiredDate;
+    String fbAccessToken;
+    String fbUserId;
+    Date fbExpiredDate;
 
-    public String wxAccessToken;
-    public String wxUnionId;
-    public Date wxExpiredDate;
+    String wxAccessToken;
+    String wxUnionId;
+    Date wxExpiredDate;
 
     public AuthInfo (JSONObject jsonData){
         apiToken = jsonData.optString("token");
