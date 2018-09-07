@@ -30,4 +30,17 @@
     <string name="verify_count_down">Verify(%1$s)</string>
     <string name="resend">Resend</string>
     <string name="login_cancel">Login Cancelled!</string>
+    <string name="name">Name</string>
+    <string name="nickname">Nickname</string>
+    <string name="gender">Gender</string>
+    <string name="birthday">Birthday</string>
+    <string name="whatsup">Whats up</string>
+    <string name="region">Region</string>
+    <string name="edit_cover">Edit Cover</string>
+    <string name="save">Save</string>
+    <string name="nameinput">Enter your name</string>
+    <string name="nicknameinput">Enter your nickname</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="whatsupinput">Say something about your mood?</string>
 </resources>

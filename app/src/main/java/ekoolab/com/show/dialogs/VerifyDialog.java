@@ -100,7 +100,8 @@ public class VerifyDialog extends SimpleDialog implements View.OnClickListener{
         beforeCall();
         AndroidNetworking.post(Constants.VERIFY_2FA)
                 .addBodyParameter("verifyCode", code)
-                .addBodyParameter("token", authInfo.apiToken)
+                .addBodyParameter("token", authInfo.getApiToken())
+               // .addBodyParameter("token", authInfo.apiToken)
                 .setPriority(Priority.MEDIUM)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
@@ -113,9 +114,10 @@ public class VerifyDialog extends SimpleDialog implements View.OnClickListener{
                             if (errorCode == 1) {
                                 JSONObject data = response.getJSONObject("data");
                                 AuthInfo info = new AuthInfo(data);
-                                authInfo.userCode = info.userCode;
-                                authInfo.apiToken = info.apiToken;
-                                authInfo.accountType = "mobile";
+//                                authInfo.userCode = info.userCode;
+//                                authInfo.apiToken = info.apiToken;
+                                //authInfo.accountType = "mobile";
+                                authInfo.setAccountType("mobile");
 
                                 if(listener != null){
                                     listener.did2FAVerify(info);

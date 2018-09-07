@@ -70,7 +70,7 @@ public class TabFragment extends BaseFragment implements View.OnClickListener {
 
         tabEmart.init(R.drawable.tab_icon_emart, Constants.tabBarTitles[2], HomeFragment.class);
 
-        tabProfile.init(R.drawable.tab_icon_profile, Constants.tabBarTitles[3], HomeFragment.class);
+        tabProfile.init(R.drawable.tab_icon_profile, Constants.tabBarTitles[3], ProfileFragment.class);
 
         clearOldFragment();
         doSelect(tabHome);

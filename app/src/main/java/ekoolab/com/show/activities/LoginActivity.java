@@ -163,8 +163,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                             if (errorCode == 1) {
                                 JSONObject data = response.getJSONObject("data");
                                 AuthInfo authInfo = new AuthInfo(data);
-                                authInfo.mobile = mobile;
-                                authInfo.dialNo = "65";
+                                authInfo.setMobile(mobile);
+                                authInfo.setDialNo("65");
+//                                authInfo.mobile = mobile;
+//                                authInfo.dialNo = "65";
                                 AuthUtils.getInstance(LoginActivity.this).saveAuthInfo(authInfo);
                                 LoginActivity.this.finish();
                             } else {
@@ -208,9 +210,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                             if (errorCode == 1) {
                                 JSONObject data = response.getJSONObject("data");
                                 AuthInfo authInfo = new AuthInfo(data);
-                                authInfo.fbAccessToken = loginResult.getAccessToken().getToken();
-                                authInfo.fbExpiredDate = loginResult.getAccessToken().getExpires();
-                                authInfo.fbUserId = loginResult.getAccessToken().getUserId();
+                                authInfo.setFbAccessToken(loginResult.getAccessToken().getToken());
+                                //authInfo.fbAccessToken = loginResult.getAccessToken().getToken();
+                                authInfo.setFbExpiredDate(loginResult.getAccessToken().getExpires());
+                                //authInfo.fbExpiredDate = loginResult.getAccessToken().getExpires();
+                                authInfo.setFbUserId(loginResult.getAccessToken().getUserId());
+                                //authInfo.fbUserId = loginResult.getAccessToken().getUserId();
                                 AuthUtils.getInstance(LoginActivity.this).saveAuthInfo(authInfo);
                                 LoginActivity.this.finish();
                             } else {

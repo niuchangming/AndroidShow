@@ -85,8 +85,10 @@ public class RegisterDialog extends SimpleDialog implements View.OnClickListener
                             String message = response.getString("message");
                             if (errorCode == 1) {;
                                 AuthInfo authInfo = new AuthInfo(response);
-                                authInfo.mobile = mobile;
-                                authInfo.dialNo = "65";
+                                authInfo.setMobile(mobile);
+                                authInfo.setDialNo("65");
+//                                authInfo.mobile = mobile;
+//                                authInfo.dialNo = "65";
 
                                 if(listener != null) {
                                     listener.didRegistered(authInfo);

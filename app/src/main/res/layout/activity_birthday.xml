@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/appBackground"
+    tools:context=".activities.BirthdayActivity">
+
+    <include layout="@layout/toolbar_layout" />
+
+    <RelativeLayout
+        android:id="@+id/birthday_rl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:minHeight="@dimen/item_height_48dp"
+        android:paddingLeft="@dimen/layout_padding_16dp"
+        android:paddingRight="@dimen/layout_padding_16dp">
+
+        <ImageView
+            android:id="@+id/name_icon"
+            android:layout_width="@dimen/icon_size_24dp"
+            android:layout_height="@dimen/icon_size_24dp"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/birthday" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/layout_margin_16dp"
+            android:layout_toRightOf="@id/name_icon"
+            android:text="@string/birthday"
+            android:textColor="@color/text_color_black"
+            android:textSize="@dimen/text_size_16sp" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/name_right_icon"
+            android:layout_marginLeft="@dimen/layout_margin_2dp"
+            android:text="1900-01-01"
+            android:textColor="@color/text_color_gray"
+            android:textSize="@dimen/text_size_16sp" />
+
+        <ImageView
+            android:id="@+id/name_right_icon"
+            android:layout_width="@dimen/icon_size_16dp"
+            android:layout_height="@dimen/icon_size_16dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/right_arrow_icon" />
+    </RelativeLayout>
+
+
+</LinearLayout>

@@ -69,22 +69,22 @@ public class AuthUtils {
     public void saveAuthInfo(AuthInfo info){
         SharedPreferences.Editor spEditor = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE).edit();
         spEditor.putBoolean(Constants.Auth.LOGGED_IN, true);
-        spEditor.putString(Constants.Auth.API_TOKEN, info.apiToken);
-        spEditor.putString(Constants.Auth.USER_CODE, info.userCode);
-        spEditor.putInt(Constants.Auth.ROLE, info.role);
-        spEditor.putString(Constants.Auth.LOGIN_TYPE, info.accountType);
+        spEditor.putString(Constants.Auth.API_TOKEN, info.getApiToken());
+        spEditor.putString(Constants.Auth.USER_CODE, info.getUserCode());
+        spEditor.putInt(Constants.Auth.ROLE, info.getRole());
+        spEditor.putString(Constants.Auth.LOGIN_TYPE, info.getAccountType());
 
-        if(info.accountType.equalsIgnoreCase("facebook")){
-            spEditor.putString(Constants.Auth.FB_ACCESS_TOKEN, info.fbAccessToken);
-            spEditor.putLong(Constants.Auth.FB_TOKEN_EXPIRED, info.fbExpiredDate.getTime());
-            spEditor.putString(Constants.Auth.FB_USER_ID, info.fbUserId);
-        }else if(info.accountType.equalsIgnoreCase("wechat")){
-            spEditor.putString(Constants.Auth.WX_ACCESS_TOKEN, info.wxAccessToken);
-            spEditor.putLong(Constants.Auth.WX_TOKEN_EXPIRED, info.wxExpiredDate.getTime());
-            spEditor.putString(Constants.Auth.WX_UNION_ID, info.wxUnionId);
+        if(info.getAccountType().equalsIgnoreCase("facebook")){
+            spEditor.putString(Constants.Auth.FB_ACCESS_TOKEN, info.getFbAccessToken());
+            spEditor.putLong(Constants.Auth.FB_TOKEN_EXPIRED, info.getFbExpiredDate().getTime());
+            spEditor.putString(Constants.Auth.FB_USER_ID, info.getFbUserId());
+        }else if(info.getAccountType().equalsIgnoreCase("wechat")){
+            spEditor.putString(Constants.Auth.WX_ACCESS_TOKEN, info.getWxAccessToken());
+            spEditor.putLong(Constants.Auth.WX_TOKEN_EXPIRED, info.getWxExpiredDate().getTime());
+            spEditor.putString(Constants.Auth.WX_UNION_ID, info.getWxUnionId());
         }else{
-            spEditor.putString(Constants.Auth.MOBILE, info.mobile);
-            spEditor.putString(Constants.Auth.DIAL_NO, info.dialNo);
+            spEditor.putString(Constants.Auth.MOBILE, info.getMobile());
+            spEditor.putString(Constants.Auth.DIAL_NO, info.getDialNo());
         }
 
         spEditor.apply();
