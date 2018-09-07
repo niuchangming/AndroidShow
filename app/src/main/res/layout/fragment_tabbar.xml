@@ -1,0 +1,51 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <ekoolab.com.show.views.TabButton
+        android:id="@+id/tab_item_home"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp" />
+
+    <ekoolab.com.show.views.TabButton
+        android:id="@+id/tab_item_zsc"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp" />
+
+    <!--加号发表动态的，暂时不需要-->
+    <ImageButton
+        android:id="@+id/tab_item_camera"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:contentDescription="@null"
+        android:padding="2dp"
+        android:scaleType="centerInside"
+        android:background="@android:color/transparent"
+        android:src="@drawable/tab_icon_camera"/>
+
+    <ekoolab.com.show.views.TabButton
+        android:id="@+id/tab_item_emart"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp" />
+
+    <ekoolab.com.show.views.TabButton
+        android:id="@+id/tab_item_profile"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp" />
+</LinearLayout>

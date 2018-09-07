@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">@color/colorWhite</color>
+    <color name="colorPrimaryDark">@color/extraGray</color>
+    <color name="colorAccent">#FF4081</color>
+
+
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="extraGray">#F0F0F0</color>
+    <color name="gray">#C3C3C3</color>
+    <color name="colorBlack">#333333</color>
+    <color name="colorOrange">#FC5C1B</color>
+    <color name="colorGreen">#6bc92c</color>
+    <color name="colorPink">#EC4A86</color>
+    <color name="colorDarkPink">#CC1B5D</color>
+</resources>
