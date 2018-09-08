@@ -70,12 +70,32 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content">
                     <TextView
-                        android:text="xxx"
+                        android:id="@+id/tv_followers"
+                        android:layout_marginTop="8dp"
+                        android:text="0"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                     <TextView
+                        android:text="@string/followers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+
+                </LinearLayout>
+                <LinearLayout
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/tv_followings"
                         android:layout_marginTop="8dp"
-                        android:text="222"
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:text="@string/followings"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
@@ -86,57 +106,47 @@
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content">
+
                     <TextView
-                        android:text="xxx"
+                        android:id="@+id/tv_coins"
+                        android:layout_marginTop="8dp"
+                        android:text="0"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                     <TextView
-                        android:layout_marginTop="8dp"
-                        android:text="222"
+                        android:text="@string/coins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
-                </LinearLayout>
-                <LinearLayout
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:text="xxx"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:layout_marginTop="8dp"
-                        android:text="222"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
 
                 </LinearLayout>
 
             </LinearLayout>
 
             <LinearLayout
+                android:padding="5dp"
                 android:layout_marginTop="15dp"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <Button
+                <TextView
+                    android:gravity="center"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="35dp"
                     android:layout_weight="1"
                     android:text="@string/register"
                     android:textColor="@color/colorBlack"
-                    android:background="@drawable/white_round_corner_bg"/>
-                <Button
+                    android:background="@drawable/green_round_corner_bg"/>
+                <TextView
+                    android:layout_marginLeft="15dp"
+                    android:gravity="center"
                     android:layout_marginRight="10dp"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="35dp"
                     android:layout_weight="1"
                     android:text="@string/register"
                     android:textColor="@color/colorBlack"
-                    android:background="@drawable/white_round_corner_bg"/>
+                    android:background="@drawable/green_round_corner_bg"/>
             </LinearLayout>
 
         </LinearLayout>
@@ -144,79 +154,82 @@
     </LinearLayout>
     <include layout="@layout/ic_spitview_horizontal" />
 
-    <LinearLayout
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
         <LinearLayout
-            android:gravity="center"
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:layout_width="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <TextView
-                android:text="xxx"
+
+            <LinearLayout
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:text="@string/gender"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/tv_gender"
+                    android:layout_marginTop="8dp"
+                    android:text="Male"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:text="@string/birthday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/tv_birthday"
+                    android:layout_marginTop="8dp"
+                    android:text="1990-11-05"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:text="@string/region"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/tv_region"
+                    android:layout_marginTop="8dp"
+                    android:text="China"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginRight="@dimen/layout_margin_5dp"
+                android:layout_gravity="center"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:layout_marginTop="8dp"
-                android:text="222"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_gravity="center"
+                    android:layout_width="@dimen/icon_size_16dp"
+                    android:layout_height="@dimen/icon_size_16dp"
+                    android:src="@mipmap/right_arrow_icon" />
+
+            </LinearLayout>
 
         </LinearLayout>
-        <LinearLayout
-            android:gravity="center"
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content">
-            <TextView
-                android:text="xxx"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:layout_marginTop="8dp"
-                android:text="222"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
 
-        </LinearLayout>
-        <LinearLayout
-            android:gravity="center"
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content">
-            <TextView
-                android:text="xxx"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:layout_marginTop="8dp"
-                android:text="222"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-        <!--<LinearLayout-->
-
-            <!--android:layout_weight="1"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content">-->
-            <!--<ImageView-->
-                <!--android:layout_gravity="center_vertical"-->
-                <!--android:layout_width="@dimen/icon_size_16dp"-->
-                <!--android:layout_height="@dimen/icon_size_16dp"-->
-                <!--android:src="@mipmap/right_arrow_icon" />-->
-
-        <!--</LinearLayout>-->
-
-    </LinearLayout>
 
     <include layout="@layout/ic_spitview_horizontal" />
 

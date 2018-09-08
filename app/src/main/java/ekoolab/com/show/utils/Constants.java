@@ -12,6 +12,7 @@ public class Constants {
 
     public static final String[] tabBarTitles = {"Home", "ZSC", "e-Mart", "Profile"};
     public static final String[] homeIndicatorTitles = {"Video", "Live", "Moment"};
+    public static final String[] profileIndicatorTitles = {"MyVideos", "MyCollects", "MyMoments"};
 
 
 
