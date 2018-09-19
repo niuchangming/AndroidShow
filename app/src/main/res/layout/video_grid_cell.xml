@@ -1,52 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:background="@color/colorBlack">
 
-    <ImageView
-        android:id="@+id/cover_iv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"/>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="5dp"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/loc_tc"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="H,3:4">
+        <ImageView
+            android:id="@+id/cover_iv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:gravity="left"
-            android:textColor="@color/colorWhite"
-            android:textSize="12sp"/>
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_marginTop="2dp">
-            <ImageView
-                android:id="@+id/avatar_iv"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:scaleType="centerCrop"/>
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="5dp"
+            android:orientation="vertical">
             <TextView
-                android:id="@+id/name_tv"
+                android:id="@+id/loc_tv"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_marginLeft="5dp"
-                android:gravity="left|center_vertical"
-                android:textSize="12sp"
-                android:textColor="@color/colorWhite"/>
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:gravity="left"
+                android:textColor="@color/colorWhite"
+                android:textSize="12sp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:layout_marginTop="2dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/avatar_iv"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"/>
+
+                <TextView
+                    android:id="@+id/name_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="left|center_vertical"
+                    android:textSize="12sp"
+                    android:textColor="@color/colorWhite"/>
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </RelativeLayout>
 
-
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

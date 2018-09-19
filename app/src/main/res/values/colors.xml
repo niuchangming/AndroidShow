@@ -11,6 +11,9 @@
     <color name="colorGreen">#6bc92c</color>
     <color name="colorPink">#EC4A86</color>
     <color name="colorDarkPink">#CC1B5D</color>
+    <color name="colorRed">#D50065</color>
+
+
 
     <!-- 新增加属性 -->
     <color name="toolBarBackground">@android:color/white</color>

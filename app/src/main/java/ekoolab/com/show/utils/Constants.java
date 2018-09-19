@@ -1,7 +1,7 @@
 package ekoolab.com.show.utils;
 
 public class Constants {
-    public static final String HOST = "http://ec2-52-41-0-146.us-west-2.compute.amazonaws.com:8081/api/";
+    public static final String HOST = "http://ec2-34-220-129-171.us-west-2.compute.amazonaws.com:8081/api/";
     public static final String LOGIN = HOST + "user/login";
     public static final String SIGNUP = HOST + "user/signup";
     public static final String VERIFY_2FA = HOST + "user/2fa";

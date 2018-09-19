@@ -1,32 +1,46 @@
 package ekoolab.com.show.beans;
 
-public class Photo {
+import android.os.Parcel;
+import android.os.Parcelable;
 
-    private  String origin;
-    private String medium;
-    private String small;
+import ekoolab.com.show.utils.JsonParser.FieldExclude;
 
-    public String getOrigin() {
-        return origin;
+public class Photo implements Parcelable {
+
+    public String origin;
+    public String medium;
+    public String small;
+
+    public Photo() {}
+    public Photo(Parcel source) {
+        origin = source.readString();
+        medium = source.readString();
+        small = source.readString();
     }
 
-    public void setOrigin(String origin) {
-        this.origin = origin;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public String getMedium() {
-        return medium;
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(origin);
+        parcel.writeString(medium);
+        parcel.writeString(small);
     }
 
-    public void setMedium(String medium) {
-        this.medium = medium;
-    }
+    @FieldExclude
+    public static final Parcelable.Creator<Photo> CREATOR = new Creator<Photo>() {
 
-    public String getSmall() {
-        return small;
-    }
+        @Override
+        public Photo createFromParcel(Parcel source) {
+            return new Photo(source);
+        }
 
-    public void setSmall(String small) {
-        this.small = small;
-    }
+        @Override
+        public Photo[] newArray(int size) {
+            return new Photo[size];
+        }
+    };
 }

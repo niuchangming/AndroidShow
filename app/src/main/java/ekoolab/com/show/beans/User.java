@@ -1,50 +1,52 @@
 package ekoolab.com.show.beans;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class User {
-    private  String name;
-    private String userCode;
-    private Photo avatar;
-    private int likeCount;
-    private int favouriteCount;
+import ekoolab.com.show.utils.JsonParser.FieldExclude;
 
-    public String getName() {
-        return name;
+public class User implements Parcelable{
+    public String name;
+    public String nickname;
+    public String userCode;
+    public Photo avatar;
+    public int followingCount;
+
+    public User(){}
+    public User(Parcel source) {
+        name = source.readString();
+        nickname = source.readString();
+        userCode = source.readString();
+        avatar = source.readParcelable(Photo.class.getClassLoader());
+        followingCount = source.readInt();
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public String getUserCode() {
-        return userCode;
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(name);
+        parcel.writeString(nickname);
+        parcel.writeString(userCode);
+        parcel.writeParcelable(avatar, i);
+        parcel.writeInt(followingCount);
     }
 
-    public void setUserCode(String userCode) {
-        this.userCode = userCode;
-    }
+    @FieldExclude
+    public static final Parcelable.Creator<User> CREATOR = new Creator<User>() {
 
-    public Photo getAvatar() {
-        return avatar;
-    }
+        @Override
+        public User createFromParcel(Parcel source) {
+            return new User(source);
+        }
 
-    public void setAvatar(Photo avatar) {
-        this.avatar = avatar;
-    }
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
 
-    public int getLikeCount() {
-        return likeCount;
-    }
-
-    public void setLikeCount(int likeCount) {
-        this.likeCount = likeCount;
-    }
-
-    public int getFavouriteCount() {
-        return favouriteCount;
-    }
-
-    public void setFavouriteCount(int favouriteCount) {
-        this.favouriteCount = favouriteCount;
-    }
+    };
 }

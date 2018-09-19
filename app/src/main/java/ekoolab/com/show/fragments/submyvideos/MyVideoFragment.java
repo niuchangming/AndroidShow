@@ -1,4 +1,4 @@
-package ekoolab.com.show.fragments.subhomes;
+package ekoolab.com.show.fragments.submyvideos;
 
 import android.util.Log;
 import android.view.View;
@@ -7,6 +7,7 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import com.santalu.emptyview.EmptyView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,6 +23,7 @@ import ekoolab.com.show.utils.ViewHolder;
 public class MyVideoFragment extends BaseFragment {
     private final String TAG = "VideoFragment";
     private int pageIndex;
+    private EmptyView emptyView;
 
     @Override
     protected int getLayoutId() {
@@ -39,10 +41,11 @@ public class MyVideoFragment extends BaseFragment {
 
     @Override
     protected void initViews(ViewHolder holder, View root) {
-
+        emptyView = holder.get(R.id.empty_view);
     }
 
     private void loadVideoData(){
+        emptyView.showLoading();
         AndroidNetworking.post(Constants.VIDEO_LIST)
                 .addBodyParameter("timestamp", new Date().getTime() + "")
                 .addBodyParameter("pageSize", Constants.PAGE_SIZE + "")
@@ -58,17 +61,17 @@ public class MyVideoFragment extends BaseFragment {
                             int errorCode = response.getInt("errorCode");
                             String message = response.getString("message");
                             if (errorCode == 1) {
-
+                                emptyView.content().show();
                             } else {
-                                toast(message);
+                                emptyView.error().setErrorText(message).show();
                             }
                         }catch (JSONException e){
-                            Log.e(TAG, e.getLocalizedMessage());
+                            emptyView.error(e).show();
                         }
                     }
                     @Override
                     public void onError(ANError error) {
-                        Log.e(TAG, error.getLocalizedMessage());
+                        emptyView.error(error).show();
                     }
                 });
     }

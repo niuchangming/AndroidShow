@@ -17,9 +17,9 @@ import java.util.List;
 import ekoolab.com.show.R;
 import ekoolab.com.show.adapters.ProfileAdapter;
 import ekoolab.com.show.fragments.BaseFragment;
-import ekoolab.com.show.fragments.subhomes.MyCollectsFragment;
-import ekoolab.com.show.fragments.subhomes.MyVideoFragment;
-import ekoolab.com.show.fragments.subhomes.MymomentsFragment;
+import ekoolab.com.show.fragments.submyvideos.MyCollectsFragment;
+import ekoolab.com.show.fragments.submyvideos.MyVideoFragment;
+import ekoolab.com.show.fragments.submyvideos.MymomentsFragment;
 import ekoolab.com.show.utils.EventBusMsg;
 
 public class PersonActivity extends BaseActivity {
