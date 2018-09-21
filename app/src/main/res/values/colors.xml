@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">@color/colorWhite</color>
+    <color name="colorPrimaryDark">@color/extraGray</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="extraGray">#F0F0F0</color>
+    <color name="gray">#C3C3C3</color>
+    <color name="colorBlack">#333333</color>
+    <color name="colorOrange">#FC5C1B</color>
+    <color name="colorGreen">#6bc92c</color>
+    <color name="colorPink">#EC4A86</color>
+    <color name="colorDarkPink">#CC1B5D</color>
+    <color name="colorRed">#D50065</color>
+
+
+
+    <!-- 新增加属性 -->
+    <color name="toolBarBackground">@android:color/white</color>
+    <color name="text_Color">@android:color/white</color>
+    <color name="appBackground">#ebebeb</color>
+    <color name="tabBackground">@android:color/white</color>
+    <color name="default_item_bg_normal">@android:color/transparent</color>
+    <color name="default_item_bg_press">#80ffffff</color>
+    <color name="default_text_color_enabled">#80ffffff</color>
+    <color name="primary_color">@color/colorAccent</color>
+    <color name="colorControlNormal">#cccccc</color>
+    <color name="text_color_green">@color/colorAccent</color>
+    <color name="text_color_gray">#999999</color>
+    <color name="text_color_orange">#ff7800</color>
+    <color name="text_color_red">#ff221e</color>
+    <color name="text_color_black">@android:color/black</color>
+    <color name="textColorHint">#50999999</color>
+    <color name="lineColorBg">#cccccc</color>
+    <color name="grayColorBg">#F5F5F5</color>
+    <color name="white">@android:color/white</color>
+    <color name="app_default_bg">#80ffffff</color>
+    <!-- Toast -->
+    <color name="toast_stroke_bg">#50333333</color>
+    <color name="toast_layout_bg">#aa333333</color>
+    <color name="lingBg">#cccccc</color>
+    <color name="btn_send_normal">@color/colorAccent</color>
+    <color name="btn_send_press">@color/tabBackground</color>
+    <color name="facebar_btn_select">#D9D9D9</color>
+    <color name="facebar_btn_nomal">@color/white</color>
+    <color name="point_normal">#b5b5b6</color>
+    <color name="point_select">#666667</color>
+    <color name="bt_red_bg">#ff221e</color>
+    <color name="bt_bg">#ff221e</color>
+    <color name="bt_gray_bg">#999999</color>
+    <color name="bt_bg_unselect">#c1c1c1</color>
+    <color name="red_light">#90d33f3f</color>
+    <color name="main_text_selected">#d33f3f</color>
+    <color name="main_text_unselected">@android:color/background_dark</color>
+    <drawable name="catalogue_selected">#ebebeb</drawable>
+    <drawable name="catalogue_unselected">#ffffffff</drawable>
+    <drawable name="catalogue_view_selected">#ff221e</drawable>
+    <color name="gray_very_light">#DDDDDD</color>
+    <color name="darkRed">#D92E30</color>
+    <color name="black">#080808</color>
+    <color name="titleGreen">#4DCD70</color>
+    <color name="graygreen">#47B018</color>
+    <color name="asiapay">#4D1F80</color>
+</resources>
