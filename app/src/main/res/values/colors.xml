@@ -61,4 +61,5 @@
     <color name="titleGreen">#4DCD70</color>
     <color name="graygreen">#47B018</color>
     <color name="asiapay">#4D1F80</color>
+    <color name="divider_color">#ebebeb</color>
 </resources>

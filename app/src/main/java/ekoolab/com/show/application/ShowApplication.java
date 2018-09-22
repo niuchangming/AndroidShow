@@ -5,7 +5,9 @@ import android.app.Application;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.interceptors.HttpLoggingInterceptor;
 import com.facebook.drawee.backends.pipeline.Fresco;
-import com.jacksonandroidnetworking.JacksonParserFactory;
+
+import ekoolab.com.show.utils.Constants;
+import ekoolab.com.show.utils.FileUtils;
 
 public class ShowApplication extends Application {
 
@@ -18,5 +20,7 @@ public class ShowApplication extends Application {
         AndroidNetworking.initialize(application);
         AndroidNetworking.enableLogging(HttpLoggingInterceptor.Level.BODY);
         Fresco.initialize(this);
+        FileUtils.createOrExistsDir(Constants.VIDEO_PATH);
+        FileUtils.createOrExistsDir(Constants.IMAGE_PATH);
     }
 }

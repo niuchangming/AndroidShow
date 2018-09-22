@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.luck.picture.lib.utils.AppManager;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.uber.autodispose.AutoDispose;
 import com.uber.autodispose.AutoDisposeConverter;
@@ -37,6 +38,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppManager.getInstance().addActivity(this);
         setContentView(R.layout.activity_base);
         rxPermissions = new RxPermissions(this);
         initData();
@@ -147,5 +149,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public <T> AutoDisposeConverter<T> autoDisposable() {
         return AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(this));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        AppManager.getInstance().killActivity(this);
     }
 }

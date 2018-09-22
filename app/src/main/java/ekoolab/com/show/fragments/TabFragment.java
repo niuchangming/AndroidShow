@@ -81,11 +81,8 @@ public class TabFragment extends BaseFragment implements View.OnClickListener {
         if (v instanceof TabButton) {
             TabButton nav = (TabButton) v;
             doSelect(nav);
-        }else{
-            switch(v.getId()){
-                case R.id.tab_item_camera:
-                    break;
-            }
+        } else if (v.getId() == R.id.tab_item_camera) {
+            mOnNavigationReselectListener.onCenterCameraClick();
         }
 
     }
@@ -160,5 +157,7 @@ public class TabFragment extends BaseFragment implements View.OnClickListener {
 
     public interface OnTabBarSelectedListener {
         void onReselect(TabButton navigationButton);
+
+        void onCenterCameraClick();
     }
 }

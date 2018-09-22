@@ -6,15 +6,10 @@ import com.rx2androidnetworking.Rx2AndroidNetworking;
 import com.uber.autodispose.FlowableSubscribeProxy;
 
 import java.util.HashMap;
-import java.util.List;
 
 import ekoolab.com.show.activities.BaseActivity;
-import ekoolab.com.show.beans.Video;
 import ekoolab.com.show.fragments.BaseFragment;
-import ekoolab.com.show.utils.AuthUtils;
-import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.RxUtils;
-import io.reactivex.Flowable;
 
 /**
  * @author Army
