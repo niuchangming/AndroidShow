@@ -4,12 +4,10 @@ import android.app.Activity;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -61,7 +59,7 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
 
         public void bind(final Video video) {
             Glide.with(activity).load(video.preview.origin).into(previewIv);
-            videoView.setVideoURI(Uri.parse(video.videoUrl));
+            videoView.setVideoURI(Uri.parse(video.resourceUri));
             descTv.setText(video.description);
         }
     }

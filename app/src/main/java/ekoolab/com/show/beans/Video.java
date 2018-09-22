@@ -3,41 +3,23 @@ package ekoolab.com.show.beans;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import ekoolab.com.show.utils.JsonParser.FieldExclude;
-import ekoolab.com.show.utils.JsonParser.JSOName;
-
 public class Video implements Parcelable {
     public String resourceId;
     public long uploadTime;
     public Photo preview;
-    @JSOName(name = "resourceUri")
-    public String videoUrl;
+    public String resourceUri;
     public String title;
     public String description;
     public double lat;
     public double lon;
     public String permission;
-    public int category;
-    public User creator;
+    public String category;
     public int likeCount;
     public int favouriteCount;
-
-    public Video() {}
-    public Video(Parcel source) {
-        resourceId = source.readString();
-        uploadTime = source.readLong();
-        preview = source.readParcelable(Photo.class.getClassLoader());
-        videoUrl = source.readString();
-        title = source.readString();
-        description = source.readString();
-        lat = source.readDouble();
-        lon = source.readDouble();
-        permission = source.readString();
-        category = source.readInt();
-        creator = source.readParcelable(User.class.getClassLoader());
-        likeCount = source.readInt();
-        favouriteCount = source.readInt();
-    }
+    public boolean isMyLike;
+    public boolean isMyFavourite;
+    public User creator;
+    public int commentCount;
 
     @Override
     public int describeContents() {
@@ -45,25 +27,48 @@ public class Video implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(resourceId);
-        parcel.writeLong(uploadTime);
-        parcel.writeParcelable(preview, i);
-        parcel.writeString(videoUrl);
-        parcel.writeString(title);
-        parcel.writeString(description);
-        parcel.writeDouble(lat);
-        parcel.writeDouble(lon);
-        parcel.writeString(permission);
-        parcel.writeInt(category);
-        parcel.writeParcelable(creator, i);
-        parcel.writeInt(likeCount);
-        parcel.writeInt(favouriteCount);
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.resourceId);
+        dest.writeLong(this.uploadTime);
+        dest.writeParcelable(this.preview, flags);
+        dest.writeString(this.resourceUri);
+        dest.writeString(this.title);
+        dest.writeString(this.description);
+        dest.writeDouble(this.lat);
+        dest.writeDouble(this.lon);
+        dest.writeString(this.permission);
+        dest.writeString(this.category);
+        dest.writeInt(this.likeCount);
+        dest.writeInt(this.favouriteCount);
+        dest.writeByte(this.isMyLike ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isMyFavourite ? (byte) 1 : (byte) 0);
+        dest.writeParcelable(this.creator, flags);
+        dest.writeInt(this.commentCount);
     }
 
-    @FieldExclude
-    public static final Parcelable.Creator<Video> CREATOR = new Creator<Video>() {
+    public Video() {
+    }
 
+    protected Video(Parcel in) {
+        this.resourceId = in.readString();
+        this.uploadTime = in.readLong();
+        this.preview = in.readParcelable(Photo.class.getClassLoader());
+        this.resourceUri = in.readString();
+        this.title = in.readString();
+        this.description = in.readString();
+        this.lat = in.readDouble();
+        this.lon = in.readDouble();
+        this.permission = in.readString();
+        this.category = in.readString();
+        this.likeCount = in.readInt();
+        this.favouriteCount = in.readInt();
+        this.isMyLike = in.readByte() != 0;
+        this.isMyFavourite = in.readByte() != 0;
+        this.creator = in.readParcelable(User.class.getClassLoader());
+        this.commentCount = in.readInt();
+    }
+
+    public static final Creator<Video> CREATOR = new Creator<Video>() {
         @Override
         public Video createFromParcel(Parcel source) {
             return new Video(source);

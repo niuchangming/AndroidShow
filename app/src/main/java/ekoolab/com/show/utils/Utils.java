@@ -1,5 +1,8 @@
 package ekoolab.com.show.utils;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
@@ -19,5 +22,17 @@ public class Utils {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(millis);
         return cal.getTime();
+    }
+
+    public static String outputError(Throwable ex) {
+        Writer writer = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(writer);
+        ex.printStackTrace(printWriter);
+        Throwable cause = ex.getCause();
+
+        if (cause != null) {
+            cause.printStackTrace(printWriter);
+        }
+        return writer.toString();
     }
 }

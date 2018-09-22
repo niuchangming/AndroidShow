@@ -50,4 +50,7 @@
     <string name="empty">Content not found!</string>
     <string name="loading">Loading Now...</string>
     <string name="format_error">Format Error !</string>
+    <string name="useless_network">Network is not available!</string>
+    <string name="request_fail">The request fails!</string>
+    <string name="weak_network">Current network is weak!</string>
 </resources>

@@ -9,17 +9,8 @@ public class User implements Parcelable{
     public String name;
     public String nickname;
     public String userCode;
-    public Photo avatar;
+    public transient String avatar;
     public int followingCount;
-
-    public User(){}
-    public User(Parcel source) {
-        name = source.readString();
-        nickname = source.readString();
-        userCode = source.readString();
-        avatar = source.readParcelable(Photo.class.getClassLoader());
-        followingCount = source.readInt();
-    }
 
     @Override
     public int describeContents() {
@@ -27,17 +18,26 @@ public class User implements Parcelable{
     }
 
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(name);
-        parcel.writeString(nickname);
-        parcel.writeString(userCode);
-        parcel.writeParcelable(avatar, i);
-        parcel.writeInt(followingCount);
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.name);
+        dest.writeString(this.nickname);
+        dest.writeString(this.userCode);
+        dest.writeString(this.avatar);
+        dest.writeInt(this.followingCount);
     }
 
-    @FieldExclude
-    public static final Parcelable.Creator<User> CREATOR = new Creator<User>() {
+    public User() {
+    }
 
+    protected User(Parcel in) {
+        this.name = in.readString();
+        this.nickname = in.readString();
+        this.userCode = in.readString();
+        this.avatar = in.readString();
+        this.followingCount = in.readInt();
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
         @Override
         public User createFromParcel(Parcel source) {
             return new User(source);
@@ -47,6 +47,5 @@ public class User implements Parcelable{
         public User[] newArray(int size) {
             return new User[size];
         }
-
     };
 }
