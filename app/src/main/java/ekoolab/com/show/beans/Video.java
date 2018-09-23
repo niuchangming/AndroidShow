@@ -7,6 +7,7 @@ import ekoolab.com.show.utils.JsonParser.FieldExclude;
 import ekoolab.com.show.utils.JsonParser.JSOName;
 
 public class Video implements Parcelable {
+    private static final long serialVersionUID = -8901488825566236870L;
     public String resourceId;
     public long uploadTime;
     public Photo preview;
@@ -21,6 +22,9 @@ public class Video implements Parcelable {
     public User creator;
     public int likeCount;
     public int favouriteCount;
+    public boolean isMyLike;
+    public boolean isMyFavourite;
+    public int commentCount;
 
     public Video() {}
     public Video(Parcel source) {

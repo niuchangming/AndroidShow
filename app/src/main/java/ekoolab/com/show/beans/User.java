@@ -7,18 +7,17 @@ import ekoolab.com.show.utils.JsonParser.FieldExclude;
 
 public class User implements Parcelable{
     public String name;
-    public String nickname;
     public String userCode;
     public Photo avatar;
-    public int followingCount;
+    public boolean isMyFollowing;
+    public boolean isMyFollower;
 
     public User(){}
     public User(Parcel source) {
         name = source.readString();
-        nickname = source.readString();
         userCode = source.readString();
         avatar = source.readParcelable(Photo.class.getClassLoader());
-        followingCount = source.readInt();
+
     }
 
     @Override
@@ -29,10 +28,8 @@ public class User implements Parcelable{
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(name);
-        parcel.writeString(nickname);
         parcel.writeString(userCode);
         parcel.writeParcelable(avatar, i);
-        parcel.writeInt(followingCount);
     }
 
     @FieldExclude

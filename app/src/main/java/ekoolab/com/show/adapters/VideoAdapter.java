@@ -34,6 +34,7 @@ public class VideoAdapter extends RecyclerView.Adapter <VideoAdapter.VideoHolder
     public VideoHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = activity.getLayoutInflater().inflate(R.layout.video_grid_cell, parent, false);
         return new VideoHolder(view);
+
     }
 
     @Override
