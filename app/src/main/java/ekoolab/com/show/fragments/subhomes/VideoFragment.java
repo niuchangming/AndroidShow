@@ -1,17 +1,16 @@
 package ekoolab.com.show.fragments.subhomes;
 
 import android.content.Intent;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import com.google.gson.reflect.TypeToken;
+import com.rx2androidnetworking.Rx2AndroidNetworking;
 import com.google.gson.JsonArray;
 import com.santalu.emptyview.EmptyView;
 
@@ -34,6 +33,8 @@ import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.JsonParser.JSONParser;
 import ekoolab.com.show.utils.JsonParser.JSONParser.ParserListener;
 import ekoolab.com.show.utils.JsonUtil;
+import ekoolab.com.show.utils.ListUtils;
+import ekoolab.com.show.utils.RxUtils;
 import ekoolab.com.show.utils.ViewHolder;
 import ekoolab.com.show.views.EndLessOnScrollListener;
 import ekoolab.com.show.views.GridSpacingItemDecoration;
@@ -92,64 +93,52 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
         });
     }
 
-    private void loadVideoData(int flag){
+    private void loadVideoData(int flag) {
         if(flag==0){
             emptyView.showLoading();
         }
-        AndroidNetworking.post(Constants.VIDEO_LIST)
-                .addBodyParameter("timestamp", new Date().getTime() + "")
-                .addBodyParameter("pageSize", Constants.PAGE_SIZE + "")
-                .addBodyParameter("pageIndex", pageIndex + "")
-                .addBodyParameter("token", AuthUtils.getInstance(getContext()).getApiToken())
-                .setPriority(Priority.MEDIUM)
-                .build()
-                .getAsJSONObject(new JSONObjectRequestListener() {
+        HashMap<String, String> map = new HashMap<>(4);
+        map.put("timestamp", System.currentTimeMillis() + "");
+        map.put("pageSize", Constants.PAGE_SIZE + "");
+        map.put("pageIndex", pageIndex + "");
+        map.put("token", AuthUtils.getInstance(getContext()).getApiToken());
+        ApiServer.basePostRequest(this, Constants.VIDEO_LIST, map,
+                new TypeToken<ResponseData<List<Video>>>() {
+                })
+                .subscribe(new NetworkSubscriber<List<Video>>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-
-                        try {
-                            int errorCode = response.getInt("errorCode");
-                            String message = response.getString("message");
-                            swipeRefreshLayout.setRefreshing(false);
-                            if (errorCode == 1) {
-                                JSONArray data = response.getJSONArray("data");
-                                System.out.println("==data=="+data);
-                                List<Video> fetchedVideos = JsonUtil.getVideoList(data);
-                                videos.clear();
-                                if(fetchedVideos != null && fetchedVideos.size() > 0){
-                                    videos.addAll(fetchedVideos);
-                                    adapter.notifyDataSetChanged();
-                                    emptyView.content().show();
-                                }else{
-                                    emptyView.showEmpty();
-                                }
-                            } else {
-                                emptyView.error().setErrorText(message).show();
-                            }
-                        }catch (JSONException e){
-                            emptyView.error(e).show();
+                    protected void onSuccess(List<Video> videoList) {
+                        if (ListUtils.isNotEmpty(videoList)) {
+                            videos.clear();
+                            videos.addAll(videoList);
+                            adapter.notifyDataSetChanged();
+                            emptyView.content().show();
+                        } else {
+                            emptyView.showEmpty();
                         }
                     }
+
                     @Override
-                    public void onError(ANError error) {
-                        emptyView.error(error).show();
+                    protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
+                        emptyView.error(e).show();
+                        return super.dealHttpException(code, errorMsg, e);
                     }
                 });
     }
 
     @Override
     public void onParseSuccess(Object obj) {
-        if(obj instanceof List){
+        if (obj instanceof List) {
             videos.clear();
             List<Video> fetchedVideos = (ArrayList<Video>) obj;
-            if(fetchedVideos != null && fetchedVideos.size() > 0){
+            if (fetchedVideos != null && fetchedVideos.size() > 0) {
                 videos.addAll(fetchedVideos);
                 adapter.notifyDataSetChanged();
                 emptyView.content().show();
-            }else{
+            } else {
                 emptyView.showEmpty();
             }
-        }else{
+        } else {
             emptyView.error().setErrorText(R.string.format_error).show();
         }
     }
@@ -164,7 +153,7 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
         Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
         intent.putParcelableArrayListExtra("videos", this.videos);
 
-        for(int i = 0; i < videos.size(); i++){
+        for (int i = 0; i < videos.size(); i++) {
             if (videos.get(i).resourceId.equalsIgnoreCase(video.resourceId)) {
                 intent.putExtra("current_index", i);
                 break;

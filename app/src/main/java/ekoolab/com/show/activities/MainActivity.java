@@ -1,24 +1,28 @@
 package ekoolab.com.show.activities;
 
+import android.Manifest;
 import android.animation.ValueAnimator;
 import android.support.v4.app.Fragment;
 import android.view.View;
+
+import com.luck.picture.lib.CameraActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import ekoolab.com.show.utils.AuthUtils;
-import ekoolab.com.show.utils.EventBusMsg;
 import ekoolab.com.show.R;
-import ekoolab.com.show.views.TabButton;
+import ekoolab.com.show.dialogs.DialogViewHolder;
+import ekoolab.com.show.dialogs.XXDialog;
 import ekoolab.com.show.fragments.TabFragment;
-
-import static ekoolab.com.show.utils.AuthUtils.AuthType.LOGGED;
+import ekoolab.com.show.utils.Constants;
+import ekoolab.com.show.utils.EventBusMsg;
+import ekoolab.com.show.views.TabButton;
 
 public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSelectedListener {
 
     private TabFragment tabFragment;
+    private XXDialog xxDialog = null;
 
     @Override
     protected int getLayoutId() {
@@ -44,6 +48,34 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
     public void onReselect(TabButton navigationButton) {
         Fragment fragment = navigationButton.getFragment();
 
+    }
+
+    @Override
+    public void onCenterCameraClick() {
+        if (xxDialog == null) {
+            xxDialog = new XXDialog(this, R.layout.dialog_choose_content) {
+                @Override
+                public void convert(DialogViewHolder holder) {
+                    holder.setOnClick(R.id.tv_video, view -> {
+                        cancelDialog();
+                        gotoTakeVideo();
+                    });
+                    holder.setOnClick(R.id.tv_cancel, view -> cancelDialog());
+                }
+            }.fromBottom().fullWidth();
+        }
+        xxDialog.showDialog();
+    }
+
+    private void gotoTakeVideo() {
+        rxPermissions.request(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
+                .subscribe(aBoolean -> {
+                    if (aBoolean) {
+                        CameraActivity.navToCameraOnlyVideoThenJump(MainActivity.this,
+                                Constants.VIDEO_PATH, Constants.IMAGE_PATH, PostVideoActivity.class);
+                    }
+                });
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

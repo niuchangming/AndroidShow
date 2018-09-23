@@ -8,6 +8,8 @@ import ekoolab.com.show.utils.JsonParser.FieldExclude;
 public class User implements Parcelable{
     public String name;
     public String userCode;
+    public transient String avatar;
+    public int followingCount;
     public Photo avatar;
     public boolean isMyFollowing;
     public boolean isMyFollower;

@@ -15,6 +15,12 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.luck.picture.lib.utils.AppManager;
+import com.tbruyelle.rxpermissions2.RxPermissions;
+import com.uber.autodispose.AutoDispose;
+import com.uber.autodispose.AutoDisposeConverter;
+import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +33,14 @@ public abstract class BaseActivity extends AppCompatActivity {
     private long mBackPressedTime;
     protected FrameLayout activityContainer;
     private List<TurnBackListener> mTurnBackListeners = new ArrayList<>();
+    public RxPermissions rxPermissions;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppManager.getInstance().addActivity(this);
         setContentView(R.layout.activity_base);
+        rxPermissions = new RxPermissions(this);
         initData();
         initViews();
         getWindow().getDecorView()
@@ -136,5 +145,15 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public interface TurnBackListener {
         boolean onTurnBack();
+    }
+
+    public <T> AutoDisposeConverter<T> autoDisposable() {
+        return AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(this));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        AppManager.getInstance().killActivity(this);
     }
 }

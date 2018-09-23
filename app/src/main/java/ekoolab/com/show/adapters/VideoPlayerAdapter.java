@@ -103,7 +103,7 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
             }else{
                 iv_like.setBackgroundResource(R.mipmap.star);
             }
-            Glide.with(activity).load(video.creator.avatar.origin).into(avatar_iv);
+//            Glide.with(activity).load(video.creator.avatar.origin).into(avatar_iv);
             ll_zan.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

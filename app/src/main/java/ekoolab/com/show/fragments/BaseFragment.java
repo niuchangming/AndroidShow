@@ -11,6 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.tbruyelle.rxpermissions2.RxPermissions;
+import com.uber.autodispose.AutoDispose;
+import com.uber.autodispose.AutoDisposeConverter;
+import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider;
+
 import ekoolab.com.show.utils.ViewHolder;
 
 public abstract class BaseFragment extends Fragment {
@@ -18,6 +23,7 @@ public abstract class BaseFragment extends Fragment {
     protected Context mContext;
     private ViewHolder mViewHolder;
     private View mRoot;
+    public RxPermissions rxPermissions;
 
     @Override
     public void onAttach(Context context) {
@@ -54,6 +60,7 @@ public abstract class BaseFragment extends Fragment {
             }
             ft.commit();
         }
+        rxPermissions = new RxPermissions(this);
     }
 
     @Override
@@ -108,5 +115,9 @@ public abstract class BaseFragment extends Fragment {
         if (mViewHolder.getRootView() != null) {
             ((ViewGroup) mViewHolder.getRootView().getParent()).removeView(mViewHolder.getRootView());
         }
+    }
+
+    public <T> AutoDisposeConverter<T> autoDisposable() {
+        return AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(this));
     }
 }
