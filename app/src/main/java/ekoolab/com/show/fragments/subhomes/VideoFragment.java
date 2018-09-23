@@ -152,6 +152,21 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
             }
         }
 
-        startActivity(intent);
+       startActivityForResult(intent,0);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==0&&resultCode==2){
+            if(videos!=null&&videos.size()!=0){
+                ArrayList<Video> videoArrayList = data.getParcelableArrayListExtra("videos");
+                if(videoArrayList!=null&&videoArrayList.size()!=0){
+                    videos.clear();
+                    videos.addAll(videoArrayList);
+                }
+            }
+            adapter.notifyDataSetChanged();
+        }
     }
 }

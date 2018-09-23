@@ -10,6 +10,18 @@ public class Constants {
     public static final String SIGNUP = HOST + "user/signup";
     public static final String VERIFY_2FA = HOST + "user/2fa";
     public static final String VIDEO_LIST = HOST + "video/listall";
+    public static final String FAVOURITE = HOST + "favourites/favourite";
+    public static final String FAVOURITECANEL = HOST + "favourites/cancel";
+
+    public static final String LIKE = HOST + "likes/like";
+    public static final String UNLIKE = HOST + "likes/unlike";
+
+    public static final String FOLLOW = HOST + "follows/add";
+    public static final String FOLLOWCANCEL = HOST + "follows/cancel";
+
+    public static final String COMMENT = HOST + "comments/comment";
+    public static final String COMMENTDEL = HOST + "comments/delete";
+    public static final String COMMENTLIST = HOST + "comments/listall";
 
     public static final String ROOT_PATH = Environment.getExternalStorageDirectory().getAbsolutePath()
             + File.separator + "AndroidShow" + File.separator;

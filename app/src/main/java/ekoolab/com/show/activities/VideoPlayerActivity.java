@@ -1,5 +1,6 @@
 package ekoolab.com.show.activities;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
@@ -39,7 +40,6 @@ public class VideoPlayerActivity extends BaseActivity{
         super.initData();
         videos = getIntent().getParcelableArrayListExtra("videos");
         currentIndex = getIntent().getIntExtra("current_index", currentIndex);
-        System.out.println("==currentIndex=="+currentIndex);
         if(videos != null && videos.size() > 0){
 
             List<Video> firstVideoList = new ArrayList<>(videos.subList(currentIndex, videos.size()));
@@ -74,17 +74,9 @@ public class VideoPlayerActivity extends BaseActivity{
         adapter.setOnItemClickListener(new VideoPlayerAdapter.OnItemClickListener() {
             @Override
             public void onClick(int position) {
-                VideoPlayerActivity.this.finish();
-            }
-        });
-        adapter.setOnItemFollowClickListener(new VideoPlayerAdapter.OnItemFollowClickListener() {
-            @Override
-            public void onClick(int position) {
-                System.out.println("==position=="+position);
-//                Video video = videos.get(position);
-
-            }
-        });
+                onBackPressed();
+    }
+});
         recyclerView.setAdapter(adapter);
 
 //        int centerPos = Integer.MAX_VALUE / 2;
@@ -154,4 +146,15 @@ public class VideoPlayerActivity extends BaseActivity{
         imgPlay.animate().alpha(0f).start();
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        List<Video> firstVideoList = new ArrayList<>(videos.subList(videos.size()-currentIndex, videos.size()));
+        List<Video> secondVideoList = new ArrayList<>(videos.subList(0, videos.size()-currentIndex));
+        ArrayList<Video> videosList = new ArrayList<>(firstVideoList);
+        videosList.addAll(secondVideoList);
+        intent.putParcelableArrayListExtra("videos", videosList);
+        setResult(2, intent);
+        VideoPlayerActivity.this.finish();
+    }
 }

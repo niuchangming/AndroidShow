@@ -13,11 +13,20 @@ import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.reflect.TypeToken;
 
+import java.util.HashMap;
 import java.util.List;
 
 import ekoolab.com.show.R;
+import ekoolab.com.show.activities.BaseActivity;
+import ekoolab.com.show.api.ApiServer;
+import ekoolab.com.show.api.NetworkSubscriber;
+import ekoolab.com.show.api.ResponseData;
 import ekoolab.com.show.beans.Video;
+import ekoolab.com.show.utils.AuthUtils;
+import ekoolab.com.show.utils.Constants;
+import ekoolab.com.show.utils.ListUtils;
 
 public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.ViewHolder> {
     private final String TAG = "VideoPlayerAdapter";
@@ -61,6 +70,7 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
         TextView tv_follow;
         ImageView iv_del,iv_zan,iv_like;
         LinearLayout ll_comment,ll_like,ll_zan,ll_share;
+
         public ViewHolder(View itemView) {
             super(itemView);
             videoView = itemView.findViewById(R.id.video_view);
@@ -87,8 +97,8 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
             Glide.with(activity).load(video.preview.origin).into(previewIv);
             videoView.setVideoURI(Uri.parse(video.resourceUri));
             descTv.setText(video.description);
-            tv_like.setText(video.likeCount + "");
-            tv_zan.setText(video.favouriteCount + "");
+            tv_like.setText(video.favouriteCount + "");
+            tv_zan.setText(video.likeCount + "");
             tv_comment.setText(video.commentCount + "");
             tv_share.setText(video.likeCount + "");
             tv_title.setText(video.title + "");
@@ -103,11 +113,20 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
             }else{
                 iv_like.setBackgroundResource(R.mipmap.star);
             }
-            Glide.with(activity).load(video.creator.avatar).into(avatar_iv);
+            if(video.creator.isMyFollowing){
+                tv_follow.setText("已关注");
+            }else{
+                tv_follow.setText("关注");
+            }
+            Glide.with(activity).load(video.creator.avatar.origin).into(avatar_iv);
             ll_zan.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    if(video.isMyLike){
+                        getLike(ViewHolder.this,video,false);
+                    }else{
+                        getLike(ViewHolder.this,video,true);
+                    }
                 }
             });
             ll_share.setOnClickListener(new View.OnClickListener() {
@@ -119,7 +138,11 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
             ll_like.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    if(video.isMyFavourite){
+                        getFavourite(ViewHolder.this,video,false);
+                    }else{
+                        getFavourite(ViewHolder.this,video,true);
+                    }
                 }
             });
             ll_comment.setOnClickListener(new View.OnClickListener() {
@@ -138,16 +161,136 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
                 @Override
                 public void onClick(View view) {
                     if(video.creator.isMyFollowing){
-                        tv_follow.setText("关注");
-                        video.creator.isMyFollowing = false;
+                        getFollow(ViewHolder.this,video,false);
                     }else{
-                        tv_follow.setText("已关注");
-                        video.creator.isMyFollowing = true;
+                        getFollow(ViewHolder.this,video,false);
                     }
-                    mOnItemFollowClickListener.onClick(position);
                 }
             });
         }
+    }
+
+    private void getFollow(ViewHolder viewHolder,Video video,boolean flag) {
+        HashMap<String, String> map = new HashMap<>(2);
+        map.put("resourceId", video.resourceId);
+        map.put("token", AuthUtils.getInstance(activity).getApiToken());
+        ApiServer.basePostRequest((BaseActivity) activity, flag?Constants.FOLLOW:Constants.FOLLOWCANCEL, map,
+                new TypeToken<ResponseData<String>>() {
+                })
+                .subscribe(new NetworkSubscriber<String>() {
+                    @Override
+                    protected void onSuccess(String s) {
+                        try {
+                            if(video.creator.isMyFollowing){
+                                video.creator.isMyFollowing = false;
+                                viewHolder.tv_follow.setText(video.creator.isMyFollowing+"");
+                            }else{
+                                video.creator.isMyFollowing = true;
+                                viewHolder.tv_follow.setText(video.creator.isMyFollowing+"");
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
+                        return super.dealHttpException(code, errorMsg, e);
+                    }
+                });
+    }
+
+    private void saveComment(ViewHolder viewHolder,Video video,String comment) {
+        HashMap<String, String> map = new HashMap<>(3);
+        map.put("body", comment);
+        map.put("resourceId", video.resourceId);
+        map.put("token", AuthUtils.getInstance(activity).getApiToken());
+        ApiServer.basePostRequest((BaseActivity) activity, Constants.COMMENT, map,
+                new TypeToken<ResponseData<String>>() {
+                })
+                .subscribe(new NetworkSubscriber<String>() {
+                    @Override
+                    protected void onSuccess(String s) {
+                        try {
+
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
+                        return super.dealHttpException(code, errorMsg, e);
+                    }
+                });
+    }
+
+    private void getFavourite(ViewHolder viewHolder,Video video,boolean flag) {
+        HashMap<String, String> map = new HashMap<>(2);
+        map.put("resourceId", video.resourceId);
+        map.put("token", AuthUtils.getInstance(activity).getApiToken());
+        ApiServer.basePostRequest((BaseActivity) activity, flag?Constants.FAVOURITE:Constants.FAVOURITECANEL, map,
+                new TypeToken<ResponseData<String>>() {
+                })
+                .subscribe(new NetworkSubscriber<String>() {
+                    @Override
+                    protected void onSuccess(String s) {
+                        try {
+                            if(video.isMyFavourite){
+                                video.isMyFavourite = false;
+                                video.favouriteCount-= 1;
+                                viewHolder.tv_like.setText(video.favouriteCount+"");
+                                viewHolder.iv_like.setBackgroundResource(R.mipmap.star);
+                            }else{
+                                video.isMyFavourite = true;
+                                video.favouriteCount+= 1;
+                                viewHolder.tv_like.setText(video.favouriteCount+"");
+                                viewHolder.iv_like.setBackgroundResource(R.mipmap.star_fill);
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
+                        return super.dealHttpException(code, errorMsg, e);
+                    }
+                });
+    }
+
+    private void getLike(ViewHolder viewHolder,Video video,boolean flag) {
+        HashMap<String, String> map = new HashMap<>(2);
+        map.put("resourceId", video.resourceId);
+        map.put("token", AuthUtils.getInstance(activity).getApiToken());
+        ApiServer.basePostRequest((BaseActivity) activity, flag?Constants.LIKE:Constants.UNLIKE, map,
+                new TypeToken<ResponseData<String>>() {
+                })
+                .subscribe(new NetworkSubscriber<String>() {
+                    @Override
+                    protected void onSuccess(String s) {
+                        try {
+                            if(video.isMyLike){
+                                video.isMyLike = false;
+                                video.likeCount-= 1;
+                                viewHolder.tv_zan.setText(video.likeCount+"");
+                                viewHolder.iv_zan.setBackgroundResource(R.mipmap.heart_line);
+                            }else{
+                                video.isMyLike = true;
+                                video.likeCount+= 1;
+                                viewHolder.tv_zan.setText(video.likeCount+"");
+                                viewHolder.iv_zan.setBackgroundResource(R.mipmap.heart_red);
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
+                        return super.dealHttpException(code, errorMsg, e);
+                    }
+                });
     }
 
     private OnItemClickListener mOnItemClickListener = null;
@@ -158,17 +301,6 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.mOnItemClickListener = onItemClickListener;
-    }
-
-
-    private OnItemFollowClickListener mOnItemFollowClickListener = null;
-
-    public interface OnItemFollowClickListener {
-        void onClick(int position);
-    }
-
-    public void setOnItemFollowClickListener(OnItemFollowClickListener onItemfollowClickListener) {
-        this.mOnItemFollowClickListener = onItemfollowClickListener;
     }
 
 }
