@@ -85,7 +85,7 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
 
         public void bind(final Video video,final int position) {
             Glide.with(activity).load(video.preview.origin).into(previewIv);
-            videoView.setVideoURI(Uri.parse(video.videoUrl));
+            videoView.setVideoURI(Uri.parse(video.resourceUri));
             descTv.setText(video.description);
             tv_like.setText(video.likeCount + "");
             tv_zan.setText(video.favouriteCount + "");
@@ -103,7 +103,7 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
             }else{
                 iv_like.setBackgroundResource(R.mipmap.star);
             }
-//            Glide.with(activity).load(video.creator.avatar.origin).into(avatar_iv);
+            Glide.with(activity).load(video.creator.avatar).into(avatar_iv);
             ll_zan.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

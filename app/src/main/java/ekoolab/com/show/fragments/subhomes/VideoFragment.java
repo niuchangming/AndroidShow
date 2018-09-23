@@ -1,40 +1,31 @@
 package ekoolab.com.show.fragments.subhomes;
 
 import android.content.Intent;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.common.Priority;
-import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.google.gson.reflect.TypeToken;
-import com.rx2androidnetworking.Rx2AndroidNetworking;
-import com.google.gson.JsonArray;
 import com.santalu.emptyview.EmptyView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.activities.VideoPlayerActivity;
 import ekoolab.com.show.adapters.VideoAdapter;
-import ekoolab.com.show.beans.AuthInfo;
+import ekoolab.com.show.api.ApiServer;
+import ekoolab.com.show.api.NetworkSubscriber;
+import ekoolab.com.show.api.ResponseData;
 import ekoolab.com.show.beans.Video;
 import ekoolab.com.show.fragments.BaseFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
-import ekoolab.com.show.utils.JsonParser.JSONParser;
 import ekoolab.com.show.utils.JsonParser.JSONParser.ParserListener;
-import ekoolab.com.show.utils.JsonUtil;
 import ekoolab.com.show.utils.ListUtils;
-import ekoolab.com.show.utils.RxUtils;
 import ekoolab.com.show.utils.ViewHolder;
 import ekoolab.com.show.views.EndLessOnScrollListener;
 import ekoolab.com.show.views.GridSpacingItemDecoration;
@@ -112,6 +103,7 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
                             videos.clear();
                             videos.addAll(videoList);
                             adapter.notifyDataSetChanged();
+                            swipeRefreshLayout.setRefreshing(false);
                             emptyView.content().show();
                         } else {
                             emptyView.showEmpty();
