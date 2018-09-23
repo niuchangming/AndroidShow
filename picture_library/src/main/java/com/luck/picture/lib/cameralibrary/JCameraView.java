@@ -134,7 +134,6 @@ public class JCameraView extends FrameLayout implements CameraInterface.CameraOp
 //        manager.getDefaultDisplay().getMetrics(outMetrics);
         layout_width = ScreenUtils.getScreenWidth(mContext);
         zoomGradient = (int) (layout_width / 16f);
-        LogUtil.i("zoom = " + zoomGradient);
         machine = new CameraMachine(getContext(), this, this);
     }
 

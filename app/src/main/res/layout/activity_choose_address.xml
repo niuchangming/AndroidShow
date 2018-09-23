@@ -37,6 +37,7 @@
             android:layout_weight="1"
             android:background="@color/transparent"
             android:gravity="left|center_vertical"
+            android:singleLine="true"
             android:imeOptions="actionSearch"
             android:textColor="@color/colorBlack" />
 

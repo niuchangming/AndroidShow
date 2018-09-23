@@ -1,5 +1,9 @@
 package ekoolab.com.show.utils;
 
+import android.content.Context;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -45,4 +49,30 @@ public class Utils {
         return false;
     }
 
+    /**
+     * 显示软键盘
+     */
+    public static void showInput(EditText et_msg) {
+        try {
+            et_msg.setFocusable(true);
+            et_msg.setFocusableInTouchMode(true);
+            et_msg.requestFocus();
+            InputMethodManager inputManager = (InputMethodManager) et_msg.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.showSoftInput(et_msg, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 隐藏软键盘
+     */
+    public static void hideInput(EditText et_msg) {
+        try {
+            InputMethodManager imm = (InputMethodManager) et_msg.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(et_msg.getWindowToken(), 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
