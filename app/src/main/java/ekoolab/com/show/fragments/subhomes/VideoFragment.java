@@ -27,17 +27,17 @@ import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.JsonParser.JSONParser.ParserListener;
 import ekoolab.com.show.utils.ListUtils;
 import ekoolab.com.show.utils.ViewHolder;
+import ekoolab.com.show.views.EndLessOnScrollListener;
 import ekoolab.com.show.views.GridSpacingItemDecoration;
+import me.shihao.library.XRecyclerView;
 
 public class VideoFragment extends BaseFragment implements ParserListener, VideoAdapter.OnItemClickListener {
     private final String TAG = "VideoFragment";
     private int pageIndex;
     private EmptyView emptyView;
-    private RecyclerView recyclerView;
+    private XRecyclerView recyclerView;
     private VideoAdapter adapter;
     private ArrayList<Video> videos= new ArrayList<Video>();
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private LinearLayoutManager mLinearLayoutManager;
 
     @Override
     protected int getLayoutId() {
@@ -58,29 +58,25 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
 
     @Override
     protected void initViews(ViewHolder holder, View root) {
-        swipeRefreshLayout = holder.get(R.id.layout_swipe_refresh);
         emptyView = holder.get(R.id.empty_view);
         recyclerView = holder.get(R.id.recycler_view);
-        mLinearLayoutManager = new LinearLayoutManager(getActivity());
         int spanCount = 2;
         int spacing = 2;
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount);
-        recyclerView.setLayoutManager(gridLayoutManager);
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, false));
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        recyclerView.gridLayoutManager(spanCount);
+        recyclerView.getRecyclerView().addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, false));
+
+        recyclerView.setOnRefreshListener(new XRecyclerView.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 pageIndex = 0;
                 loadVideoData(1);
             }
+
+            @Override
+            public void onLoadMore() {
+                loadVideoData(2);
+            }
         });
-//        recyclerView.addOnScrollListener(new EndLessOnScrollListener(gridLayoutManager) {
-//            @Override
-//            public void onLoadMore(int currentPage) {
-//                System.out.println("===11===");
-////                loadVideoData(1);
-//            }
-//        });
     }
 
     private void loadVideoData(int flag) {
@@ -99,10 +95,16 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
                     @Override
                     protected void onSuccess(List<Video> videoList) {
                         if (ListUtils.isNotEmpty(videoList)) {
-                            videos.clear();
-                            videos.addAll(videoList);
+                            pageIndex++;
+                            if(flag==2){
+                                videos.addAll(videoList);
+                            }else{
+                                videos.clear();
+                                videos.addAll(videoList);
+                                recyclerView.refreshComlete();
+                            }
                             adapter.notifyDataSetChanged();
-                            swipeRefreshLayout.setRefreshing(false);
+                            recyclerView.refreshComlete();
                             emptyView.content().show();
                         } else {
                             emptyView.showEmpty();
