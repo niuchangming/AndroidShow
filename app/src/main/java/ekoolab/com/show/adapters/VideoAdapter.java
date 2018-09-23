@@ -34,6 +34,7 @@ public class VideoAdapter extends RecyclerView.Adapter <VideoAdapter.VideoHolder
     public VideoHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = activity.getLayoutInflater().inflate(R.layout.video_grid_cell, parent, false);
         return new VideoHolder(view);
+
     }
 
     @Override
@@ -65,7 +66,7 @@ public class VideoAdapter extends RecyclerView.Adapter <VideoAdapter.VideoHolder
         public void bind(final Video video, final OnItemClickListener listener) {
             nameTv.setText(video.creator.name);
             locationTv.setText("大连");
-//            Glide.with(activity).load(video.creator.avatar.origin).into(avatarIv);
+            Glide.with(activity).load(video.creator.avatar).into(avatarIv);
             Glide.with(activity).load(video.preview.origin).into(coverIv);
 
             itemView.setOnClickListener(new View.OnClickListener() {

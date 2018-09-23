@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.dingmouren.layoutmanagergroup.viewpager.OnViewPagerListener;
@@ -27,6 +28,7 @@ public class VideoPlayerActivity extends BaseActivity{
     private ViewPagerLayoutManager layoutManager;
     private VideoPlayerAdapter adapter;
 
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_video_palyer;
@@ -37,7 +39,7 @@ public class VideoPlayerActivity extends BaseActivity{
         super.initData();
         videos = getIntent().getParcelableArrayListExtra("videos");
         currentIndex = getIntent().getIntExtra("current_index", currentIndex);
-
+        System.out.println("==currentIndex=="+currentIndex);
         if(videos != null && videos.size() > 0){
 
             List<Video> firstVideoList = new ArrayList<>(videos.subList(currentIndex, videos.size()));
@@ -69,13 +71,27 @@ public class VideoPlayerActivity extends BaseActivity{
         recyclerView.setLayoutManager(layoutManager);
 
         adapter = new VideoPlayerAdapter(this, videos);
+        adapter.setOnItemClickListener(new VideoPlayerAdapter.OnItemClickListener() {
+            @Override
+            public void onClick(int position) {
+                VideoPlayerActivity.this.finish();
+            }
+        });
+        adapter.setOnItemFollowClickListener(new VideoPlayerAdapter.OnItemFollowClickListener() {
+            @Override
+            public void onClick(int position) {
+                System.out.println("==position=="+position);
+//                Video video = videos.get(position);
+
+            }
+        });
         recyclerView.setAdapter(adapter);
 
-        int centerPos = Integer.MAX_VALUE / 2;
-        int difference = centerPos % videos.size();
+//        int centerPos = Integer.MAX_VALUE / 2;
+//        int difference = centerPos % videos.size();
 
         initListener();
-        layoutManager.scrollToPosition(Integer.MAX_VALUE / 2 + difference);
+//        layoutManager.scrollToPosition(Integer.MAX_VALUE / 2 + difference);
     }
 
     private void initListener(){
@@ -111,7 +127,6 @@ public class VideoPlayerActivity extends BaseActivity{
         final VideoView videoView = itemView.findViewById(R.id.video_view);
         final ImageView imgThumb = itemView.findViewById(R.id.preview_iv);
         final MediaPlayer[] mediaPlayer = new MediaPlayer[1];
-        videoView.start();
         videoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
             @Override
             public boolean onInfo(MediaPlayer mp, int what, int extra) {
@@ -121,13 +136,14 @@ public class VideoPlayerActivity extends BaseActivity{
                 return false;
             }
         });
-
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
                 Log.v(TAG,"onPrepared");
             }
         });
+        videoView.requestFocus();
+        videoView.start();
     }
 
     private void releaseVideo(int index){

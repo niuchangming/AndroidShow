@@ -7,10 +7,12 @@ import ekoolab.com.show.utils.JsonParser.FieldExclude;
 
 public class User implements Parcelable{
     public String name;
-    public String nickname;
     public String userCode;
     public transient String avatar;
     public int followingCount;
+    public boolean isMyFollowing;
+    public boolean isMyFollower;
+
 
     @Override
     public int describeContents() {
@@ -20,10 +22,10 @@ public class User implements Parcelable{
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.name);
-        dest.writeString(this.nickname);
         dest.writeString(this.userCode);
-        dest.writeString(this.avatar);
         dest.writeInt(this.followingCount);
+        dest.writeByte(this.isMyFollowing ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isMyFollower ? (byte) 1 : (byte) 0);
     }
 
     public User() {
@@ -31,10 +33,10 @@ public class User implements Parcelable{
 
     protected User(Parcel in) {
         this.name = in.readString();
-        this.nickname = in.readString();
         this.userCode = in.readString();
-        this.avatar = in.readString();
         this.followingCount = in.readInt();
+        this.isMyFollowing = in.readByte() != 0;
+        this.isMyFollower = in.readByte() != 0;
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {

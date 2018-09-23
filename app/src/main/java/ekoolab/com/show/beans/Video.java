@@ -3,6 +3,9 @@ package ekoolab.com.show.beans;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import ekoolab.com.show.utils.JsonParser.FieldExclude;
+import ekoolab.com.show.utils.JsonParser.JSOName;
+
 public class Video implements Parcelable {
     public String resourceId;
     public long uploadTime;
@@ -14,12 +17,13 @@ public class Video implements Parcelable {
     public double lon;
     public String permission;
     public String category;
+    public User creator;
     public int likeCount;
     public int favouriteCount;
     public boolean isMyLike;
     public boolean isMyFavourite;
-    public User creator;
     public int commentCount;
+
 
     @Override
     public int describeContents() {
@@ -38,11 +42,11 @@ public class Video implements Parcelable {
         dest.writeDouble(this.lon);
         dest.writeString(this.permission);
         dest.writeString(this.category);
+        dest.writeParcelable(this.creator, flags);
         dest.writeInt(this.likeCount);
         dest.writeInt(this.favouriteCount);
         dest.writeByte(this.isMyLike ? (byte) 1 : (byte) 0);
         dest.writeByte(this.isMyFavourite ? (byte) 1 : (byte) 0);
-        dest.writeParcelable(this.creator, flags);
         dest.writeInt(this.commentCount);
     }
 
@@ -60,11 +64,11 @@ public class Video implements Parcelable {
         this.lon = in.readDouble();
         this.permission = in.readString();
         this.category = in.readString();
+        this.creator = in.readParcelable(User.class.getClassLoader());
         this.likeCount = in.readInt();
         this.favouriteCount = in.readInt();
         this.isMyLike = in.readByte() != 0;
         this.isMyFavourite = in.readByte() != 0;
-        this.creator = in.readParcelable(User.class.getClassLoader());
         this.commentCount = in.readInt();
     }
 

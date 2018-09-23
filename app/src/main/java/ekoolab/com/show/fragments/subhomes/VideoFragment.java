@@ -1,23 +1,16 @@
 package ekoolab.com.show.fragments.subhomes;
 
 import android.content.Intent;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.common.Priority;
-import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.google.gson.reflect.TypeToken;
-import com.rx2androidnetworking.Rx2AndroidNetworking;
 import com.santalu.emptyview.EmptyView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,16 +20,14 @@ import ekoolab.com.show.adapters.VideoAdapter;
 import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
-import ekoolab.com.show.beans.AuthInfo;
 import ekoolab.com.show.beans.Video;
 import ekoolab.com.show.fragments.BaseFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
-import ekoolab.com.show.utils.JsonParser.JSONParser;
 import ekoolab.com.show.utils.JsonParser.JSONParser.ParserListener;
 import ekoolab.com.show.utils.ListUtils;
-import ekoolab.com.show.utils.RxUtils;
 import ekoolab.com.show.utils.ViewHolder;
+import ekoolab.com.show.views.EndLessOnScrollListener;
 import ekoolab.com.show.views.GridSpacingItemDecoration;
 
 public class VideoFragment extends BaseFragment implements ParserListener, VideoAdapter.OnItemClickListener {
@@ -45,7 +36,9 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
     private EmptyView emptyView;
     private RecyclerView recyclerView;
     private VideoAdapter adapter;
-    private ArrayList<Video> videos = new ArrayList<Video>();
+    private ArrayList<Video> videos= new ArrayList<Video>();
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private LinearLayoutManager mLinearLayoutManager;
 
     @Override
     protected int getLayoutId() {
@@ -61,22 +54,40 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
         adapter = new VideoAdapter(getActivity(), videos);
         adapter.setListener(this);
         recyclerView.setAdapter(adapter);
-        loadVideoData();
+        loadVideoData(0);
     }
 
     @Override
     protected void initViews(ViewHolder holder, View root) {
+        swipeRefreshLayout = holder.get(R.id.layout_swipe_refresh);
         emptyView = holder.get(R.id.empty_view);
         recyclerView = holder.get(R.id.recycler_view);
-
+        mLinearLayoutManager = new LinearLayoutManager(getActivity());
         int spanCount = 2;
         int spacing = 2;
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), spanCount));
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount);
+        recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, false));
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                pageIndex = 0;
+                loadVideoData(1);
+            }
+        });
+        recyclerView.addOnScrollListener(new EndLessOnScrollListener(gridLayoutManager) {
+            @Override
+            public void onLoadMore(int currentPage) {
+                System.out.println("===11===");
+//                loadVideoData(1);
+            }
+        });
     }
 
-    private void loadVideoData() {
-        emptyView.showLoading();
+    private void loadVideoData(int flag) {
+        if(flag==0){
+            emptyView.showLoading();
+        }
         HashMap<String, String> map = new HashMap<>(4);
         map.put("timestamp", System.currentTimeMillis() + "");
         map.put("pageSize", Constants.PAGE_SIZE + "");
@@ -92,6 +103,7 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
                             videos.clear();
                             videos.addAll(videoList);
                             adapter.notifyDataSetChanged();
+                            swipeRefreshLayout.setRefreshing(false);
                             emptyView.content().show();
                         } else {
                             emptyView.showEmpty();
