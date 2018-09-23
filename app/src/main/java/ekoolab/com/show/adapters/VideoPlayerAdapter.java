@@ -14,6 +14,7 @@ import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.reflect.TypeToken;
+import com.juziwl.ijkplayerlib.media.IjkVideoView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +58,7 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        VideoView videoView;
+        IjkVideoView videoView;
         ImageView previewIv;
         TextView descTv;
         TextView tv_share;

@@ -13,6 +13,7 @@ import android.widget.VideoView;
 
 import com.dingmouren.layoutmanagergroup.viewpager.OnViewPagerListener;
 import com.dingmouren.layoutmanagergroup.viewpager.ViewPagerLayoutManager;
+import com.juziwl.ijkplayerlib.media.IjkVideoView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +21,12 @@ import java.util.List;
 import ekoolab.com.show.R;
 import ekoolab.com.show.adapters.VideoPlayerAdapter;
 import ekoolab.com.show.beans.Video;
+import tv.danmaku.ijk.media.player.IMediaPlayer;
+import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 public class VideoPlayerActivity extends BaseActivity{
     private final String TAG = "VideoPlayerActivity";
-    private List<Video> videos;
+    private ArrayList<Video> videos;
     private int currentIndex;
     private RecyclerView recyclerView;
     private ViewPagerLayoutManager layoutManager;
@@ -40,12 +43,14 @@ public class VideoPlayerActivity extends BaseActivity{
         super.initData();
         videos = getIntent().getParcelableArrayListExtra("videos");
         currentIndex = getIntent().getIntExtra("current_index", currentIndex);
-        if(videos != null && videos.size() > 0){
-            List<Video> firstVideoList = new ArrayList<>(videos.subList(currentIndex, videos.size()));
-            List<Video> secondVideoList = new ArrayList<>(videos.subList(0, currentIndex));
-            videos = new ArrayList<>(firstVideoList);
-            videos.addAll(secondVideoList);
-        }
+//        if(videos != null && videos.size() > 0){
+//            List<Video> firstVideoList = new ArrayList<>(videos.subList(currentIndex, videos.size()));
+//            List<Video> secondVideoList = new ArrayList<>(videos.subList(0, currentIndex));
+//            videos = new ArrayList<>(firstVideoList);
+//            videos.addAll(secondVideoList);
+//        }
+        IjkMediaPlayer.loadLibrariesOnce(null);
+        IjkMediaPlayer.native_profileBegin("libijkplayer.so");
     }
 
     @Override
@@ -70,12 +75,11 @@ public class VideoPlayerActivity extends BaseActivity{
     }
 });
         recyclerView.setAdapter(adapter);
-
-//        int centerPos = Integer.MAX_VALUE / 2;
-//        int difference = centerPos % videos.size();
+        int size = videos.size();
+        int centerPos = Integer.MAX_VALUE / 2 / size * size;
 
         initListener();
-//        layoutManager.scrollToPosition(Integer.MAX_VALUE / 2 + difference);
+        layoutManager.scrollToPosition(centerPos + currentIndex);
     }
 
     private void initListener(){
@@ -108,31 +112,40 @@ public class VideoPlayerActivity extends BaseActivity{
 
     private void playVideo(int position) {
         View itemView = recyclerView.getChildAt(position);
-        final VideoView videoView = itemView.findViewById(R.id.video_view);
+        final IjkVideoView videoView = itemView.findViewById(R.id.video_view);
         final ImageView imgThumb = itemView.findViewById(R.id.preview_iv);
-        final MediaPlayer[] mediaPlayer = new MediaPlayer[1];
-        videoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
+        final IMediaPlayer[] mediaPlayer = new IMediaPlayer[1];
+        videoView.setOnInfoListener(new IMediaPlayer.OnInfoListener() {
             @Override
-            public boolean onInfo(MediaPlayer mp, int what, int extra) {
-                mediaPlayer[0] = mp;
-                mp.setLooping(true);
+            public boolean onInfo(IMediaPlayer iMediaPlayer, int i, int i1) {
+                mediaPlayer[0] = iMediaPlayer;
+                iMediaPlayer.setLooping(true);
                 imgThumb.animate().alpha(0).setDuration(200).start();
                 return false;
             }
         });
-        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                Log.v(TAG,"onPrepared");
-            }
-        });
+//        videoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
+//            @Override
+//            public boolean onInfo(MediaPlayer mp, int what, int extra) {
+//                mediaPlayer[0] = mp;
+//                mp.setLooping(true);
+//                imgThumb.animate().alpha(0).setDuration(200).start();
+//                return false;
+//            }
+//        });
+//        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+//            @Override
+//            public void onPrepared(MediaPlayer mp) {
+//                Log.v(TAG,"onPrepared");
+//            }
+//        });
         videoView.requestFocus();
         videoView.start();
     }
 
     private void releaseVideo(int index){
         View itemView = recyclerView.getChildAt(index);
-        final VideoView videoView = itemView.findViewById(R.id.video_view);
+        final IjkVideoView videoView = itemView.findViewById(R.id.video_view);
         final ImageView imgPlay = itemView.findViewById(R.id.preview_iv);
         videoView.stopPlayback();
         imgPlay.animate().alpha(0f).start();
@@ -141,11 +154,7 @@ public class VideoPlayerActivity extends BaseActivity{
     @Override
     public void onBackPressed() {
         Intent intent = new Intent();
-        List<Video> firstVideoList = new ArrayList<>(videos.subList(videos.size()-currentIndex, videos.size()));
-        List<Video> secondVideoList = new ArrayList<>(videos.subList(0, videos.size()-currentIndex));
-        ArrayList<Video> videosList = new ArrayList<>(firstVideoList);
-        videosList.addAll(secondVideoList);
-        intent.putParcelableArrayListExtra("videos", videosList);
+        intent.putParcelableArrayListExtra("videos", videos);
         setResult(2, intent);
         VideoPlayerActivity.this.finish();
     }

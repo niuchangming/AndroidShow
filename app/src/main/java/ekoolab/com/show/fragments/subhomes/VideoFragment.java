@@ -77,6 +77,7 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
                 loadVideoData(2);
             }
         });
+//        recyclerView.autoRefresh();
     }
 
     private void loadVideoData(int flag) {
@@ -101,7 +102,6 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
                             }else{
                                 videos.clear();
                                 videos.addAll(videoList);
-                                recyclerView.refreshComlete();
                             }
                             adapter.notifyDataSetChanged();
                             recyclerView.refreshComlete();
