@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_public"
+        android:layout_width="100dp"
+        android:padding="8dp"
+        android:hint="public"
+        android:layout_height="wrap_content"
+        android:text="@string/permission_public"/>
+
+    <TextView
+        android:id="@+id/tv_friend"
+        android:layout_width="100dp"
+        android:padding="8dp"
+        android:hint="follower"
+        android:layout_height="wrap_content"
+        android:text="@string/permissioin_friend"/>
+
+    <TextView
+        android:id="@+id/tv_private"
+        android:layout_width="100dp"
+        android:padding="8dp"
+        android:hint="private"
+        android:layout_height="wrap_content"
+        android:text="@string/permission_private"/>
+</LinearLayout>

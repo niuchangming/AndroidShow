@@ -27,7 +27,6 @@ import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.JsonParser.JSONParser.ParserListener;
 import ekoolab.com.show.utils.ListUtils;
 import ekoolab.com.show.utils.ViewHolder;
-import ekoolab.com.show.views.EndLessOnScrollListener;
 import ekoolab.com.show.views.GridSpacingItemDecoration;
 
 public class VideoFragment extends BaseFragment implements ParserListener, VideoAdapter.OnItemClickListener {
@@ -75,13 +74,13 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
                 loadVideoData(1);
             }
         });
-        recyclerView.addOnScrollListener(new EndLessOnScrollListener(gridLayoutManager) {
-            @Override
-            public void onLoadMore(int currentPage) {
-                System.out.println("===11===");
-//                loadVideoData(1);
-            }
-        });
+//        recyclerView.addOnScrollListener(new EndLessOnScrollListener(gridLayoutManager) {
+//            @Override
+//            public void onLoadMore(int currentPage) {
+//                System.out.println("===11===");
+////                loadVideoData(1);
+//            }
+//        });
     }
 
     private void loadVideoData(int flag) {
