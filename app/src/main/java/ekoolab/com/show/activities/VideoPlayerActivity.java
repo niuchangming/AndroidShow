@@ -41,18 +41,10 @@ public class VideoPlayerActivity extends BaseActivity{
         videos = getIntent().getParcelableArrayListExtra("videos");
         currentIndex = getIntent().getIntExtra("current_index", currentIndex);
         if(videos != null && videos.size() > 0){
-
             List<Video> firstVideoList = new ArrayList<>(videos.subList(currentIndex, videos.size()));
             List<Video> secondVideoList = new ArrayList<>(videos.subList(0, currentIndex));
-
             videos = new ArrayList<>(firstVideoList);
             videos.addAll(secondVideoList);
-
-//            Video firstVideo = videos.get(0);
-//            Video lastVideo = videos.get(videos.size() - 1);
-//
-//            videos.add(0, lastVideo);
-//            videos.add(firstVideo);
         }
     }
 
