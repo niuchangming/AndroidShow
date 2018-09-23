@@ -90,7 +90,7 @@
             android:name=".activities.ChooseAddressActivity"
             android:screenOrientation="portrait"
             android:hardwareAccelerated="true"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
+            android:windowSoftInputMode="stateHidden" />
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"

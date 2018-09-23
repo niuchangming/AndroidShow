@@ -35,4 +35,14 @@ public class Utils {
         }
         return writer.toString();
     }
+
+    public static boolean containInt(int[] array, int value) {
+        for (int i = 0; i < array.length; i++) {
+            if (value == array[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

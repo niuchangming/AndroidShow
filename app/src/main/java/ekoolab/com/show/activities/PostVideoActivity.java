@@ -66,6 +66,7 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
                 easyPopup.dismiss();
                 break;
             case R.id.tv_location:
+            case R.id.tv_location_label:
                 rxPermissions.request(Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.ACCESS_WIFI_STATE,
                         Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_FINE_LOCATION,
                         Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS)
@@ -101,6 +102,7 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
         ivVideoImage = findViewById(R.id.iv_video_image);
         tvLocation = findViewById(R.id.tv_location);
         tvLocation.setOnClickListener(this);
+        findViewById(R.id.tv_location_label).setOnClickListener(this);
         tvPermission = findViewById(R.id.tv_permission);
         tvPermission.setOnClickListener(this);
 
