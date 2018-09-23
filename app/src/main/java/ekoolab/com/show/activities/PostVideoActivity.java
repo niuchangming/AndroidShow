@@ -1,5 +1,7 @@
 package ekoolab.com.show.activities;
 
+import android.Manifest;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.EditText;
@@ -10,6 +12,7 @@ import com.bumptech.glide.Glide;
 import com.luck.picture.lib.CameraActivity;
 
 import ekoolab.com.show.R;
+import ekoolab.com.show.views.EasyPopup;
 
 /**
  * @author Army
@@ -29,6 +32,7 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
     private TextView tvLocation;
     private TextView tvPermission;
     private View toolbarTitle;
+    private EasyPopup easyPopup;
 
     @Override
     public void onClick(View v) {
@@ -37,6 +41,37 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
                 onBackPressed();
                 break;
             case R.id.iv_right:
+                break;
+            case R.id.tv_permission:
+                if (easyPopup == null) {
+                    View contentView = getLayoutInflater().inflate(R.layout.popup_post_permission, null);
+                    TextView tvPublic = contentView.findViewById(R.id.tv_public);
+                    TextView tvFriend = contentView.findViewById(R.id.tv_friend);
+                    TextView tvPrivate = contentView.findViewById(R.id.tv_private);
+                    tvPublic.setOnClickListener(this);
+                    tvFriend.setOnClickListener(this);
+                    tvPrivate.setOnClickListener(this);
+                    easyPopup = new EasyPopup(this)
+                            .setContentView(contentView)
+                            .setFocusAndOutsideEnable(true)
+                            .createPopup();
+                }
+                easyPopup.showAsDropDown(tvPermission);
+                break;
+            case R.id.tv_public:
+            case R.id.tv_friend:
+            case R.id.tv_private:
+                tvPermission.setText(((TextView) v).getText());
+                tvPermission.setHint(((TextView) v).getHint());
+                easyPopup.dismiss();
+                break;
+            case R.id.tv_location:
+                rxPermissions.request(Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.ACCESS_WIFI_STATE,
+                        Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS)
+                        .subscribe(aBoolean -> {
+                            startActivity(new Intent(this, ChooseAddressActivity.class));
+                        });
                 break;
             default:
                 break;
@@ -65,10 +100,14 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
         tvAtFriend = findViewById(R.id.tv_at_friend);
         ivVideoImage = findViewById(R.id.iv_video_image);
         tvLocation = findViewById(R.id.tv_location);
+        tvLocation.setOnClickListener(this);
         tvPermission = findViewById(R.id.tv_permission);
+        tvPermission.setOnClickListener(this);
 
         String videoPath = getIntent().getStringExtra(CameraActivity.EXTRA_PATH);
         Glide.with(this).load(videoPath).into(ivVideoImage);
+
+
     }
 
     @Override
