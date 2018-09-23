@@ -2,9 +2,10 @@ package ekoolab.com.show.activities;
 
 import android.Manifest;
 import android.animation.ValueAnimator;
-import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.view.View;
+
+import com.luck.picture.lib.CameraActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -14,6 +15,7 @@ import ekoolab.com.show.R;
 import ekoolab.com.show.dialogs.DialogViewHolder;
 import ekoolab.com.show.dialogs.XXDialog;
 import ekoolab.com.show.fragments.TabFragment;
+import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.EventBusMsg;
 import ekoolab.com.show.views.TabButton;
 
@@ -70,9 +72,9 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
                 Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
                 .subscribe(aBoolean -> {
                     if (aBoolean) {
-//                        CameraActivity.navToCameraOnlyVideoThenJump(MainActivity.this,
-//                                Constants.VIDEO_PATH, Constants.IMAGE_PATH, PostVideoActivity.class);
-                        startActivity(new Intent(MainActivity.this, PostVideoActivity.class));
+                        CameraActivity.navToCameraOnlyVideoThenJump(MainActivity.this,
+                                Constants.VIDEO_PATH, Constants.IMAGE_PATH, PostVideoActivity.class);
+//                        startActivity(new Intent(MainActivity.this, PostVideoActivity.class));
                     }
                 });
     }

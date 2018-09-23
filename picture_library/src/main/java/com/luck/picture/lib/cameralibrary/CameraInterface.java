@@ -261,7 +261,7 @@ public class CameraInterface implements Camera.PreviewCallback {
 
     private CameraInterface() {
         findAvailableCameras();
-        SELECTED_CAMERA = CAMERA_POST_POSITION;
+        SELECTED_CAMERA = CAMERA_FRONT_POSITION;
         saveVideoPath = "";
     }
 

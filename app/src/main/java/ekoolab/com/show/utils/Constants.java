@@ -12,6 +12,7 @@ public class Constants {
     public static final String VIDEO_LIST = HOST + "video/listall";
     public static final String FAVOURITE = HOST + "favourites/favourite";
     public static final String FAVOURITECANEL = HOST + "favourites/cancel";
+    public static final String UPLOAD_VIDEO = HOST + "video/upload";
 
     public static final String LIKE = HOST + "likes/like";
     public static final String UNLIKE = HOST + "likes/unlike";

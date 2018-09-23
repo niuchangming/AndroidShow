@@ -30,7 +30,8 @@ public class CameraActivity extends AppCompatActivity {
     public static final String EXTRA_IMG_OUTPATH = "extra_imgOutPath";
     public static final String EXTRA_TYPE = "extra_type";
     public static final String EXTRA_JUMP_CLASS = "extra_jump_class";
-    public static final String EXTRA_PATH = "extra_path";
+    public static final String EXTRA_VIDEO_PATH = "extra_video_path";
+    public static final String EXTRA_IMAGE_PATH = "extra_image_path";
     public static final int REQUEST_CODE = 987;
     private Class<?> jumpClass = null;
 
@@ -104,7 +105,7 @@ public class CameraActivity extends AppCompatActivity {
                 }
                 String path = FileUtil.saveBitmap(dir, bitmap);
                 Intent intent = new Intent();
-                intent.putExtra(EXTRA_PATH, path);
+                intent.putExtra(EXTRA_VIDEO_PATH, path);
                 setResult(PictureSelectorActivity.RESULT_OK, intent);
                 finish();
             }
@@ -112,11 +113,11 @@ public class CameraActivity extends AppCompatActivity {
             @Override
             public void recordSuccess(String url, Bitmap firstFrame) {
                 //获取视频路径
-//                String path = FileUtil.saveBitmap("PictureSelector/CameraImage", firstFrame);
-//                Log.i("CJT", "url = " + url + ", Bitmap = " + path);  //video 的图片和地址
                 Intent intent = new Intent();
-                intent.putExtra(EXTRA_PATH, url);
+                intent.putExtra(EXTRA_VIDEO_PATH, url);
                 if (jumpClass != null) {
+                    String imagePath = FileUtil.saveBitmap(imgOutPath, firstFrame);
+                    intent.putExtra(EXTRA_IMAGE_PATH, imagePath);
                     intent.setClass(CameraActivity.this, jumpClass);
                     startActivity(intent);
                 } else {

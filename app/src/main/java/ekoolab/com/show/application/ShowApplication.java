@@ -5,7 +5,6 @@ import android.content.Context;
 import android.support.multidex.MultiDex;
 
 import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.interceptors.HttpLoggingInterceptor;
 import com.baidu.mapapi.CoordType;
 import com.baidu.mapapi.SDKInitializer;
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -28,7 +27,6 @@ public class ShowApplication extends Application {
         super.onCreate();
         application = this;
         AndroidNetworking.initialize(application);
-        AndroidNetworking.enableLogging(HttpLoggingInterceptor.Level.BODY);
         Fresco.initialize(this);
         FileUtils.createOrExistsDir(Constants.VIDEO_PATH);
         FileUtils.createOrExistsDir(Constants.IMAGE_PATH);
