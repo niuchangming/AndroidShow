@@ -15,13 +15,13 @@ import com.bumptech.glide.Glide;
 import com.juziwl.ijkplayerlib.media.IjkVideoView;
 import com.luck.picture.lib.CameraActivity;
 
-import java.io.File;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.utils.DisplayUtils;
+import ekoolab.com.show.utils.FileUtils;
 import ekoolab.com.show.utils.UIHandler;
 import ekoolab.com.show.views.MyHorizontalScrollView;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
@@ -140,10 +140,9 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
             return 0;
         }
         int position = videoView.getCurrentPosition();
-        int duration = videoView.getDuration();
         if (horizontal != null) {
-            if (duration > 0) {
-                float percent = position * 1f / duration;
+            if (videoDuration > 0) {
+                float percent = position * 1f / videoDuration;
                 horizontal.scrollTo((int) (totalFramesWidth * percent), 0);
             }
         }
@@ -205,7 +204,7 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
                 }
                 intent.putExtra(CameraActivity.EXTRA_VIDEO_PATH, videoPath);
                 startActivity(intent);
-                deleteFiles(framePaths);
+                FileUtils.deleteFiles(framePaths);
                 finish();
                 break;
             default:
@@ -213,13 +212,10 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
         }
     }
 
-    private void deleteFiles(List<String> files) {
-        for (String filePath : files) {
-            File file = new File(filePath);
-            if (file.exists()) {
-                file.delete();
-            }
-        }
+    @Override
+    public void onBackPressed() {
+        FileUtils.deleteFiles(framePaths);
+        super.onBackPressed();
     }
 
     @Override

@@ -211,6 +211,9 @@ public class JCameraView extends FrameLayout implements CameraInterface.CameraOp
             public void cancel() {
 //                machine.cancle(mVideoView.getHolder(), screenProp);
                 machine.cancle(surfaceView.getHolder(), screenProp);
+                framePaths.add(firstFramePath);
+                FileUtil.deleteFiles(framePaths);
+                framePaths.clear();
             }
 
             @Override
