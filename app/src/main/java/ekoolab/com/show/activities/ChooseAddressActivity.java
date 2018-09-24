@@ -26,14 +26,15 @@ import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.core.CityInfo;
 import com.baidu.mapapi.search.core.PoiDetailInfo;
 import com.baidu.mapapi.search.core.PoiInfo;
 import com.baidu.mapapi.search.core.SearchResult;
 import com.baidu.mapapi.search.poi.OnGetPoiSearchResultListener;
+import com.baidu.mapapi.search.poi.PoiCitySearchOption;
 import com.baidu.mapapi.search.poi.PoiDetailResult;
 import com.baidu.mapapi.search.poi.PoiDetailSearchResult;
 import com.baidu.mapapi.search.poi.PoiIndoorResult;
-import com.baidu.mapapi.search.poi.PoiNearbySearchOption;
 import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.poi.PoiSearch;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -45,6 +46,7 @@ import java.util.List;
 import ekoolab.com.show.R;
 import ekoolab.com.show.beans.PoiResultData;
 import ekoolab.com.show.utils.DisplayUtils;
+import ekoolab.com.show.utils.ToastUtils;
 import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.views.itemdecoration.LinearItemDecoration;
 
@@ -173,13 +175,19 @@ public class ChooseAddressActivity extends BaseActivity implements View.OnClickL
         etSearch.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 if (!TextUtils.isEmpty(etSearch.getText())) {
-                    PoiNearbySearchOption nearbySearchOption = new PoiNearbySearchOption()
+                    PoiCitySearchOption searchOption = new PoiCitySearchOption()
+                            .city(bdLocation.getCity())
                             .keyword(etSearch.getText().toString())
-                            .location(new LatLng(bdLocation.getLatitude(), bdLocation.getLongitude()))
-                            .radius(100000)
                             .pageNum(0)
                             .scope(1);
-                    mPoiSearch.searchNearby(nearbySearchOption);
+                    mPoiSearch.searchInCity(searchOption);
+//                    PoiNearbySearchOption nearbySearchOption = new PoiNearbySearchOption()
+//                            .keyword(etSearch.getText().toString())
+//                            .location(new LatLng(bdLocation.getLatitude(), bdLocation.getLongitude()))
+//                            .radius(100000)
+//                            .pageNum(0)
+//                            .scope(1);
+//                    mPoiSearch.searchNearby(nearbySearchOption);
                     Utils.hideInput(etSearch);
                 }
                 return true;
@@ -280,6 +288,19 @@ public class ChooseAddressActivity extends BaseActivity implements View.OnClickL
         if (result.error == SearchResult.ERRORNO.NO_ERROR) {
             List<PoiResultData> resultData = convert(result.getAllPoi());
             adapter.replaceData(resultData);
+            return;
+        }
+        if (result.error == SearchResult.ERRORNO.AMBIGUOUS_KEYWORD) {
+            // 当输入关键字在本市没有找到，但在其他城市找到时，返回包含该关键字信息的城市列表
+            StringBuilder strInfo = new StringBuilder("在");
+            for (CityInfo cityInfo : result.getSuggestCityList()) {
+                if (strInfo.length() != 1) {
+                    strInfo.append(",");
+                }
+                strInfo.append(cityInfo.city);
+            }
+            strInfo.append("找到结果");
+            ToastUtils.showToast(strInfo.toString());
         }
     }
 
