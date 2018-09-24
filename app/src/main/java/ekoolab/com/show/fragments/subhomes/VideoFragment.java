@@ -156,6 +156,7 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
 
     @Override
     public void onItemClick(Video video) {
+        recyclerView.refreshComlete();
         Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
         intent.putParcelableArrayListExtra("videos", this.videos);
 
