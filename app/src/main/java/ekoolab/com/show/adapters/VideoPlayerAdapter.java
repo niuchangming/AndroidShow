@@ -1,7 +1,6 @@
 package ekoolab.com.show.adapters;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.reflect.TypeToken;
@@ -27,7 +25,6 @@ import ekoolab.com.show.api.ResponseData;
 import ekoolab.com.show.beans.Video;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
-import ekoolab.com.show.utils.ListUtils;
 
 public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.ViewHolder> {
     private final String TAG = "VideoPlayerAdapter";
@@ -96,7 +93,7 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
 
         public void bind(final Video video,final int position) {
             Glide.with(activity).load(video.preview.origin).into(previewIv);
-            videoView.setVideoURI(Uri.parse(video.resourceUri));
+            videoView.setVideoPath(video.resourceUri);
             descTv.setText(video.description);
             tv_like.setText(video.favouriteCount + "");
             tv_zan.setText(video.likeCount + "");
