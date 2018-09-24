@@ -1,10 +1,6 @@
 package ekoolab.com.show.fragments.subhomes;
 
 import android.content.Intent;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.view.View;
 
@@ -28,7 +24,6 @@ import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.JsonParser.JSONParser.ParserListener;
 import ekoolab.com.show.utils.ListUtils;
 import ekoolab.com.show.utils.ViewHolder;
-import ekoolab.com.show.views.EndLessOnScrollListener;
 import ekoolab.com.show.views.GridSpacingItemDecoration;
 import me.shihao.library.XRecyclerView;
 
