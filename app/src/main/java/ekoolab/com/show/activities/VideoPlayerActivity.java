@@ -149,9 +149,14 @@ public class VideoPlayerActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent();
-        intent.putParcelableArrayListExtra("videos", videos);
-        setResult(2, intent);
-        VideoPlayerActivity.this.finish();
+        try {
+            releaseVideo(0);
+            Intent intent = new Intent();
+            intent.putParcelableArrayListExtra("videos", videos);
+            setResult(2, intent);
+            VideoPlayerActivity.this.finish();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }
