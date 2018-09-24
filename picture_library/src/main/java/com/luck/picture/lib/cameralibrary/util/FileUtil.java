@@ -90,5 +90,11 @@ public class FileUtil {
         return file.length();
     }
 
-
+    public static boolean createDir(String dirPath) {
+        File file = new File(dirPath);
+        if (file.isDirectory() && !file.exists()) {
+            return file.mkdirs();
+        }
+        return true;
+    }
 }

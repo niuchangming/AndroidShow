@@ -2,7 +2,6 @@ package com.luck.picture.lib;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +19,8 @@ import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.utils.AppManager;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class CameraActivity extends AppCompatActivity {
@@ -32,6 +33,7 @@ public class CameraActivity extends AppCompatActivity {
     public static final String EXTRA_JUMP_CLASS = "extra_jump_class";
     public static final String EXTRA_VIDEO_PATH = "extra_video_path";
     public static final String EXTRA_IMAGE_PATH = "extra_image_path";
+    public static final String EXTRA_VIDEO_FRAME_PATHS = "extra_video_frame_paths";
     public static final int REQUEST_CODE = 987;
     private Class<?> jumpClass = null;
 
@@ -57,13 +59,20 @@ public class CameraActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AppManager.getInstance().addActivity(this);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_camera);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            getWindow().getDecorView()
+                    .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        }
         jCameraView = (JCameraView) findViewById(R.id.jcameraview);
         //设置视频保存路径
         jCameraView.setSaveVideoPath(getIntent().getStringExtra(EXTRA_VIDEO_OUTPATH));
         imgOutPath = getIntent().getStringExtra(EXTRA_IMG_OUTPATH);
+        jCameraView.setSaveImagePath(imgOutPath);
         long videoDuration = getIntent().getLongExtra(EXTRA_VIDEO_DURATION, PictureConfig.DAFAULT_VIDEO_DURATION);
         jCameraView.setVideoDuration(videoDuration);
         int type = getIntent().getIntExtra(EXTRA_TYPE, -1);
@@ -111,14 +120,19 @@ public class CameraActivity extends AppCompatActivity {
             }
 
             @Override
-            public void recordSuccess(String url, Bitmap firstFrame) {
+            public void recordSuccess(String url, String firstFramePath, List<String> framePaths) {
                 //获取视频路径
                 Intent intent = new Intent();
                 intent.putExtra(EXTRA_VIDEO_PATH, url);
                 if (jumpClass != null) {
-                    String imagePath = FileUtil.saveBitmap(imgOutPath, firstFrame);
-                    intent.putExtra(EXTRA_IMAGE_PATH, imagePath);
-                    intent.setClass(CameraActivity.this, jumpClass);
+                    intent.putExtra(EXTRA_IMAGE_PATH, firstFramePath);
+                    intent.putStringArrayListExtra(EXTRA_VIDEO_FRAME_PATHS, (ArrayList<String>) framePaths);
+                    intent.putExtra(EXTRA_JUMP_CLASS, jumpClass);
+                    try {
+                        intent.setClass(CameraActivity.this, Class.forName("ekoolab.com.show.activities.ChooseCoverActivity"));
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
                     startActivity(intent);
                 } else {
                     setResult(PictureSelectorActivity.RESULT_OK, intent);
@@ -132,26 +146,6 @@ public class CameraActivity extends AppCompatActivity {
                 CameraActivity.this.finish();
             }
         });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        //全屏显示
-        if (Build.VERSION.SDK_INT >= 19) {
-            View decorView = getWindow().getDecorView();
-            decorView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        } else {
-            View decorView = getWindow().getDecorView();
-            int option = View.SYSTEM_UI_FLAG_FULLSCREEN;
-            decorView.setSystemUiVisibility(option);
-        }
     }
 
     @Override

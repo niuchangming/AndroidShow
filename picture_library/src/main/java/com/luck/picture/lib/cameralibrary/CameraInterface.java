@@ -30,12 +30,16 @@ import com.luck.picture.lib.cameralibrary.util.DeviceUtil;
 import com.luck.picture.lib.cameralibrary.util.FileUtil;
 import com.luck.picture.lib.cameralibrary.util.LogUtil;
 import com.luck.picture.lib.cameralibrary.util.ScreenUtils;
+import com.luck.picture.lib.utils.ScheduledExecutorManager;
+import com.luck.picture.lib.utils.ThreadExecutorManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static android.graphics.Bitmap.createBitmap;
 
@@ -75,8 +79,9 @@ public class CameraInterface implements Camera.PreviewCallback {
     private MediaRecorder mediaRecorder;
     private String videoFileName;
     private String saveVideoPath;
+    private String saveImagePath;
     private String videoFileAbsPath;
-    private Bitmap videoFirstFrame = null;
+    private String videoFirstFramePath = null;
 
     private ErrorListener errorLisenter;
 
@@ -88,7 +93,8 @@ public class CameraInterface implements Camera.PreviewCallback {
     private int angle = 0;
     private int cameraAngle = 90;//摄像头角度   默认为90度
     private int rotation = 0;
-    private byte[] firstFrame_data;
+    private byte[] frameData;
+    private int recordAngle = 0;
 
     public static final int TYPE_RECORDER = 0x090;
     public static final int TYPE_CAPTURE = 0x091;
@@ -98,6 +104,17 @@ public class CameraInterface implements Camera.PreviewCallback {
     //视频质量
     private int mediaQuality = JCameraView.MEDIA_QUALITY_MIDDLE;
     private SensorManager sm = null;
+    private List<String> framePaths = new ArrayList<>(20);
+    
+    private Runnable captureRunnable = new Runnable() {
+        @Override
+        public void run() {
+            String path = String.format(Locale.getDefault(),"%sframe_%d.jpeg", saveImagePath, 
+                    System.currentTimeMillis());
+            framePaths.add(path);
+            generateFrameBitmap(recordAngle, frameData, path);
+        }
+    };
 
     //获取CameraInterface单例
     public static synchronized CameraInterface getInstance() {
@@ -195,6 +212,15 @@ public class CameraInterface implements Camera.PreviewCallback {
         }
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    void setSaveImagePath(String saveImagePath) {
+        this.saveImagePath = saveImagePath;
+        File file = new File(saveImagePath);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+    }
+
 
     public void setZoom(float zoom, int type) {
         if (mCamera == null) {
@@ -251,7 +277,7 @@ public class CameraInterface implements Camera.PreviewCallback {
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
-        firstFrame_data = data;
+        frameData = data;
     }
 
 
@@ -461,25 +487,12 @@ public class CameraInterface implements Camera.PreviewCallback {
 
     //启动录像
     public void startRecord(Surface surface, float screenProp, ErrorCallback callback) {
-        mCamera.setPreviewCallback(null);
-        final int nowAngle = (angle + 90) % 360;
+        mCamera.setPreviewCallback(this);
+        recordAngle  = (angle + 90) % 360;
         //获取第一帧图片
-        Camera.Parameters parameters = mCamera.getParameters();
-        int width = parameters.getPreviewSize().width;
-        int height = parameters.getPreviewSize().height;
-        YuvImage yuv = new YuvImage(firstFrame_data, parameters.getPreviewFormat(), width, height, null);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        yuv.compressToJpeg(new Rect(0, 0, width, height), 50, out);
-        byte[] bytes = out.toByteArray();
-        videoFirstFrame = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        Matrix matrix = new Matrix();
-        if (SELECTED_CAMERA == CAMERA_POST_POSITION) {
-            matrix.setRotate(nowAngle);
-        } else if (SELECTED_CAMERA == CAMERA_FRONT_POSITION) {
-            matrix.setRotate(270);
-        }
-        videoFirstFrame = createBitmap(videoFirstFrame, 0, 0, videoFirstFrame.getWidth(), videoFirstFrame
-                .getHeight(), matrix, true);
+        videoFirstFramePath = String.format(Locale.getDefault(), "%sfirstframe_%d.jpeg",
+                saveImagePath, System.currentTimeMillis());
+        generateFrameBitmap(recordAngle, frameData, videoFirstFramePath);
 
         if (isRecorder) {
             return;
@@ -527,7 +540,7 @@ public class CameraInterface implements Camera.PreviewCallback {
 //        if (SELECTED_CAMERA == CAMERA_FRONT_POSITION) {
 //            mediaRecorder.setOrientationHint(270);
 //        } else {
-//            mediaRecorder.setOrientationHint(nowAngle);
+//            mediaRecorder.setOrientationHint(recordAngle);
 ////            mediaRecorder.setOrientationHint(90);
 //        }
 
@@ -535,24 +548,24 @@ public class CameraInterface implements Camera.PreviewCallback {
             //手机预览倒立的处理
             if (cameraAngle == 270) {
                 //横屏
-                if (nowAngle == 0) {
+                if (recordAngle == 0) {
                     mediaRecorder.setOrientationHint(180);
-                } else if (nowAngle == 270) {
+                } else if (recordAngle == 270) {
                     mediaRecorder.setOrientationHint(270);
                 } else {
                     mediaRecorder.setOrientationHint(90);
                 }
             } else {
-                if (nowAngle == 90) {
+                if (recordAngle == 90) {
                     mediaRecorder.setOrientationHint(270);
-                } else if (nowAngle == 270) {
+                } else if (recordAngle == 270) {
                     mediaRecorder.setOrientationHint(90);
                 } else {
-                    mediaRecorder.setOrientationHint(nowAngle);
+                    mediaRecorder.setOrientationHint(recordAngle);
                 }
             }
         } else {
-            mediaRecorder.setOrientationHint(nowAngle);
+            mediaRecorder.setOrientationHint(recordAngle);
         }
 
 
@@ -568,26 +581,53 @@ public class CameraInterface implements Camera.PreviewCallback {
             saveVideoPath = Environment.getExternalStorageDirectory().getPath();
         }
         videoFileAbsPath = saveVideoPath + videoFileName;
+        FileUtil.createDir(saveVideoPath);
         mediaRecorder.setOutputFile(videoFileAbsPath);
         try {
             mediaRecorder.prepare();
             mediaRecorder.start();
             isRecorder = true;
-        } catch (IllegalStateException e) {
+            framePaths.clear();
+            ScheduledExecutorManager.getInstance().schedule(captureRunnable, 200, 1000);
+        } catch (IllegalStateException | IOException e) {
             e.printStackTrace();
-            Log.i("CJT", "startRecord IllegalStateException");
-            if (this.errorLisenter != null) {
-                this.errorLisenter.onError();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.i("CJT", "startRecord IOException");
             if (this.errorLisenter != null) {
                 this.errorLisenter.onError();
             }
         } catch (RuntimeException e) {
-            Log.i("CJT", "startRecord RuntimeException");
+            e.printStackTrace();
+            if (this.errorLisenter != null) {
+                this.errorLisenter.onError();
+            }
         }
+    }
+
+    private void generateFrameBitmap(int nowAngle, final byte[] frameData, String framePath) {
+        ThreadExecutorManager.getInstance().runInThreadPool(() -> {
+            try {
+                Camera.Parameters parameters = mCamera.getParameters();
+                int width = parameters.getPreviewSize().width;
+                int height = parameters.getPreviewSize().height;
+                YuvImage yuv = new YuvImage(frameData, parameters.getPreviewFormat(), width, height, null);
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                yuv.compressToJpeg(new Rect(0, 0, width, height), 50, out);
+                byte[] bytes = out.toByteArray();
+                Bitmap frame = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                Matrix matrix = new Matrix();
+                if (SELECTED_CAMERA == CAMERA_POST_POSITION) {
+                    matrix.setRotate(nowAngle);
+                } else if (SELECTED_CAMERA == CAMERA_FRONT_POSITION) {
+                    matrix.setRotate(270);
+                }
+                frame = createBitmap(frame, 0, 0, frame.getWidth(), frame
+                        .getHeight(), matrix, true);
+                File file = new File(framePath);
+                FileUtil.createDir(file.getParent());
+                frame.compress(Bitmap.CompressFormat.JPEG, 80, new FileOutputStream(file));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     //停止录像
@@ -595,6 +635,7 @@ public class CameraInterface implements Camera.PreviewCallback {
         if (!isRecorder) {
             return;
         }
+        ScheduledExecutorManager.getInstance().cancelSchedule(captureRunnable);
         if (mediaRecorder != null) {
             mediaRecorder.setOnErrorListener(null);
             mediaRecorder.setOnInfoListener(null);
@@ -614,13 +655,13 @@ public class CameraInterface implements Camera.PreviewCallback {
             }
             if (isShort) {
                 if (FileUtil.deleteFile(videoFileAbsPath)) {
-                    callback.recordResult(null, null);
+                    callback.recordResult(null, null, framePaths);
                 }
                 return;
             }
             doStopPreview();
             String fileName = saveVideoPath + videoFileName;
-            callback.recordResult(fileName, videoFirstFrame);
+            callback.recordResult(fileName, videoFirstFramePath, framePaths);
         }
     }
 
@@ -711,7 +752,7 @@ public class CameraInterface implements Camera.PreviewCallback {
 
 
     public interface StopRecordCallback {
-        void recordResult(String url, Bitmap firstFrame);
+        void recordResult(String url, String firstFramePath, List<String> framePaths);
     }
 
     interface ErrorCallback {

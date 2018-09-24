@@ -66,4 +66,5 @@
     <string name="permissioin_friend">Friend</string>
     <string name="permission_private">Private</string>
     <string name="choose_place">Choose Place</string>
+    <string name="next">Next</string>
 </resources>

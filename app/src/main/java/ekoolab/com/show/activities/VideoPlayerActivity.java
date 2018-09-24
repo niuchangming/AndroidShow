@@ -1,22 +1,18 @@
 package ekoolab.com.show.activities;
 
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.VideoView;
 
 import com.dingmouren.layoutmanagergroup.viewpager.OnViewPagerListener;
 import com.dingmouren.layoutmanagergroup.viewpager.ViewPagerLayoutManager;
 import com.juziwl.ijkplayerlib.media.IjkVideoView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.adapters.VideoPlayerAdapter;
@@ -24,7 +20,7 @@ import ekoolab.com.show.beans.Video;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
-public class VideoPlayerActivity extends BaseActivity{
+public class VideoPlayerActivity extends BaseActivity {
     private final String TAG = "VideoPlayerActivity";
     private ArrayList<Video> videos;
     private int currentIndex;
@@ -72,8 +68,8 @@ public class VideoPlayerActivity extends BaseActivity{
             @Override
             public void onClick(int position) {
                 onBackPressed();
-    }
-});
+            }
+        });
         recyclerView.setAdapter(adapter);
         int size = videos.size();
         int centerPos = Integer.MAX_VALUE / 2 / size * size;
@@ -82,7 +78,7 @@ public class VideoPlayerActivity extends BaseActivity{
         layoutManager.scrollToPosition(centerPos + currentIndex);
     }
 
-    private void initListener(){
+    private void initListener() {
         layoutManager.setOnViewPagerListener(new OnViewPagerListener() {
             @Override
             public void onInitComplete() {
@@ -90,12 +86,12 @@ public class VideoPlayerActivity extends BaseActivity{
             }
 
             @Override
-            public void onPageRelease(boolean isNext,int position) {
-                Log.e(TAG,"释放位置:"+position +" 下一页:"+isNext);
+            public void onPageRelease(boolean isNext, int position) {
+                Log.e(TAG, "释放位置:" + position + " 下一页:" + isNext);
                 int index;
-                if (isNext){
+                if (isNext) {
                     index = 0;
-                }else {
+                } else {
                     index = 1;
                 }
 
@@ -103,7 +99,7 @@ public class VideoPlayerActivity extends BaseActivity{
             }
 
             @Override
-            public void onPageSelected(int position,boolean isBottom) {
+            public void onPageSelected(int position, boolean isBottom) {
                 playVideo(0);
             }
 
@@ -143,7 +139,7 @@ public class VideoPlayerActivity extends BaseActivity{
         videoView.start();
     }
 
-    private void releaseVideo(int index){
+    private void releaseVideo(int index) {
         View itemView = recyclerView.getChildAt(index);
         final IjkVideoView videoView = itemView.findViewById(R.id.video_view);
         final ImageView imgPlay = itemView.findViewById(R.id.preview_iv);

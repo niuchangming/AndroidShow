@@ -35,6 +35,7 @@ import com.luck.picture.lib.cameralibrary.view.CameraView;
 import com.luck.picture.lib.config.PictureConfig;
 
 import java.io.File;
+import java.util.List;
 
 
 /**
@@ -89,8 +90,9 @@ public class JCameraView extends FrameLayout implements CameraInterface.CameraOp
     private float screenProp = 0f;
 
     private Bitmap captureBitmap;   //捕获的图片
-    private Bitmap firstFrame;      //第一帧图片
+    private String firstFramePath;      //第一帧图片
     private String videoUrl;        //视频URL
+    private List<String> framePaths; //视频每一秒的图片
 
 
     //切换摄像头按钮的参数
@@ -363,6 +365,13 @@ public class JCameraView extends FrameLayout implements CameraInterface.CameraOp
         CameraInterface.getInstance().setSaveVideoPath(path);
     }
 
+    public void setSaveImagePath(String path) {
+        if (TextUtils.isEmpty(path)) {
+            path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "PictureSelector/image/";
+        }
+        CameraInterface.getInstance().setSaveImagePath(path);
+    }
+
 
     public void setJCameraLisenter(JCameraListener jCameraLisenter) {
         this.jCameraLisenter = jCameraLisenter;
@@ -427,7 +436,7 @@ public class JCameraView extends FrameLayout implements CameraInterface.CameraOp
 //                mVideoView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 //                machine.start(mVideoView.getHolder(), screenProp);
                 if (jCameraLisenter != null) {
-                    jCameraLisenter.recordSuccess(videoUrl, firstFrame);
+                    jCameraLisenter.recordSuccess(videoUrl, firstFramePath, framePaths);
                 }
                 break;
             case TYPE_PICTURE:
@@ -461,10 +470,11 @@ public class JCameraView extends FrameLayout implements CameraInterface.CameraOp
     }
 
     @Override
-    public void playVideo(Bitmap firstFrame, final String url) {
+    public void playVideo(String firstFramePath, final String url, List<String> framePaths) {
         surfaceView.setVisibility(GONE);
         videoUrl = url;
-        this.firstFrame = firstFrame;
+        this.firstFramePath = firstFramePath;
+        this.framePaths = framePaths;
         mVideoView.setVideoPath(url);
         mVideoView.start();
         mVideoView.setVisibility(VISIBLE);

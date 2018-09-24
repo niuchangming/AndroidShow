@@ -2,6 +2,7 @@ package ekoolab.com.show.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.LayoutRes;
@@ -43,8 +44,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         rxPermissions = new RxPermissions(this);
         initData();
         initViews();
-        getWindow().getDecorView()
-                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            getWindow().getDecorView()
+                    .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        }
     }
 
     @LayoutRes

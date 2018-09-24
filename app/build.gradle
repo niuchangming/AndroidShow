@@ -16,7 +16,6 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.config
         multiDexEnabled true
@@ -68,9 +67,6 @@ dependencies {
     implementation 'com.uber.autodispose:autodispose:1.0.0-RC2'
     implementation 'com.uber.autodispose:autodispose-android-archcomponents:1.0.0-RC2'
     implementation 'com.orhanobut:logger:1.15'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation project(':picture_library')
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.github.fodroid:XRecyclerView:v1.0'

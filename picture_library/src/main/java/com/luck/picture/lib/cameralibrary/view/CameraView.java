@@ -2,6 +2,8 @@ package com.luck.picture.lib.cameralibrary.view;
 
 import android.graphics.Bitmap;
 
+import java.util.List;
+
 /**
  * =====================================
  * 作    者: 陈嘉桐
@@ -17,7 +19,7 @@ public interface CameraView {
 
     void showPicture(Bitmap bitmap, boolean isVertical);
 
-    void playVideo(Bitmap firstFrame, String url);
+    void playVideo(String firstFramePath, String url, List<String> framePaths);
 
     void stopVideo();
 

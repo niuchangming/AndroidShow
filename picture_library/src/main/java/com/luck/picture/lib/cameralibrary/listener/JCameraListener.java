@@ -2,6 +2,8 @@ package com.luck.picture.lib.cameralibrary.listener;
 
 import android.graphics.Bitmap;
 
+import java.util.List;
+
 /**
  * =====================================
  * 作    者: 陈嘉桐
@@ -14,7 +16,7 @@ public interface JCameraListener {
 
     void captureSuccess(Bitmap bitmap);
 
-    void recordSuccess(String url, Bitmap firstFrame);
+    void recordSuccess(String url, String firstFramePath, List<String> framePaths);
 
     void quit();
 
