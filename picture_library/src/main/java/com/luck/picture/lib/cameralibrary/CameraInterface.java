@@ -278,6 +278,7 @@ public class CameraInterface implements Camera.PreviewCallback {
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
         frameData = data;
+        System.out.println("onPreviewFrame");
     }
 
 
@@ -487,7 +488,6 @@ public class CameraInterface implements Camera.PreviewCallback {
 
     //启动录像
     public void startRecord(Surface surface, float screenProp, ErrorCallback callback) {
-        mCamera.setPreviewCallback(this);
         recordAngle  = (angle + 90) % 360;
         //获取第一帧图片
         videoFirstFramePath = String.format(Locale.getDefault(), "%sfirstframe_%d.jpeg",
@@ -584,6 +584,7 @@ public class CameraInterface implements Camera.PreviewCallback {
         FileUtil.createDir(saveVideoPath);
         mediaRecorder.setOutputFile(videoFileAbsPath);
         try {
+            mCamera.setPreviewCallback(this);
             mediaRecorder.prepare();
             mediaRecorder.start();
             isRecorder = true;

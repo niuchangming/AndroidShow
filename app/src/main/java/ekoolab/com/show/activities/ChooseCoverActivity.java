@@ -48,7 +48,6 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
     private StringBuilder mFormatBuilder;
     private Formatter mFormatter;
     private TextView currentTime, tvNext;
-    private int curScrollX = 0;
 
     @Override
     protected void initData() {
@@ -118,10 +117,11 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onScrollChange(int scrollX, int oldScrollX) {
         if (isTouchHorizontalScrollView) {
-            curScrollX = scrollX;
             ivPlayVideo.setVisibility(View.GONE);
             ivFirstFrame.setVisibility(View.GONE);
-            videoView.seekTo((int) ((scrollX * 1f / totalFramesWidth) * videoDuration));
+            int curPosition = (int) ((scrollX * 1f / totalFramesWidth) * videoDuration);
+            videoView.seekTo(curPosition);
+            currentTime.setText(stringForTime(curPosition));
         }
     }
 
@@ -189,19 +189,21 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
                 UIHandler.getInstance().post(mShowProgress);
                 break;
             case R.id.tv_next:
-                Intent intent = getIntent();
-                intent.setClass(this, PostVideoActivity.class);
-                if (curScrollX == 0) {
-                } else if (curScrollX >= totalFramesWidth) {
+                Intent intent = new Intent(this, PostVideoActivity.class);
+                int currentPosition = videoView.getCurrentPosition();
+                if (currentPosition == 0) {
+                    intent.putExtra(CameraActivity.EXTRA_IMAGE_PATH, firstFramePath);
+                } else if (currentPosition >= videoDuration) {
                     String imagePath = framePaths.remove(framePaths.size() - 1);
                     framePaths.add(firstFramePath);
                     intent.putExtra(CameraActivity.EXTRA_IMAGE_PATH, imagePath);
                 } else {
-                    int position = (int) (framePaths.size() * curScrollX * 1f / totalFramesWidth);
+                    int position = (int) (framePaths.size() * currentPosition * 1f / videoDuration);
                     String imagePath = framePaths.remove(position);
                     framePaths.add(firstFramePath);
                     intent.putExtra(CameraActivity.EXTRA_IMAGE_PATH, imagePath);
                 }
+                intent.putExtra(CameraActivity.EXTRA_VIDEO_PATH, videoPath);
                 startActivity(intent);
                 deleteFiles(framePaths);
                 finish();
