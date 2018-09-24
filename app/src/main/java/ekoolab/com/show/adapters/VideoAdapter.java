@@ -29,6 +29,11 @@ public class VideoAdapter extends RecyclerView.Adapter <VideoAdapter.VideoHolder
         this.listener = listener;
     }
 
+    @Override
+    public long getItemId(int position){
+        return videos.get(position).resourceId.hashCode();
+    }
+
     @NonNull
     @Override
     public VideoHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
