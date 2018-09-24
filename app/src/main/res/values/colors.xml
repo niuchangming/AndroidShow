@@ -13,6 +13,8 @@
     <color name="colorDarkPink">#CC1B5D</color>
     <color name="colorRed">#D50065</color>
 
+    <color name="lock_bg">#cc000000</color>
+
 
 
     <!-- 新增加属性 -->

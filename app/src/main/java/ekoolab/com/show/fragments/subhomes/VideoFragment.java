@@ -1,6 +1,11 @@
 package ekoolab.com.show.fragments.subhomes;
 
 import android.content.Intent;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.view.View;
 
 import com.google.gson.reflect.TypeToken;
@@ -23,6 +28,7 @@ import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.JsonParser.JSONParser.ParserListener;
 import ekoolab.com.show.utils.ListUtils;
 import ekoolab.com.show.utils.ViewHolder;
+import ekoolab.com.show.views.EndLessOnScrollListener;
 import ekoolab.com.show.views.GridSpacingItemDecoration;
 import me.shihao.library.XRecyclerView;
 
@@ -47,6 +53,7 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
         pageIndex = 0;
         adapter = new VideoAdapter(getActivity(), videos);
         adapter.setListener(this);
+        adapter.setHasStableIds(false);
         recyclerView.setAdapter(adapter);
         loadVideoData(0);
     }
@@ -58,6 +65,7 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
         int spanCount = 2;
         int spacing = 2;
         recyclerView.gridLayoutManager(spanCount);
+        ((SimpleItemAnimator)recyclerView.getRecyclerView().getItemAnimator()).setSupportsChangeAnimations(false);
         recyclerView.getRecyclerView().addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, false));
         recyclerView.setOnRefreshListener(new XRecyclerView.OnRefreshListener() {
             @Override
@@ -89,19 +97,30 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
                 .subscribe(new NetworkSubscriber<List<Video>>() {
                     @Override
                     protected void onSuccess(List<Video> videoList) {
-                        if (ListUtils.isNotEmpty(videoList)) {
-                            pageIndex++;
-                            if(flag==2){
-                                videos.addAll(videoList);
-                            }else{
-                                videos.clear();
-                                videos.addAll(videoList);
+                        try {
+                            if (ListUtils.isNotEmpty(videoList)) {
+                                pageIndex++;
+                                if(flag==2){
+                                    videos.addAll(videoList);
+                                    adapter.notifyItemRangeChanged(videos.size()-videoList.size(),videos.size());
+                                }else if(flag==1){
+                                    adapter.notifyItemRangeRemoved(videoList.size(),videos.size());
+                                    videos.clear();
+                                    videos.addAll(videoList);
+                                    adapter.notifyItemRangeChanged(0,videos.size());
+                                }else{
+                                    videos.clear();
+                                    videos.addAll(videoList);
+                                    adapter.notifyDataSetChanged();
+                                }
+                                recyclerView.refreshComlete();
+                                emptyView.content().show();
+                            } else {
+                                emptyView.showEmpty();
                             }
-                            adapter.notifyDataSetChanged();
+                        }catch (Exception e){
                             recyclerView.refreshComlete();
-                            emptyView.content().show();
-                        } else {
-                            emptyView.showEmpty();
+                            e.printStackTrace();
                         }
                     }
 
