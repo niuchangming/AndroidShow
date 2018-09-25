@@ -95,7 +95,6 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activities.ChooseCoverActivity"
-            android:hardwareAccelerated="true"
             android:screenOrientation="portrait" />
 
         <meta-data
