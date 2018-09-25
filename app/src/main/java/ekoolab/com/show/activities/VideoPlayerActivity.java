@@ -1,24 +1,23 @@
 package ekoolab.com.show.activities;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.VideoView;
 
 import com.dingmouren.layoutmanagergroup.viewpager.OnViewPagerListener;
 import com.dingmouren.layoutmanagergroup.viewpager.ViewPagerLayoutManager;
-import com.juziwl.ijkplayerlib.media.IjkVideoView;
 
 import java.util.ArrayList;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.adapters.VideoPlayerAdapter;
 import ekoolab.com.show.beans.Video;
-import tv.danmaku.ijk.media.player.IMediaPlayer;
-import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 public class VideoPlayerActivity extends BaseActivity {
     private final String TAG = "VideoPlayerActivity";
@@ -45,8 +44,8 @@ public class VideoPlayerActivity extends BaseActivity {
 //            videos = new ArrayList<>(firstVideoList);
 //            videos.addAll(secondVideoList);
 //        }
-        IjkMediaPlayer.loadLibrariesOnce(null);
-        IjkMediaPlayer.native_profileBegin("libijkplayer.so");
+//        IjkMediaPlayer.loadLibrariesOnce(null);
+//        IjkMediaPlayer.native_profileBegin("libijkplayer.so");
     }
 
     @Override
@@ -108,12 +107,12 @@ public class VideoPlayerActivity extends BaseActivity {
 
     private void playVideo(int position) {
         View itemView = recyclerView.getChildAt(position);
-        final IjkVideoView videoView = itemView.findViewById(R.id.video_view);
+        final VideoView videoView = itemView.findViewById(R.id.video_view);
         final ImageView imgThumb = itemView.findViewById(R.id.preview_iv);
-        final IMediaPlayer[] mediaPlayer = new IMediaPlayer[1];
-        videoView.setOnInfoListener(new IMediaPlayer.OnInfoListener() {
+        final MediaPlayer[] mediaPlayer = new MediaPlayer[1];
+        videoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
             @Override
-            public boolean onInfo(IMediaPlayer iMediaPlayer, int i, int i1) {
+            public boolean onInfo(MediaPlayer iMediaPlayer, int i, int i1) {
                 mediaPlayer[0] = iMediaPlayer;
                 iMediaPlayer.setLooping(true);
                 imgThumb.animate().alpha(0).setDuration(200).start();
@@ -141,7 +140,7 @@ public class VideoPlayerActivity extends BaseActivity {
 
     private void releaseVideo(int index) {
         View itemView = recyclerView.getChildAt(index);
-        final IjkVideoView videoView = itemView.findViewById(R.id.video_view);
+        final VideoView videoView = itemView.findViewById(R.id.video_view);
         final ImageView imgPlay = itemView.findViewById(R.id.preview_iv);
         videoView.stopPlayback();
         imgPlay.animate().alpha(0f).start();
@@ -155,7 +154,7 @@ public class VideoPlayerActivity extends BaseActivity {
             intent.putParcelableArrayListExtra("videos", videos);
             setResult(2, intent);
             VideoPlayerActivity.this.finish();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

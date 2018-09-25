@@ -9,10 +9,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.reflect.TypeToken;
-import com.juziwl.ijkplayerlib.media.IjkVideoView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +46,7 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Video video = videos.get(position % videos.size());
-        holder.bind(video,position);
+        holder.bind(video, position);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        IjkVideoView videoView;
+        VideoView videoView;
         ImageView previewIv;
         TextView descTv;
         TextView tv_share;
@@ -66,8 +66,8 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
         TextView tv_name;
         ImageView avatar_iv;
         TextView tv_follow;
-        ImageView iv_del,iv_zan,iv_like;
-        LinearLayout ll_comment,ll_like,ll_zan,ll_share;
+        ImageView iv_del, iv_zan, iv_like;
+        LinearLayout ll_comment, ll_like, ll_zan, ll_share;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -91,7 +91,7 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
             iv_like = itemView.findViewById(R.id.iv_like);
         }
 
-        public void bind(final Video video,final int position) {
+        public void bind(final Video video, final int position) {
             Glide.with(activity).load(video.preview.origin).into(previewIv);
             videoView.setVideoPath(video.resourceUri);
             descTv.setText(video.description);
@@ -101,29 +101,29 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
             tv_share.setText(video.likeCount + "");
             tv_title.setText(video.title + "");
             tv_name.setText(video.creator.name + "");
-            if(video.isMyLike){
+            if (video.isMyLike) {
                 iv_zan.setBackgroundResource(R.mipmap.heart_red);
-            }else{
+            } else {
                 iv_zan.setBackgroundResource(R.mipmap.heart_line);
             }
-            if(video.isMyFavourite){
+            if (video.isMyFavourite) {
                 iv_like.setBackgroundResource(R.mipmap.star_fill);
-            }else{
+            } else {
                 iv_like.setBackgroundResource(R.mipmap.star);
             }
-            if(video.creator.isMyFollowing){
+            if (video.creator.isMyFollowing) {
                 tv_follow.setText("已关注");
-            }else{
+            } else {
                 tv_follow.setText("关注");
             }
             Glide.with(activity).load(video.creator.avatar).into(avatar_iv);
             ll_zan.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(video.isMyLike){
-                        getLike(ViewHolder.this,video,false);
-                    }else{
-                        getLike(ViewHolder.this,video,true);
+                    if (video.isMyLike) {
+                        getLike(ViewHolder.this, video, false);
+                    } else {
+                        getLike(ViewHolder.this, video, true);
                     }
                 }
             });
@@ -136,10 +136,10 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
             ll_like.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(video.isMyFavourite){
-                        getFavourite(ViewHolder.this,video,false);
-                    }else{
-                        getFavourite(ViewHolder.this,video,true);
+                    if (video.isMyFavourite) {
+                        getFavourite(ViewHolder.this, video, false);
+                    } else {
+                        getFavourite(ViewHolder.this, video, true);
                     }
                 }
             });
@@ -158,35 +158,35 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
             tv_follow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(video.creator.isMyFollowing){
-                        getFollow(ViewHolder.this,video,false);
-                    }else{
-                        getFollow(ViewHolder.this,video,false);
+                    if (video.creator.isMyFollowing) {
+                        getFollow(ViewHolder.this, video, false);
+                    } else {
+                        getFollow(ViewHolder.this, video, false);
                     }
                 }
             });
         }
     }
 
-    private void getFollow(ViewHolder viewHolder,Video video,boolean flag) {
+    private void getFollow(ViewHolder viewHolder, Video video, boolean flag) {
         HashMap<String, String> map = new HashMap<>(2);
         map.put("resourceId", video.resourceId);
         map.put("token", AuthUtils.getInstance(activity).getApiToken());
-        ApiServer.basePostRequest((BaseActivity) activity, flag?Constants.FOLLOW:Constants.FOLLOWCANCEL, map,
+        ApiServer.basePostRequest((BaseActivity) activity, flag ? Constants.FOLLOW : Constants.FOLLOWCANCEL, map,
                 new TypeToken<ResponseData<String>>() {
                 })
                 .subscribe(new NetworkSubscriber<String>() {
                     @Override
                     protected void onSuccess(String s) {
                         try {
-                            if(video.creator.isMyFollowing){
+                            if (video.creator.isMyFollowing) {
                                 video.creator.isMyFollowing = false;
-                                viewHolder.tv_follow.setText(video.creator.isMyFollowing+"");
-                            }else{
+                                viewHolder.tv_follow.setText(video.creator.isMyFollowing + "");
+                            } else {
                                 video.creator.isMyFollowing = true;
-                                viewHolder.tv_follow.setText(video.creator.isMyFollowing+"");
+                                viewHolder.tv_follow.setText(video.creator.isMyFollowing + "");
                             }
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -198,7 +198,7 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
                 });
     }
 
-    private void saveComment(ViewHolder viewHolder,Video video,String comment) {
+    private void saveComment(ViewHolder viewHolder, Video video, String comment) {
         HashMap<String, String> map = new HashMap<>(3);
         map.put("body", comment);
         map.put("resourceId", video.resourceId);
@@ -211,7 +211,7 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
                     protected void onSuccess(String s) {
                         try {
 
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -223,29 +223,29 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
                 });
     }
 
-    private void getFavourite(ViewHolder viewHolder,Video video,boolean flag) {
+    private void getFavourite(ViewHolder viewHolder, Video video, boolean flag) {
         HashMap<String, String> map = new HashMap<>(2);
         map.put("resourceId", video.resourceId);
         map.put("token", AuthUtils.getInstance(activity).getApiToken());
-        ApiServer.basePostRequest((BaseActivity) activity, flag?Constants.FAVOURITE:Constants.FAVOURITECANEL, map,
+        ApiServer.basePostRequest((BaseActivity) activity, flag ? Constants.FAVOURITE : Constants.FAVOURITECANEL, map,
                 new TypeToken<ResponseData<String>>() {
                 })
                 .subscribe(new NetworkSubscriber<String>() {
                     @Override
                     protected void onSuccess(String s) {
                         try {
-                            if(video.isMyFavourite){
+                            if (video.isMyFavourite) {
                                 video.isMyFavourite = false;
-                                video.favouriteCount-= 1;
-                                viewHolder.tv_like.setText(video.favouriteCount+"");
+                                video.favouriteCount -= 1;
+                                viewHolder.tv_like.setText(video.favouriteCount + "");
                                 viewHolder.iv_like.setBackgroundResource(R.mipmap.star);
-                            }else{
+                            } else {
                                 video.isMyFavourite = true;
-                                video.favouriteCount+= 1;
-                                viewHolder.tv_like.setText(video.favouriteCount+"");
+                                video.favouriteCount += 1;
+                                viewHolder.tv_like.setText(video.favouriteCount + "");
                                 viewHolder.iv_like.setBackgroundResource(R.mipmap.star_fill);
                             }
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -257,29 +257,29 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
                 });
     }
 
-    private void getLike(ViewHolder viewHolder,Video video,boolean flag) {
+    private void getLike(ViewHolder viewHolder, Video video, boolean flag) {
         HashMap<String, String> map = new HashMap<>(2);
         map.put("resourceId", video.resourceId);
         map.put("token", AuthUtils.getInstance(activity).getApiToken());
-        ApiServer.basePostRequest((BaseActivity) activity, flag?Constants.LIKE:Constants.UNLIKE, map,
+        ApiServer.basePostRequest((BaseActivity) activity, flag ? Constants.LIKE : Constants.UNLIKE, map,
                 new TypeToken<ResponseData<String>>() {
                 })
                 .subscribe(new NetworkSubscriber<String>() {
                     @Override
                     protected void onSuccess(String s) {
                         try {
-                            if(video.isMyLike){
+                            if (video.isMyLike) {
                                 video.isMyLike = false;
-                                video.likeCount-= 1;
-                                viewHolder.tv_zan.setText(video.likeCount+"");
+                                video.likeCount -= 1;
+                                viewHolder.tv_zan.setText(video.likeCount + "");
                                 viewHolder.iv_zan.setBackgroundResource(R.mipmap.heart_line);
-                            }else{
+                            } else {
                                 video.isMyLike = true;
-                                video.likeCount+= 1;
-                                viewHolder.tv_zan.setText(video.likeCount+"");
+                                video.likeCount += 1;
+                                viewHolder.tv_zan.setText(video.likeCount + "");
                                 viewHolder.iv_zan.setBackgroundResource(R.mipmap.heart_red);
                             }
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }

@@ -74,7 +74,6 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
                 loadVideoData(2);
             }
         });
-//        recyclerView.autoRefresh();
     }
 
     private void loadVideoData(int flag) {
@@ -94,7 +93,6 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
                     protected void onSuccess(List<Video> videoList) {
                         try {
                             if (ListUtils.isNotEmpty(videoList)) {
-                                pageIndex++;
                                 if(flag==2){
                                     videos.addAll(videoList);
                                     adapter.notifyItemRangeChanged(videos.size()-videoList.size(),videos.size());
@@ -109,6 +107,11 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
                                     adapter.notifyDataSetChanged();
                                 }
                                 recyclerView.refreshComlete();
+                                if(videoList.size()==20){
+                                    pageIndex++;
+                                }else{
+                                    recyclerView.loadMoreNoData();
+                                }
                                 emptyView.content().show();
                             } else {
                                 emptyView.showEmpty();
@@ -151,7 +154,6 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
 
     @Override
     public void onItemClick(Video video) {
-        recyclerView.refreshComlete();
         Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
         intent.putParcelableArrayListExtra("videos", this.videos);
 
