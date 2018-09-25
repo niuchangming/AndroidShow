@@ -48,6 +48,7 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
     private StringBuilder mFormatBuilder;
     private Formatter mFormatter;
     private TextView currentTime, tvNext;
+    private boolean isVideoPlay = false;
 
     @Override
     protected void initData() {
@@ -92,6 +93,7 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 isTouchHorizontalScrollView = true;
                 videoView.pause();
+                isVideoPlay = false;
                 ivPlay.setSelected(false);
                 UIHandler.getInstance().removeCallbacks(mShowProgress);
             }
@@ -129,14 +131,14 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
         @Override
         public void run() {
             int pos = setProgress();
-            if (videoView != null && videoView.isPlaying()) {
+            if (videoView != null && isVideoPlay) {
                 UIHandler.getInstance().postDelayed(mShowProgress, 100 - (pos % 100));
             }
         }
     };
 
     private int setProgress() {
-        if (videoView == null || !videoView.isPlaying()) {
+        if (videoView == null || !isVideoPlay) {
             return 0;
         }
         int position = videoView.getCurrentPosition();
@@ -171,14 +173,17 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
             case R.id.iv_play:
                 if (ivPlay.isSelected()) {
                     videoView.pause();
+                    isVideoPlay = false;
                     UIHandler.getInstance().removeCallbacks(mShowProgress);
                 } else {
                     videoView.start();
+                    isVideoPlay = true;
                     UIHandler.getInstance().post(mShowProgress);
                 }
                 ivPlay.setSelected(!ivPlay.isSelected());
                 break;
             case R.id.iv_play_video:
+                isVideoPlay = true;
                 videoView.start();
                 UIHandler.getInstance().postDelayed(() -> {
                     ivFirstFrame.setVisibility(View.GONE);
