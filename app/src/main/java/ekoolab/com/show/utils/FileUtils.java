@@ -518,6 +518,12 @@ public class FileUtils {
         return true;
     }
 
+    public static void deleteFiles(List<String> files) {
+        for (String filePath : files) {
+            deleteFile(filePath);
+        }
+    }
+
     /**
      * 获取目录下所有文件
      * <p>不递归进子目录</p>

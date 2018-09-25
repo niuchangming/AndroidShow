@@ -105,14 +105,11 @@ public class CameraInterface implements Camera.PreviewCallback {
     private int mediaQuality = JCameraView.MEDIA_QUALITY_MIDDLE;
     private SensorManager sm = null;
     private List<String> framePaths = new ArrayList<>(20);
-    
+
     private Runnable captureRunnable = new Runnable() {
         @Override
         public void run() {
-            String path = String.format(Locale.getDefault(),"%sframe_%d.jpeg", saveImagePath, 
-                    System.currentTimeMillis());
-            framePaths.add(path);
-            generateFrameBitmap(recordAngle, frameData, path);
+            mCamera.setOneShotPreviewCallback(CameraInterface.this);
         }
     };
 
@@ -264,7 +261,6 @@ public class CameraInterface implements Camera.PreviewCallback {
                     mParams.setZoom(nowScaleRate);
                     mCamera.setParameters(mParams);
                 }
-                LogUtil.i("setZoom = " + nowScaleRate);
                 break;
         }
 
@@ -278,7 +274,13 @@ public class CameraInterface implements Camera.PreviewCallback {
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
         frameData = data;
-        System.out.println("onPreviewFrame");
+        if (isRecorder) {
+            System.out.println("onPreviewFrame");
+            String path = String.format(Locale.getDefault(),"%sframe_%d.jpeg", saveImagePath,
+                    System.currentTimeMillis());
+            framePaths.add(path);
+            generateFrameBitmap(recordAngle, frameData, path);
+        }
     }
 
 
@@ -500,6 +502,7 @@ public class CameraInterface implements Camera.PreviewCallback {
         if (mCamera == null) {
             openCamera(SELECTED_CAMERA);
         }
+        mCamera.setPreviewCallback(null);
         if (mediaRecorder == null) {
             mediaRecorder = new MediaRecorder();
         }
@@ -584,7 +587,6 @@ public class CameraInterface implements Camera.PreviewCallback {
         FileUtil.createDir(saveVideoPath);
         mediaRecorder.setOutputFile(videoFileAbsPath);
         try {
-            mCamera.setPreviewCallback(this);
             mediaRecorder.prepare();
             mediaRecorder.start();
             isRecorder = true;
