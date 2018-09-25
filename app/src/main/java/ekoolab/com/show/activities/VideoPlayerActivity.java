@@ -27,7 +27,6 @@ public class VideoPlayerActivity extends BaseActivity {
     private ViewPagerLayoutManager layoutManager;
     private VideoPlayerAdapter adapter;
 
-
     @Override
     protected int getLayoutId() {
         return R.layout.activity_video_palyer;
@@ -112,28 +111,20 @@ public class VideoPlayerActivity extends BaseActivity {
         final MediaPlayer[] mediaPlayer = new MediaPlayer[1];
         videoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
             @Override
-            public boolean onInfo(MediaPlayer iMediaPlayer, int i, int i1) {
-                mediaPlayer[0] = iMediaPlayer;
-                iMediaPlayer.setLooping(true);
-                imgThumb.animate().alpha(0).setDuration(200).start();
+            public boolean onInfo(MediaPlayer mp, int what, int extra) {
+                mediaPlayer[0] = mp;
+                mp.setLooping(true);
+                imgThumb.animate().alpha(0).setDuration(1000).start();
                 return false;
             }
         });
-//        videoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
-//            @Override
-//            public boolean onInfo(MediaPlayer mp, int what, int extra) {
-//                mediaPlayer[0] = mp;
-//                mp.setLooping(true);
-//                imgThumb.animate().alpha(0).setDuration(200).start();
-//                return false;
-//            }
-//        });
-//        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-//            @Override
-//            public void onPrepared(MediaPlayer mp) {
-//                Log.v(TAG,"onPrepared");
-//            }
-//        });
+        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                Log.v(TAG, "onPrepared");
+
+            }
+        });
         videoView.requestFocus();
         videoView.start();
     }
@@ -158,4 +149,5 @@ public class VideoPlayerActivity extends BaseActivity {
             e.printStackTrace();
         }
     }
+
 }
