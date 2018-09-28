@@ -33,7 +33,7 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
     private EmptyView emptyView;
     private XRecyclerView recyclerView;
     private VideoAdapter adapter;
-    private ArrayList<Video> videos= new ArrayList<Video>();
+    private ArrayList<Video> videos = new ArrayList<Video>();
 
     @Override
     protected int getLayoutId() {
@@ -43,8 +43,6 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
 
     @Override
     protected void initData() {
-        super.initData();
-
         pageIndex = 0;
         adapter = new VideoAdapter(getActivity(), videos);
         adapter.setListener(this);
@@ -60,7 +58,7 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
         int spanCount = 2;
         int spacing = 2;
         recyclerView.gridLayoutManager(spanCount);
-        ((SimpleItemAnimator)recyclerView.getRecyclerView().getItemAnimator()).setSupportsChangeAnimations(false);
+        ((SimpleItemAnimator) recyclerView.getRecyclerView().getItemAnimator()).setSupportsChangeAnimations(false);
         recyclerView.getRecyclerView().addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, false));
         recyclerView.setOnRefreshListener(new XRecyclerView.OnRefreshListener() {
             @Override
@@ -77,7 +75,7 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
     }
 
     private void loadVideoData(int flag) {
-        if(flag==0){
+        if (flag == 0) {
             emptyView.showLoading();
         }
         HashMap<String, String> map = new HashMap<>(4);
@@ -93,30 +91,30 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
                     protected void onSuccess(List<Video> videoList) {
                         try {
                             if (ListUtils.isNotEmpty(videoList)) {
-                                if(flag==2){
+                                if (flag == 2) {
                                     videos.addAll(videoList);
-                                    adapter.notifyItemRangeChanged(videos.size()-videoList.size(),videos.size());
-                                }else if(flag==1){
-                                    adapter.notifyItemRangeRemoved(videoList.size(),videos.size());
+                                    adapter.notifyItemRangeChanged(videos.size() - videoList.size(), videos.size());
+                                } else if (flag == 1) {
+                                    adapter.notifyItemRangeRemoved(videoList.size(), videos.size());
                                     videos.clear();
                                     videos.addAll(videoList);
-                                    adapter.notifyItemRangeChanged(0,videos.size());
-                                }else{
+                                    adapter.notifyItemRangeChanged(0, videos.size());
+                                } else {
                                     videos.clear();
                                     videos.addAll(videoList);
                                     adapter.notifyDataSetChanged();
                                 }
                                 recyclerView.refreshComlete();
-                                if(videoList.size()==20){
+                                if (videoList.size() == 20) {
                                     pageIndex++;
-                                }else{
+                                } else {
                                     recyclerView.loadMoreNoData();
                                 }
                                 emptyView.content().show();
                             } else {
                                 emptyView.showEmpty();
                             }
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             recyclerView.refreshComlete();
                             e.printStackTrace();
                         }
@@ -164,16 +162,16 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
             }
         }
 
-       startActivityForResult(intent,0);
+        startActivityForResult(intent, 0);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==0&&resultCode==2){
-            if(videos!=null&&videos.size()!=0){
+        if (requestCode == 0 && resultCode == 2) {
+            if (videos != null && videos.size() != 0) {
                 ArrayList<Video> videoArrayList = data.getParcelableArrayListExtra("videos");
-                if(videoArrayList!=null&&videoArrayList.size()!=0){
+                if (videoArrayList != null && videoArrayList.size() != 0) {
                     videos.clear();
                     videos.addAll(videoArrayList);
                 }

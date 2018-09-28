@@ -24,6 +24,8 @@ public class Constants {
     public static final String COMMENTDEL = HOST + "comments/delete";
     public static final String COMMENTLIST = HOST + "comments/listall";
 
+    public static final String MOMENTLIST = HOST + "moment/listall";
+
     public static final String ROOT_PATH = Environment.getExternalStorageDirectory().getAbsolutePath()
             + File.separator + "AndroidShow" + File.separator;
 
@@ -34,7 +36,7 @@ public class Constants {
 
 
     public static final String[] tabBarTitles = {"Home", "ZSC", "e-Mart", "Profile"};
-    public static final String[] homeIndicatorTitles = {"Video", "Live", "Moment"};
+    public static final String[] homeIndicatorTitles = {"Moment", "Video", "Live"};
     public static final String[] profileIndicatorTitles = {"MyVideos", "MyCollects", "MyMoments"};
 
 

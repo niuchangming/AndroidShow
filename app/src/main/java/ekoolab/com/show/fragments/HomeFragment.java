@@ -95,8 +95,8 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener{
         loginBtn.setOnClickListener(this);
 
         fragments = new ArrayList<>();
-        fragments.add(new VideoFragment());
         fragments.add(new MomentFragment());
+        fragments.add(new VideoFragment());
         fragments.add(new LiveFragment());
 
         viewPager = holder.get(R.id.viewpager);

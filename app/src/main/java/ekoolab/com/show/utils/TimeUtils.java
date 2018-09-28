@@ -1,7 +1,5 @@
 package ekoolab.com.show.utils;
 
-import com.google.zxing.common.StringUtils;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -281,22 +279,12 @@ public class TimeUtils {
      * 1天以上的，由于其时效性弱，所以通常以天为最小单位，如：昨天HH：MM<br/>
      * 两天以上，显示：xx月xx日 HH：MM<br/>
      * 1年以上，显示xxxx年xx月xx日<br/>
-     *
-     * @param time
-     * @return
      */
-    public static String formatTime(String time) {
-        if (Utils.isBlank(time)) {
-            return "";
-        }
+    public static String formatTime(long timestamp) {
         Calendar currentTime = Calendar.getInstance();
         Calendar needFormatTime = Calendar.getInstance();
         Calendar midTime = Calendar.getInstance();
-        try {
-            needFormatTime.setTime(YYYYMMDDHHMMSS.get().parse(time));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        needFormatTime.setTimeInMillis(timestamp);
         midTime.add(Calendar.DAY_OF_MONTH, -NUMBER_1);
         boolean flag = midTime.get(Calendar.DAY_OF_MONTH) == needFormatTime.get(Calendar.DAY_OF_MONTH)
                 && (Math.abs(needFormatTime.get(Calendar.MONTH) - currentTime.get(Calendar.MONTH)) == NUMBER_1);
@@ -315,20 +303,21 @@ public class TimeUtils {
         }
         // 1天以上的，由于其时效性弱，所以通常以天为最小单位，如：昨天HH：MM
         if (delta == 1 || flag) {
-            return "昨天 " + HHMM.get().format(needFormatTime.getTime());
+            return "yesterday " + HHMM.get().format(needFormatTime.getTime());
         }
         // 1小时以上1天以内的（即当天的），以小时为最小单位，显示：xx小时前；
         long deltaInMills = currentTime.getTimeInMillis() - needFormatTime.getTimeInMillis();
         //大于一小时
         if (deltaInMills >= 60 * 60 * 1000) {
-            return String.format(Locale.getDefault(), "%d小时前", deltaInMills / (60 * 60 * 1000));
+            long hour = deltaInMills / (60 * 60 * 1000);
+            return String.format(Locale.getDefault(), "%d hour%s ago", hour, hour > 1 ? "s" : "");
         }
         //小于一小时
-        if (deltaInMills < 60 * 60 * 1000 && deltaInMills >= 10 * 60 * 1000) {
-            return String.format(Locale.getDefault(), "%d分钟前", deltaInMills / (60 * 1000));
+        if (deltaInMills >= 10 * 60 * 1000) {
+            return String.format(Locale.getDefault(), "%d minutes ago", deltaInMills / (60 * 1000));
         }
         // 10分钟之内，显示“刚刚”；
-        return "刚刚";
+        return "just now";
     }
 
     /**

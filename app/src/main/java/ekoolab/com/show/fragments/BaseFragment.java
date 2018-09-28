@@ -92,6 +92,11 @@ public abstract class BaseFragment extends Fragment {
         return mViewHolder.getRootView();
     }
 
+    /**
+     * 先走initViews方法，再走initData方法
+     * @param holder
+     * @param root
+     */
     protected abstract void initViews(ViewHolder holder, View root);
 
     protected void initData() {
