@@ -30,6 +30,8 @@ public class Moment {
         public String replyToName;
         public String commentId;
         public int likeCount;
-        public List<?> comments;
+        public List<CommentsBean> comments;
+        public List<CommentsBean> childrenIds;
+        public String resourceId;
     }
 }

@@ -12,6 +12,7 @@ import java.util.Map;
 import ekoolab.com.show.activities.BaseActivity;
 import ekoolab.com.show.fragments.BaseFragment;
 import ekoolab.com.show.utils.RxUtils;
+import io.reactivex.Flowable;
 
 /**
  * @author Army
@@ -47,6 +48,19 @@ public class ApiServer {
                 .getParseFlowable(typeToken)
                 .compose(RxUtils.rxSchedulerHelper())
                 .as(fragment.autoDisposable());
+    }
+
+    public static <T> Flowable<T> basePostRequestNoDisposable(BaseFragment fragment,
+                                                  String url,
+                                                  HashMap<String, String> map,
+                                                  TypeToken<T> typeToken) {
+        return Rx2AndroidNetworking
+                .post(url)
+                .addBodyParameter(map)
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getParseFlowable(typeToken)
+                .compose(RxUtils.rxSchedulerHelper());
     }
 
     public static <T> FlowableSubscribeProxy<T> baseUploadRequest(BaseActivity activity,

@@ -67,4 +67,7 @@
     <string name="permission_private">Private</string>
     <string name="choose_place">Choose Place</string>
     <string name="next">Next</string>
+    <string name="send_comment">SEND</string>
+    <string name="moment_reply1"><Data><![CDATA[<font color="#03ABE3">%1$s</font>：%2$s]]></Data></string>
+    <string name="moment_reply2"><Data><![CDATA[<font color="#03ABE3">%1$s</font>回复<font color="#03ABE3">%2$s</font>：%3$s]]></Data></string>
 </resources>

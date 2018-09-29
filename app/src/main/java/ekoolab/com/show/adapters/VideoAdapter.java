@@ -72,7 +72,9 @@ public class VideoAdapter extends RecyclerView.Adapter <VideoAdapter.VideoHolder
             nameTv.setText(video.creator.name);
             locationTv.setText("大连");
             Glide.with(activity).load(video.creator.avatar.origin).into(avatarIv);
-            Glide.with(activity).load(video.preview.origin).into(coverIv);
+            if (video.preview != null) {
+                Glide.with(activity).load(video.preview.origin).into(coverIv);
+            }
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {

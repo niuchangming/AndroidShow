@@ -36,6 +36,15 @@ public abstract class XXDialog {
         convert(dilaogVh);
     }
 
+    public XXDialog(Context context, int layoutId, boolean isBgTransparent) {
+        dilaogVh = DialogViewHolder.get(context, layoutId);
+        mRootView = dilaogVh.getConvertView();
+        mDialog = new Dialog(context, isBgTransparent ? R.style.common_dialog_bg_transparent : R.style.common_dialog);
+        mDialog.setContentView(mRootView);
+        mDialogWindow = mDialog.getWindow();
+        convert(dilaogVh);
+    }
+
     /**
      * 把弹出框view holder传出去
      *

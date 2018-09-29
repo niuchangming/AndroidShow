@@ -35,6 +35,7 @@ import ekoolab.com.show.dialogs.RegisterDialog;
 import ekoolab.com.show.dialogs.VerifyDialog;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
+import ekoolab.com.show.utils.Utils;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener,
         RegisterDialog.RegisterListener, VerifyDialog.VerifyListener{
@@ -128,6 +129,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     public void onClick(View view) {
         switch(view.getId()){
             case R.id.login_btn:
+                Utils.hideInput(passwordEt);
                 mobileLogin();
                 break;
             case R.id.register_btn:

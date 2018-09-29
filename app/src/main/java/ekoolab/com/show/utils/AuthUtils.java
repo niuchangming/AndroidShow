@@ -66,11 +66,17 @@ public class AuthUtils {
         return sp.getString(Constants.Auth.USER_CODE, "");
     }
 
+    public String getName(){
+        SharedPreferences sp = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+        return sp.getString(Constants.Auth.USERNAME, "");
+    }
+
     public void saveAuthInfo(AuthInfo info){
         SharedPreferences.Editor spEditor = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE).edit();
         spEditor.putBoolean(Constants.Auth.LOGGED_IN, true);
         spEditor.putString(Constants.Auth.API_TOKEN, info.getApiToken());
         spEditor.putString(Constants.Auth.USER_CODE, info.getUserCode());
+        spEditor.putString(Constants.Auth.USERNAME, info.getName());
         spEditor.putInt(Constants.Auth.ROLE, info.getRole());
         spEditor.putString(Constants.Auth.LOGIN_TYPE, info.getAccountType());
 

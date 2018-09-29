@@ -49,6 +49,7 @@ public class Constants {
         public static final String DIAL_NO = "dial_no";
         public static final String MOBILE = "logged_mobile";
         public static final String USER_CODE = "user_code";
+        public static final String USERNAME = "user_name";
         public static final String ROLE = "role";
         public static final String CHANNEL_ID = "channel_id";
         public static final String FB_TOKEN_EXPIRED = "fb_expired";

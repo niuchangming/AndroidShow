@@ -39,6 +39,7 @@ public class ShowApplication extends Application implements Thread.UncaughtExcep
                 .hideThreadInfo()
                 .logLevel(BuildConfig.DEBUG ? LogLevel.FULL : LogLevel.NONE);
         AndroidNetworking.initialize(application);
+//        AndroidNetworking.setParserFactory(new GsonParserFactory());
         Fresco.initialize(this);
         FileUtils.createOrExistsDir(Constants.VIDEO_PATH);
         FileUtils.createOrExistsDir(Constants.IMAGE_PATH);

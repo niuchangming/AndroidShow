@@ -12,6 +12,7 @@ public class AuthInfo {
     private int role;
     private String accountType;
     private String nickName;
+    private String name;
     private String userCode;
 
     private String fbAccessToken;
@@ -126,12 +127,21 @@ public class AuthInfo {
         this.wxExpiredDate = wxExpiredDate;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public AuthInfo (JSONObject jsonData){
         apiToken = jsonData.optString("token");
         role = jsonData.optInt("roleType");
         accountType = jsonData.optString("accountType");
         nickName = jsonData.optString("nickName");
         userCode = jsonData.optString("userCode");
+        name = jsonData.optString("name");
     }
 
 }
