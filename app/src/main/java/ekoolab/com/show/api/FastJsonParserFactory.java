@@ -1,8 +1,8 @@
 package ekoolab.com.show.api;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.parser.Feature;
 import com.androidnetworking.interfaces.Parser;
-import com.google.gson.Gson;
-import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -17,33 +17,26 @@ import okhttp3.ResponseBody;
  * @date 2018/9/30
  * @description
  */
-public class GsonParserFactory extends Parser.Factory {
-    private final Gson gson;
+public class FastJsonParserFactory extends Parser.Factory {
+    public static final Feature[] EMPTY_SERIALIZER_FEATURES = new Feature[0];
 
-    public GsonParserFactory() {
-        this.gson = new Gson();
-    }
-
-    public GsonParserFactory(Gson gson) {
-        this.gson = gson;
+    public FastJsonParserFactory() {
     }
 
     @Override
     public Parser<ResponseBody, ?> responseBodyParser(Type type) {
-        TypeAdapter<?> adapter = gson.getAdapter(TypeToken.get(type));
-        return new GsonResponseBodyParser<>(gson, adapter);
+        return new FastJsonResponseBodyParser<>(type);
     }
 
     @Override
     public Parser<?, RequestBody> requestBodyParser(Type type) {
-        TypeAdapter<?> adapter = gson.getAdapter(TypeToken.get(type));
-        return new GsonRequestBodyParser<>(gson, adapter);
+        return new FastJsonRequestBodyParser<>();
     }
 
     @Override
     public Object getObject(String string, Type type) {
         try {
-            return gson.fromJson(string, type);
+            return JSON.parseObject(string, type, EMPTY_SERIALIZER_FEATURES);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -53,7 +46,7 @@ public class GsonParserFactory extends Parser.Factory {
     @Override
     public String getString(Object object) {
         try {
-            return gson.toJson(object);
+            return JSON.toJSONString(object);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -65,7 +58,7 @@ public class GsonParserFactory extends Parser.Factory {
         try {
             Type type = new TypeToken<HashMap<String, String>>() {
             }.getType();
-            return gson.fromJson(gson.toJson(object), type);
+            return JSON.parseObject(JSON.toJSONString(object), type, EMPTY_SERIALIZER_FEATURES);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -69,6 +69,7 @@
             android:layout_height="31dp"
             android:paddingBottom="8dp"
             android:paddingTop="8dp"
+            android:background="@color/orange"
             android:src="@drawable/selector_heart" />
 
         <TextView
@@ -87,6 +88,7 @@
             android:id="@+id/iv_reward"
             android:layout_width="15dp"
             android:layout_height="31dp"
+            android:background="@color/orange"
             android:paddingBottom="8dp"
             android:paddingTop="8dp"
             android:src="@drawable/selector_heart" />
@@ -97,6 +99,7 @@
             android:layout_height="31dp"
             android:layout_marginLeft="15dp"
             android:paddingBottom="8dp"
+            android:background="@color/orange"
             android:paddingTop="8dp"
             android:src="@drawable/selector_heart" />
 

@@ -26,6 +26,8 @@ public class Constants {
 
     public static final String MOMENTLIST = HOST + "moment/listall";
 
+    public static final String GIFTLIST = HOST + "gift/getGifts";
+
     public static final String ROOT_PATH = Environment.getExternalStorageDirectory().getAbsolutePath()
             + File.separator + "AndroidShow" + File.separator;
 

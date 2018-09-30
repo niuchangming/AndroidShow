@@ -15,6 +15,7 @@ import com.orhanobut.logger.Logger;
 
 import ekoolab.com.show.BuildConfig;
 import ekoolab.com.show.activities.MainActivity;
+import ekoolab.com.show.api.FastJsonParserFactory;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.FileUtils;
 import ekoolab.com.show.utils.Utils;
@@ -39,7 +40,7 @@ public class ShowApplication extends Application implements Thread.UncaughtExcep
                 .hideThreadInfo()
                 .logLevel(BuildConfig.DEBUG ? LogLevel.FULL : LogLevel.NONE);
         AndroidNetworking.initialize(application);
-//        AndroidNetworking.setParserFactory(new GsonParserFactory());
+        AndroidNetworking.setParserFactory(new FastJsonParserFactory());
         Fresco.initialize(this);
         FileUtils.createOrExistsDir(Constants.VIDEO_PATH);
         FileUtils.createOrExistsDir(Constants.IMAGE_PATH);

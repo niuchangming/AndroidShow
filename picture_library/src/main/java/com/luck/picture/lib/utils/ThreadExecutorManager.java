@@ -19,7 +19,7 @@ public class ThreadExecutorManager {
     private ExecutorService executorService = null;
 
     private ThreadExecutorManager(){
-        executorService = new ThreadPoolExecutor(10, 10,
+        executorService = new ThreadPoolExecutor(10, 20,
                 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<>(), new DefaultThreadFactory());
     }
