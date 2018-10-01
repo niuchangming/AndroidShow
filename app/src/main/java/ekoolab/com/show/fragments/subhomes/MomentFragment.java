@@ -1,14 +1,18 @@
 package ekoolab.com.show.fragments.subhomes;
 
+import android.animation.FloatEvaluator;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.ArrayMap;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
@@ -65,6 +69,7 @@ public class MomentFragment extends BaseFragment {
     private int pageIndex;
     private EmptyView mEmptyView;
     private XRecyclerView mRecyclerView;
+    private LinearLayout llTipsContainer;
     private BaseQuickAdapter<Moment, BaseViewHolder> mAdapter = null;
     private List<Moment> moments = new ArrayList<>(20);
     private ArrayMap<String, String> zanMap = new ArrayMap<>(10);
@@ -77,6 +82,7 @@ public class MomentFragment extends BaseFragment {
     private long delay = 150L;
     private List<Gift> gifts = new ArrayList<>(10);
     private OnInteractivePlayGifListener playGifListener;
+    private String curUserSmallAvator = null;
 
     @Override
     public void onAttach(Context context) {
@@ -112,6 +118,7 @@ public class MomentFragment extends BaseFragment {
                 getMomentData(false);
             }
         });
+        llTipsContainer = holder.get(R.id.ll_tips_container);
     }
 
     @Override
@@ -235,9 +242,11 @@ public class MomentFragment extends BaseFragment {
                     }
                 });
                 holder.setOnClick(R.id.tv_send, view -> {
+                    Gift gift = gifts.get(adapter.getCurGiftPos());
                     if (playGifListener != null) {
-                        playGifListener.playGif(gifts.get(adapter.getCurGiftPos()).animImage);
+                        playGifListener.playGif(gift.animImage);
                     }
+                    generateGiftTips(gift);
                 });
             }
         };
@@ -467,6 +476,24 @@ public class MomentFragment extends BaseFragment {
 
     public interface OnInteractivePlayGifListener {
         void playGif(String imageUrl);
+    }
+
+    private void generateGiftTips(Gift gift) {
+        if (TextUtils.isEmpty(curUserSmallAvator)) {
+            curUserSmallAvator = AuthUtils.getInstance(mContext.getApplicationContext()).getAvator(AuthUtils.SMALL);
+        }
+        View view = LayoutInflater.from(mContext).inflate(R.layout.layout_moment_gift_tips, null);
+        ImageView ivHeader = view.findViewById(R.id.iv_header);
+        ImageView ivGiftImage = view.findViewById(R.id.iv_gift_image);
+        TextView tvGiftName = view.findViewById(R.id.tv_gift_name);
+        Glide.with(this).load(curUserSmallAvator).into(ivHeader);
+        Glide.with(this).load(gift.image).into(ivGiftImage);
+        tvGiftName.setText(String.format("送%s", gift.name));
+        llTipsContainer.addView(view);
+        int width = getResources().getDimensionPixelSize(R.dimen.moment_gift_tips_width);
+        ObjectAnimator animator = ObjectAnimator.ofObject(view, "translationX", new FloatEvaluator(), -width, 0);
+        animator.setDuration(300);
+        animator.start();
     }
 
 }

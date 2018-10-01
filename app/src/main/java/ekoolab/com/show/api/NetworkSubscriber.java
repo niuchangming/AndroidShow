@@ -1,7 +1,6 @@
 package ekoolab.com.show.api;
 
 
-import com.google.zxing.common.StringUtils;
 import com.orhanobut.logger.Logger;
 
 import org.reactivestreams.Subscriber;
@@ -48,11 +47,20 @@ public abstract class NetworkSubscriber<T> implements Subscriber<ResponseData<T>
                     ToastUtils.showToast(R.string.useless_network);
                 }
             } else {
-                if (!dealHttpException(STATUS_FAILURE, "", e)) {
+                int code;
+                String errorMsg;
+                if (e instanceof HttpException) {
+                    code = ((HttpException) e).getStatus();
+                    errorMsg = e.getMessage();
+                } else {
+                    code = STATUS_FAILURE;
+                    errorMsg = "";
+                }
+                if (!dealHttpException(code, errorMsg, e)) {
                     if (e instanceof SocketTimeoutException || e instanceof ConnectException) {
                         ToastUtils.showToast(R.string.weak_network);
                     } else if (e != null && !android.text.TextUtils.isEmpty(e.getMessage())
-                            && e.getMessage().length() <= ERROR_MSG_MAX_LENGTH){
+                            && e.getMessage().length() <= ERROR_MSG_MAX_LENGTH) {
                         ToastUtils.showToast(e.getMessage());
                     } else {
                         ToastUtils.showToast(R.string.request_fail);

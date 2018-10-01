@@ -9,6 +9,8 @@ public class Constants {
     public static final String LOGIN = HOST + "user/login";
     public static final String SIGNUP = HOST + "user/signup";
     public static final String VERIFY_2FA = HOST + "user/2fa";
+    public static final String GET_USERPROFILE = HOST + "user/getUserprofile";
+
     public static final String VIDEO_LIST = HOST + "video/listall";
     public static final String FAVOURITE = HOST + "favourites/favourite";
     public static final String FAVOURITECANEL = HOST + "favourites/cancel";
@@ -52,7 +54,11 @@ public class Constants {
         public static final String MOBILE = "logged_mobile";
         public static final String USER_CODE = "user_code";
         public static final String USERNAME = "user_name";
+        public static final String GENDER = "gender";
         public static final String ROLE = "role";
+        public static final String AVATAR_MEDIUM = "avatar_medium";
+        public static final String AVATAR_ORIGIN = "avatar_origin";
+        public static final String AVATAR_SMALL = "avatar_small";
         public static final String CHANNEL_ID = "channel_id";
         public static final String FB_TOKEN_EXPIRED = "fb_expired";
         public static final String FB_ACCESS_TOKEN = "fb_access_token";
