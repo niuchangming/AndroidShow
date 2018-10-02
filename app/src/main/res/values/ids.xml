@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="gift_cur_count" type="id" />
+    <item name="gift_remain_count" type="id" />
+    <item name="gift_remove_animator" type="id" />
+</resources>

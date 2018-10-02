@@ -20,7 +20,7 @@ public class Moment {
     public boolean isMyLike;
     public User creator;
     public List<Photo> photoArray;
-    public List<CommentsBeanX> comments;
+    public transient List<CommentsBeanX> comments;
 
     public static class CommentsBeanX {
         public String body;

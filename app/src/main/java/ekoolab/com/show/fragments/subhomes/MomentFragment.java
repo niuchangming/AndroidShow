@@ -1,8 +1,13 @@
 package ekoolab.com.show.fragments.subhomes;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.FloatEvaluator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.text.Html;
@@ -10,6 +15,10 @@ import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -28,7 +37,10 @@ import org.reactivestreams.Publisher;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.activities.WatchImageActivity;
@@ -66,6 +78,7 @@ import io.reactivex.schedulers.Schedulers;
 import me.shihao.library.XRecyclerView;
 
 public class MomentFragment extends BaseFragment {
+    public static final long TIPS_LIVE_TIME = 3000;
     private int pageIndex;
     private EmptyView mEmptyView;
     private XRecyclerView mRecyclerView;
@@ -83,6 +96,27 @@ public class MomentFragment extends BaseFragment {
     private List<Gift> gifts = new ArrayList<>(10);
     private OnInteractivePlayGifListener playGifListener;
     private String curUserSmallAvator = null;
+    private final Map<String, View> showingGiftTipsViews = new HashMap<>(10);
+    private Handler mHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            String giftId = (String) msg.obj;
+            View view = showingGiftTipsViews.get(giftId);
+            int width = getResources().getDimensionPixelSize(R.dimen.moment_gift_tips_width);
+            ObjectAnimator animator = ObjectAnimator.ofObject(view, "translationX",
+                    new FloatEvaluator(), 0, -width);
+            animator.setDuration(300);
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    llTipsContainer.removeView(view);
+                    showingGiftTipsViews.remove(giftId);
+                }
+            });
+            view.setTag(R.id.gift_remove_animator, animator);
+            animator.start();
+        }
+    };
 
     @Override
     public void onAttach(Context context) {
@@ -168,6 +202,7 @@ public class MomentFragment extends BaseFragment {
                     showCommentDialog();
                 });
                 helper.getView(R.id.iv_reward).setOnClickListener(view -> {
+                    curMoment = item;
                     showGiftDialog();
                 });
                 boolean notEmpty = ListUtils.isNotEmpty(item.comments);
@@ -242,15 +277,42 @@ public class MomentFragment extends BaseFragment {
                     }
                 });
                 holder.setOnClick(R.id.tv_send, view -> {
-                    Gift gift = gifts.get(adapter.getCurGiftPos());
+                    int curGiftPos = adapter.getCurGiftPos();
+                    if (curGiftPos == -1) {
+                        return;
+                    }
+                    Gift gift = gifts.get(curGiftPos);
                     if (playGifListener != null) {
                         playGifListener.playGif(gift.animImage);
                     }
                     generateGiftTips(gift);
+                    sendGift(gift);
                 });
             }
         };
         xxDialog.fullWidth().fromBottom().showDialog();
+    }
+
+    private void sendGift(Gift gift) {
+        Flowable.create((FlowableOnSubscribe<HashMap<String, String>>) emitter -> {
+            HashMap<String, String> map = new HashMap<>(3);
+            map.put("momentId", curMoment.resourceId);
+            map.put("token", AuthUtils.getInstance(getContext()).getApiToken());
+            map.put("giftid", gift.giftid);
+            emitter.onNext(map);
+            emitter.onComplete();
+        }, BackpressureStrategy.BUFFER)
+                .compose(RxUtils.rxThreadHelper())
+                .flatMap((Function<HashMap<String, String>, Publisher<ResponseData<String>>>)
+                        map -> ApiServer.basePostRequestNoDisposable(MomentFragment.this,
+                        Constants.MOMENT_SENDGIFT, map, new TypeToken<ResponseData<String>>() {
+                        }))
+                .subscribe(new NetworkSubscriber<String>() {
+                    @Override
+                    protected void onSuccess(String s) {
+
+                    }
+                });
     }
 
     private void showCommentDialog() {
@@ -461,12 +523,9 @@ public class MomentFragment extends BaseFragment {
                             gifts.clear();
                             gifts.addAll(giftList);
                             for (Gift gift : gifts) {
-                                ThreadExecutorManager.getInstance().runInThreadPool(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        FutureTarget<File> target = Glide.with(MomentFragment.this)
-                                                .download(gift.animImage).submit();
-                                    }
+                                ThreadExecutorManager.getInstance().runInThreadPool(() -> {
+                                    FutureTarget<File> target = Glide.with(MomentFragment.this)
+                                            .download(gift.animImage).submit();
                                 });
                             }
                         }
@@ -479,21 +538,105 @@ public class MomentFragment extends BaseFragment {
     }
 
     private void generateGiftTips(Gift gift) {
+        View view;
+        FrameLayout flGiftNum;
+        synchronized (showingGiftTipsViews) {
+            if (showingGiftTipsViews.containsKey(gift.giftid)) {
+                mHandler.removeMessages(gifts.indexOf(gift));
+                view = showingGiftTipsViews.get(gift.giftid);
+                ObjectAnimator animator = (ObjectAnimator) view.getTag(R.id.gift_remove_animator);
+                if (animator != null) {
+                    animator.cancel();
+                }
+                flGiftNum = view.findViewById(R.id.fl_gift_num);
+                int curCount = (int) view.getTag(R.id.gift_cur_count);
+                LinkedList<Integer> remianCount = (LinkedList<Integer>) view.getTag(R.id.gift_remain_count);
+                remianCount.offer(1);
+                view.setTag(R.id.gift_cur_count, ++curCount);
+                if (animator != null) {
+                    startViewAnimator(gift, view, flGiftNum, view.getTranslationX(), 0);
+                } else {
+                    Animation animation = flGiftNum.getAnimation();
+                    if (animation == null || animation.hasEnded()) {
+                        textViewScaleAnim(gift, view, flGiftNum);
+                    }
+                }
+                return;
+            } else {
+                view = LayoutInflater.from(mContext).inflate(R.layout.layout_moment_gift_tips, null);
+                showingGiftTipsViews.put(gift.giftid, view);
+                view.setTag(R.id.gift_cur_count, 1);
+                LinkedList<Integer> integers = new LinkedList<>();
+                integers.offer(1);
+                view.setTag(R.id.gift_remain_count, integers);
+            }
+        }
         if (TextUtils.isEmpty(curUserSmallAvator)) {
             curUserSmallAvator = AuthUtils.getInstance(mContext.getApplicationContext()).getAvator(AuthUtils.SMALL);
         }
-        View view = LayoutInflater.from(mContext).inflate(R.layout.layout_moment_gift_tips, null);
         ImageView ivHeader = view.findViewById(R.id.iv_header);
         ImageView ivGiftImage = view.findViewById(R.id.iv_gift_image);
         TextView tvGiftName = view.findViewById(R.id.tv_gift_name);
+        TextView tvGiftNameFlag = view.findViewById(R.id.tv_gift_name_flag);
+        flGiftNum = view.findViewById(R.id.fl_gift_num);
         Glide.with(this).load(curUserSmallAvator).into(ivHeader);
         Glide.with(this).load(gift.image).into(ivGiftImage);
-        tvGiftName.setText(String.format("送%s", gift.name));
+        String giftName = String.format("送 %s", gift.name);
+        tvGiftName.setText(giftName);
+        tvGiftNameFlag.setText(giftName);
         llTipsContainer.addView(view);
         int width = getResources().getDimensionPixelSize(R.dimen.moment_gift_tips_width);
-        ObjectAnimator animator = ObjectAnimator.ofObject(view, "translationX", new FloatEvaluator(), -width, 0);
+        startViewAnimator(gift, view, flGiftNum, -width, 0);
+    }
+
+    private void startViewAnimator(Gift gift, View view, FrameLayout flGiftNum, Object... values) {
+        ObjectAnimator animator = ObjectAnimator.ofObject(view, "translationX", new FloatEvaluator(), values);
         animator.setDuration(300);
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                textViewScaleAnim(gift, view, flGiftNum);
+            }
+        });
         animator.start();
     }
 
+    private void textViewScaleAnim(Gift gift, View view, FrameLayout flGiftNum) {
+        int curCount = (int) view.getTag(R.id.gift_cur_count);
+        final LinkedList<Integer> integers = (LinkedList<Integer>) view.getTag(R.id.gift_remain_count);
+        integers.pollFirst();
+        String giftNum = String.format(Locale.getDefault(), "x %d", curCount);
+        ((TextView) flGiftNum.getChildAt(0)).setText(giftNum);
+        ((TextView) flGiftNum.getChildAt(1)).setText(giftNum);
+        ScaleAnimation animation = new ScaleAnimation(1, 1.5f, 1, 1.5f, 0.5f, 0.5f);
+        animation.setInterpolator(new AccelerateInterpolator());
+        animation.setDuration(200);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if (ListUtils.isNotEmpty(integers)) {
+                    textViewScaleAnim(gift, view, flGiftNum);
+                } else {
+                    mHandler.sendMessageDelayed(mHandler.obtainMessage(gifts.indexOf(gift), gift.giftid), TIPS_LIVE_TIME);
+                }
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        flGiftNum.startAnimation(animation);
+    }
+
+    @Override
+    public void onDestroyView() {
+        for (int i = 0, len = gifts.size(); i < len; i++) {
+            mHandler.removeMessages(i);
+        }
+        super.onDestroyView();
+    }
 }
