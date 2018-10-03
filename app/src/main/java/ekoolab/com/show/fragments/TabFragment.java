@@ -104,13 +104,13 @@ public class TabFragment extends BaseFragment implements View.OnClickListener {
             return;
         boolean doCommit = false;
         for (Fragment fragment : fragments) {
-            if (fragment != this && fragment != null) {
+            if (fragment != this && fragment != null && fragment instanceof BaseFragment) {
                 transaction.remove(fragment);
                 doCommit = true;
             }
         }
         if (doCommit) {
-            transaction.commit();
+            transaction.commitNow();
         }
     }
 
