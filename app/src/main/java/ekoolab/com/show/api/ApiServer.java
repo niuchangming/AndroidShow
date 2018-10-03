@@ -7,6 +7,7 @@ import com.uber.autodispose.FlowableSubscribeProxy;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import ekoolab.com.show.activities.BaseActivity;
@@ -85,6 +86,23 @@ public class ApiServer {
                 .upload(url)
                 .addMultipartParameter(valueMap)
                 .addMultipartFile(fileMap)
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getParseFlowable(typeToken)
+                .compose(RxUtils.rxSchedulerHelper())
+                .as(activity.autoDisposable());
+    }
+
+    public static <T> FlowableSubscribeProxy<T> baseUploadMoreFilesRequest(BaseActivity activity,
+                                                                  String url,
+                                                                  Map<String, String> valueMap,
+                                                                  String fileKey,
+                                                                  List<File> files,
+                                                                  TypeToken<T> typeToken) {
+        return Rx2AndroidNetworking
+                .upload(url)
+                .addMultipartParameter(valueMap)
+                .addMultipartFileList(fileKey, files)
                 .setPriority(Priority.MEDIUM)
                 .build()
                 .getParseFlowable(typeToken)
