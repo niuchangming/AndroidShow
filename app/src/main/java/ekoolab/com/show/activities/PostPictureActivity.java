@@ -5,11 +5,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
+import com.luck.picture.lib.PictureSelectorView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import ekoolab.com.show.R;
@@ -20,6 +22,7 @@ import ekoolab.com.show.beans.TextPicture;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.EventBusMsg;
+import ekoolab.com.show.utils.ImageSeclctUtils;
 import ekoolab.com.show.views.EasyPopup;
 import ekoolab.com.show.views.HorizontalGravity;
 
@@ -28,6 +31,7 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
     private TextView tv_name,tv_cancel,tv_save,tv_permission;
     private EditText et_content;
     private EasyPopup easyPopup;
+    private PictureSelectorView pictureSelectorView;
     @Override
     protected int getLayoutId() {
         return R.layout.activity_post_picture;
@@ -42,6 +46,7 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
         tv_permission = findViewById(R.id.tv_permission);
         et_content = findViewById(R.id.et_content);
         tv_name.setText(getResources().getString(R.string.moment));
+        pictureSelectorView = findViewById(R.id.psv);
         tv_cancel.setOnClickListener(this);
         tv_save.setOnClickListener(this);
         tv_permission.setOnClickListener(this);
@@ -49,6 +54,9 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected void initData() {
         super.initData();
+        ArrayList<String> arrayList = getIntent().getStringArrayListExtra("url");
+        pictureSelectorView.setOutputCameraPath(Constants.IMAGE_PATH);
+        pictureSelectorView.initData(this,3,arrayList.size(),200);
 
     }
 
