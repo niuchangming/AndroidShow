@@ -55,7 +55,7 @@ public class PostTextActivity extends BaseActivity implements View.OnClickListen
         HashMap<String, String> map = new HashMap<>(4);
         map.put("body", et_content.getText().toString());
         map.put("type", "text");
-        map.put("permission", "public");
+        map.put("permission", tv_permission.getText().toString());
         map.put("token", AuthUtils.getInstance(PostTextActivity.this).getApiToken());
         ApiServer.baseUploadRequest(this, Constants.TextPost, map, null,
                 new TypeToken<ResponseData<TextPicture>>() {
@@ -64,7 +64,7 @@ public class PostTextActivity extends BaseActivity implements View.OnClickListen
                     @Override
                     protected void onSuccess(TextPicture textPicture) {
                         try {
-                            System.out.println("===body===" + textPicture.body);
+                        PostTextActivity.this.finish();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -72,7 +72,6 @@ public class PostTextActivity extends BaseActivity implements View.OnClickListen
 
                     @Override
                     protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
-                        System.out.println("===errorMsg===" + errorMsg);
                         return super.dealHttpException(code, errorMsg, e);
                     }
                 });

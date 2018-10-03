@@ -121,9 +121,8 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
                 Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
                 .subscribe(aBoolean -> {
                     if (aBoolean) {
-                        CameraActivity.navToCameraOnlyVideoThenJump(MainActivity.this,
-                                Constants.VIDEO_PATH, Constants.IMAGE_PATH, PostVideoActivity.class);
-//                        startActivity(new Intent(MainActivity.this, PostVideoActivity.class));
+                        Intent intent = new Intent(this,PostPictureActivity.class);
+                        startActivity(intent);
                     }
                 });
     }
