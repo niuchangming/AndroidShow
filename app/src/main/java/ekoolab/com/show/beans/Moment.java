@@ -1,5 +1,7 @@
 package ekoolab.com.show.beans;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.util.List;
 
 /**
@@ -20,7 +22,8 @@ public class Moment {
     public boolean isMyLike;
     public User creator;
     public List<Photo> photoArray;
-    public transient List<CommentsBeanX> comments;
+    @JSONField(deserialize = false)
+    public List<CommentsBeanX> comments;
 
     public static class CommentsBeanX {
         public String body;
