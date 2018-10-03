@@ -89,7 +89,7 @@ public class MomentFragment extends BaseFragment {
     /**
      * 对那条评论进行评论，null表示对图文评论
      */
-    private Moment.CommentsBeanX curCommentBean = null;
+    private Moment.CommentsBean curCommentBean = null;
     private Moment curMoment = null;
     private CommentDialog commentDialog = null;
     private long delay = 150L;
@@ -209,9 +209,10 @@ public class MomentFragment extends BaseFragment {
                 helper.setGone(R.id.nest_full_listview, notEmpty);
                 if (notEmpty) {
                     NestFullListView listView = helper.getView(R.id.nest_full_listview);
-                    listView.setAdapter(new NestFullListViewAdapter<Moment.CommentsBeanX>(R.layout.item_moent_comment, item.comments) {
+                    listView.setAdapter(new NestFullListViewAdapter<Moment.CommentsBean>(R.layout.item_moent_comment, item.comments) {
+
                         @Override
-                        public void onBind(int position, Moment.CommentsBeanX bean, NestFullViewHolder holder) {
+                        public void onBind(int position, Moment.CommentsBean bean, NestFullViewHolder holder) {
                             if (!bean.ishasParentComment) {
                                 holder.setText(R.id.tv_comment, Html.fromHtml(getString(R.string.moment_reply1,
                                         bean.creator.name, bean.body)));
@@ -227,7 +228,7 @@ public class MomentFragment extends BaseFragment {
                             ToastUtils.showToast(R.string.login_first);
                             return;
                         }
-                        Moment.CommentsBeanX bean = item.comments.get(position);
+                        Moment.CommentsBean bean = item.comments.get(position);
                         if (Utils.equals(bean.creator.userCode, AuthUtils.getInstance(mContext).getUserCode())) {
                             return;
                         }
@@ -341,10 +342,10 @@ public class MomentFragment extends BaseFragment {
         if (curMoment == null) {
             return;
         }
-        Flowable.create((FlowableOnSubscribe<Moment.CommentsBeanX>) emitter -> {
+        Flowable.create((FlowableOnSubscribe<Moment.CommentsBean>) emitter -> {
             String userCode = AuthUtils.getInstance(mContext).getUserCode();
             String nickName = AuthUtils.getInstance(mContext).getName();
-            Moment.CommentsBeanX bean = new Moment.CommentsBeanX();
+            Moment.CommentsBean bean = new Moment.CommentsBean();
             bean.body = content;
             bean.creator = new User();
             bean.creator.name = nickName;
@@ -355,6 +356,7 @@ public class MomentFragment extends BaseFragment {
             } else {
                 bean.replyTo = curCommentBean.creator.userCode;
                 bean.replyToName = curCommentBean.creator.name;
+                bean.ishasParentComment = true;
             }
             emitter.onNext(bean);
             emitter.onComplete();
@@ -364,7 +366,12 @@ public class MomentFragment extends BaseFragment {
                     if (curMoment.comments == null) {
                         curMoment.comments = new ArrayList<>(10);
                     }
-                    curMoment.comments.add(commentsBean);
+                    if (curCommentBean != null) {
+                        int index = curMoment.comments.indexOf(curCommentBean);
+                        curMoment.comments.add(index + 1, commentsBean);
+                    } else {
+                        curMoment.comments.add(commentsBean);
+                    }
                     mAdapter.notifyItemChanged(moments.indexOf(curMoment));
                     if (commentDialog != null) {
                         commentDialog.clearText();
@@ -372,7 +379,7 @@ public class MomentFragment extends BaseFragment {
                     return commentsBean;
                 })
                 .observeOn(Schedulers.io())
-                .flatMap((Function<Moment.CommentsBeanX, Publisher<ResponseData<Moment.CommentsBeanX>>>) bean -> {
+                .flatMap((Function<Moment.CommentsBean, Publisher<ResponseData<String>>>) bean -> {
                     HashMap<String, String> map = new HashMap<>(4);
                     map.put("resourceId", curMoment.resourceId);
                     map.put("token", AuthUtils.getInstance(getContext()).getApiToken());
@@ -381,13 +388,13 @@ public class MomentFragment extends BaseFragment {
                         map.put("commentId", curCommentBean.commentId);
                     }
                     return ApiServer.basePostRequestNoDisposable(MomentFragment.this, Constants.COMMENT,
-                            map, new TypeToken<ResponseData<Moment.CommentsBeanX>>() {
+                            map, new TypeToken<ResponseData<String>>() {
                             });
                 })
                 .as(autoDisposable())
-                .subscribe(new NetworkSubscriber<Moment.CommentsBeanX>() {
+                .subscribe(new NetworkSubscriber<String>() {
                     @Override
-                    protected void onSuccess(Moment.CommentsBeanX s) {
+                    protected void onSuccess(String s) {
                     }
                 });
     }
@@ -479,8 +486,8 @@ public class MomentFragment extends BaseFragment {
                 continue;
             }
             //一条图文的评论
-            List<Moment.CommentsBeanX> newComments = new ArrayList<>(10);
-            for (Moment.CommentsBeanX beanX : moment.comments) {
+            List<Moment.CommentsBean> newComments = new ArrayList<>(10);
+            for (Moment.CommentsBean beanX : moment.comments) {
                 newComments.add(beanX);
                 //评论的评论
                 addToNewComments(newComments, beanX.comments);
@@ -489,27 +496,15 @@ public class MomentFragment extends BaseFragment {
         }
     }
 
-    private void addToNewComments(List<Moment.CommentsBeanX> newComments,
-                                  List<List<Moment.CommentsBeanX.CommentsBean>> comments) {
+    private void addToNewComments(List<Moment.CommentsBean> newComments,
+                                  List<Moment.CommentsBean> comments) {
         if (ListUtils.isNotEmpty(comments)) {
-            for (List<Moment.CommentsBeanX.CommentsBean> beans : comments) {
-                newComments.add(convert(beans.get(0)));
-                addToNewComments(newComments, beans.get(0).comments);
+            for (Moment.CommentsBean beans : comments) {
+                beans.ishasParentComment = true;
+                newComments.add(beans);
+                addToNewComments(newComments, beans.comments);
             }
         }
-    }
-
-    private Moment.CommentsBeanX convert(Moment.CommentsBeanX.CommentsBean bean) {
-        Moment.CommentsBeanX beanX = new Moment.CommentsBeanX();
-        beanX.ishasParentComment = true;
-        beanX.body = bean.body;
-        beanX.commentId = bean.commentId;
-        beanX.creator = bean.creator;
-        beanX.likeCount = bean.likeCount;
-        beanX.postTime = bean.postTime;
-        beanX.replyTo = bean.replyTo;
-        beanX.replyToName = bean.replyToName;
-        return beanX;
     }
 
     private void getGifts() {

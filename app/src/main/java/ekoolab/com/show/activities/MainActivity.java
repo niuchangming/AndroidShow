@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomViewTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.luck.picture.lib.CameraActivity;
+import com.luck.picture.lib.utils.AppManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -33,6 +34,7 @@ import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.DisplayUtils;
 import ekoolab.com.show.utils.EventBusMsg;
 import ekoolab.com.show.utils.ListUtils;
+import ekoolab.com.show.utils.ToastUtils;
 import ekoolab.com.show.views.TabButton;
 import pl.droidsonroids.gif.AnimationListener;
 import pl.droidsonroids.gif.GifDrawable;
@@ -55,12 +57,19 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
     @Override
     protected void initViews() {
         super.initViews();
-
-        tabFragment = new TabFragment();
-        addFragment(R.id.bottom_bar, tabFragment);
-        tabFragment.setup(R.id.main_container, this);
-        ivPlayGif = findViewById(R.id.iv_play_gif);
-        ivPlayGif.getLayoutParams().height = DisplayUtils.getScreenWidth();
+        rxPermissions.request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .subscribe(aBoolean -> {
+                    if (aBoolean) {
+                        tabFragment = new TabFragment();
+                        addFragment(R.id.bottom_bar, tabFragment);
+                        tabFragment.setup(R.id.main_container, this);
+                        ivPlayGif = findViewById(R.id.iv_play_gif);
+                        ivPlayGif.getLayoutParams().height = DisplayUtils.getScreenWidth();
+                    } else {
+                        ToastUtils.showToast("Please open storage permission");
+                        AppManager.getInstance().AppExit(getApplicationContext());
+                    }
+                });
     }
 
     @Override
