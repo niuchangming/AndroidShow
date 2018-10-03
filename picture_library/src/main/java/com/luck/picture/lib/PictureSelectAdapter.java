@@ -299,10 +299,7 @@ public class PictureSelectAdapter extends
                             .dontAnimate()
                             .dontTransform()
                             .priority(Priority.HIGH)
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .placeholder(R.drawable.falseimg)
-                            .fallback(R.drawable.falseimg)
-                            .error(R.drawable.falseimg);
+                            .diskCacheStrategy(DiskCacheStrategy.NONE);
                     Glide.with(context)
                             .load(path)
                             .apply(options)
@@ -410,10 +407,7 @@ public class PictureSelectAdapter extends
                             .dontAnimate()
                             .dontTransform()
                             .priority(Priority.HIGH)
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .placeholder(R.drawable.falseimg)
-                            .fallback(R.drawable.falseimg)
-                            .error(R.drawable.falseimg);
+                            .diskCacheStrategy(DiskCacheStrategy.NONE);
                     Glide.with(context)
                             .load(path)
                             .apply(options)

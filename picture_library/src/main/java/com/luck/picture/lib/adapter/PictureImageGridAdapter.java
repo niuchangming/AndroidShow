@@ -203,10 +203,7 @@ public class PictureImageGridAdapter extends RecyclerView.Adapter<RecyclerView.V
                         .dontAnimate()
                         .dontTransform()
                         .centerCrop()
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .placeholder(R.drawable.falseimg)
-                        .fallback(R.drawable.falseimg)
-                        .error(R.drawable.falseimg);
+                        .diskCacheStrategy(DiskCacheStrategy.NONE);
                 if (overrideWidth <= 0 && overrideHeight <= 0) {
 
                 } else {

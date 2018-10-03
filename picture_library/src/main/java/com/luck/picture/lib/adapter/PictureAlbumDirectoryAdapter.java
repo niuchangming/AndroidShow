@@ -99,9 +99,6 @@ public class PictureAlbumDirectoryAdapter extends RecyclerView.Adapter<PictureAl
                     .dontTransform()
                     .centerCrop()
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .placeholder(R.drawable.falseimg)
-                    .fallback(R.drawable.falseimg)
-                    .error(R.drawable.falseimg)
                     .override(160, 160);
             Glide.with(mContext)
                     .load(imagePath)

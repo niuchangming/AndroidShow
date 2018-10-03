@@ -78,9 +78,6 @@ public class PicturePhotoGalleryAdapter extends RecyclerView.Adapter<PicturePhot
             holder.iv_dot.setVisibility(View.GONE);
         }
         RequestOptions options = new RequestOptions()
-                .placeholder(R.drawable.common_falseimg)
-                .fallback(R.drawable.common_falseimg)
-                .error(R.drawable.common_falseimg)
                 .centerCrop()
                 .dontTransform()
                 .dontAnimate()
