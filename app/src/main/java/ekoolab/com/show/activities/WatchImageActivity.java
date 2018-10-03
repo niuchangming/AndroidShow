@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.media.ExifInterface;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -18,6 +19,8 @@ import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,7 +83,9 @@ public class WatchImageActivity extends BaseActivity {
 
                         @Override
                         public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
-                            view.setImage(ImageSource.uri(Uri.fromFile(resource)));
+                            Uri mediaUri = Uri.fromFile(resource);
+                            view.setOrientation(getOrientation(mediaUri, getApplication()));
+                            view.setImage(ImageSource.uri(mediaUri));
                         }
 
                         @Override
@@ -106,6 +111,29 @@ public class WatchImageActivity extends BaseActivity {
         @Override
         public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
             return view == object;
+        }
+    }
+
+    public static int getOrientation(Uri uri, Context ctx) {
+        try (InputStream in = ctx.getContentResolver().openInputStream(uri)) {
+            if (in == null) {
+                return 0;
+            }
+            ExifInterface exif = new ExifInterface(in);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    return SubsamplingScaleImageView.ORIENTATION_180;
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    return SubsamplingScaleImageView.ORIENTATION_90;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    return SubsamplingScaleImageView.ORIENTATION_270;
+                default:
+                    return SubsamplingScaleImageView.ORIENTATION_0;
+            }
+        } catch (IOException e) {
+            return 0;
         }
     }
 }
