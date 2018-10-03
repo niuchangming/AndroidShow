@@ -23,11 +23,15 @@ import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.EventBusMsg;
 import ekoolab.com.show.utils.ListUtils;
+import ekoolab.com.show.views.EasyPopup;
+import ekoolab.com.show.views.HorizontalGravity;
 
-public class PostTextActivity extends BaseActivity {
+public class PostTextActivity extends BaseActivity implements View.OnClickListener{
 
     private TextView tv_name,tv_cancel,tv_save,tv_permission;
     private EditText et_content;
+    private EasyPopup easyPopup;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_post_text;
@@ -42,25 +46,16 @@ public class PostTextActivity extends BaseActivity {
         tv_permission = findViewById(R.id.tv_permission);
         et_content = findViewById(R.id.et_content);
         tv_name.setText(getResources().getString(R.string.moment));
-        tv_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PostTextActivity.this.finish();
-            }
-        });
-        tv_save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                postText();
-            }
-        });
+        tv_cancel.setOnClickListener(this);
+        tv_save.setOnClickListener(this);
+        tv_permission.setOnClickListener(this);
     }
 
     private void postText() {
         HashMap<String,String> map = new HashMap<>(4);
         map.put("body", et_content.getText().toString());
         map.put("type", "text");
-        map.put("permission", "public");
+        map.put("permission", tv_permission.getText().toString());
         map.put("token", AuthUtils.getInstance(PostTextActivity.this).getApiToken());
         ApiServer.basePostRequest(this, Constants.TextPost, map,
                 new TypeToken<ResponseData<TextPicture>>() {
@@ -77,7 +72,6 @@ public class PostTextActivity extends BaseActivity {
 
                     @Override
                     protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
-                        System.out.println("===errorMsg==="+errorMsg);
                         return super.dealHttpException(code, errorMsg, e);
                     }
                 });
@@ -87,5 +81,41 @@ public class PostTextActivity extends BaseActivity {
     protected void initData() {
         super.initData();
 
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.tv_cancel:
+                PostTextActivity.this.finish();
+                break;
+            case R.id.tv_save:
+                postText();
+                break;
+            case R.id.tv_permission:
+                if (easyPopup == null) {
+                    View contentView = getLayoutInflater().inflate(R.layout.popup_post_permission, null);
+                    TextView tvPublic = contentView.findViewById(R.id.tv_public);
+                    TextView tvFriend = contentView.findViewById(R.id.tv_friend);
+                    TextView tvPrivate = contentView.findViewById(R.id.tv_private);
+                    tvPublic.setOnClickListener(this);
+                    tvFriend.setOnClickListener(this);
+                    tvPrivate.setOnClickListener(this);
+                    easyPopup = new EasyPopup(this)
+                            .setContentView(contentView)
+                            .setFocusAndOutsideEnable(true)
+                            .createPopup();
+                }
+                easyPopup.setHorizontalGravity(HorizontalGravity.RIGHT);
+                easyPopup.showAsDropDown(tv_permission);
+                break;
+            case R.id.tv_public:
+            case R.id.tv_friend:
+            case R.id.tv_private:
+                tv_permission.setText(((TextView) view).getText());
+                tv_permission.setHint(((TextView) view).getHint());
+                easyPopup.dismiss();
+                break;
+        }
     }
 }
