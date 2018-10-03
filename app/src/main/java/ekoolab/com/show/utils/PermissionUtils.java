@@ -1,13 +1,10 @@
 package ekoolab.com.show.utils;
 
-import android.Manifest;
 import android.app.Activity;
 
 import com.luck.picture.lib.permissions.RxPermissions;
 
 import java.util.function.Consumer;
-
-import ekoolab.com.show.activities.MainActivity;
 
 /**
  * @author Army

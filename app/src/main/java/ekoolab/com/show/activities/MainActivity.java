@@ -28,7 +28,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.dialogs.DialogViewHolder;
@@ -103,7 +102,7 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
                         cancelDialog();
                         gotoTakeText();
                     });
-                    holder.setOnClick(R.id.tv_pictures,view -> {
+                    holder.setOnClick(R.id.tv_pictures, view -> {
                         cancelDialog();
                         gotoTakePicture();
                     });
@@ -115,12 +114,13 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
     }
 
     private void gotoTakeText() {
-        Intent intent = new Intent(this,PostTextActivity.class);
+        Intent intent = new Intent(this, PostTextActivity.class);
         startActivity(intent);
 
     }
 
     private void gotoTakePicture() {
+        localMedias.clear();
         rxPermissions.request(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
                 .subscribe(aBoolean -> {
@@ -252,13 +252,11 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PictureConfig.CHOOSE_REQUEST) {
-            localMedias = (ArrayList<LocalMedia>)PictureSelector.obtainMultipleResult(data);
-            if(localMedias.size()==0){
-
-            }else{
-                Intent intent = new Intent(this,PostPictureActivity.class);
-                intent.putParcelableArrayListExtra("url",localMedias);
+        if (requestCode == PictureConfig.CHOOSE_REQUEST && resultCode == RESULT_OK) {
+            localMedias.addAll(PictureSelector.obtainMultipleResult(data));
+            if (!localMedias.isEmpty()) {
+                Intent intent = new Intent(this, PostPictureActivity.class);
+                intent.putParcelableArrayListExtra("url", localMedias);
                 startActivity(intent);
             }
         }
