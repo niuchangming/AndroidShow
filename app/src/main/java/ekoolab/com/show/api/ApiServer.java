@@ -36,6 +36,19 @@ public class ApiServer {
                 .as(activity.autoDisposable());
     }
 
+    public static <T> Flowable<T> basePostRequestNoDisposable(BaseActivity activity,
+                                                                String url,
+                                                                HashMap<String, String> map,
+                                                                TypeToken<T> typeToken) {
+        return Rx2AndroidNetworking
+                .post(url)
+                .addBodyParameter(map)
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getParseFlowable(typeToken)
+                .compose(RxUtils.rxSchedulerHelper());
+    }
+
     public static <T> FlowableSubscribeProxy<T> basePostRequest(BaseFragment fragment,
                                                                 String url,
                                                                 HashMap<String, String> map,

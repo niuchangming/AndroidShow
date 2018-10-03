@@ -75,5 +75,5 @@
     <!-- Button高度 -->
     <dimen name="button_height_40dp">40dp</dimen>
 
-
+    <dimen name="moment_gift_tips_width">180dp</dimen>
 </resources>

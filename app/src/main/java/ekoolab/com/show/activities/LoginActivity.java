@@ -22,15 +22,21 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.google.gson.reflect.TypeToken;
 import com.rey.material.widget.ProgressView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 import ekoolab.com.show.R;
+import ekoolab.com.show.api.ApiServer;
+import ekoolab.com.show.api.NetworkSubscriber;
+import ekoolab.com.show.api.ResponseData;
 import ekoolab.com.show.beans.AuthInfo;
+import ekoolab.com.show.beans.LoginData;
 import ekoolab.com.show.dialogs.RegisterDialog;
 import ekoolab.com.show.dialogs.VerifyDialog;
 import ekoolab.com.show.utils.AuthUtils;
@@ -38,7 +44,7 @@ import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.Utils;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener,
-        RegisterDialog.RegisterListener, VerifyDialog.VerifyListener{
+        RegisterDialog.RegisterListener, VerifyDialog.VerifyListener {
     private final static String TAG = "LoginActivity";
     private VideoView videoView;
     private String videoPath;
@@ -96,6 +102,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         videoView = findViewById(R.id.login_video_view);
         videoView.setVideoURI(Uri.parse(videoPath));
         videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
             public void onCompletion(MediaPlayer mp) {
                 videoView.start();
             }
@@ -103,7 +110,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         videoView.start();
     }
 
-    private void initFacebookStuff(){
+    private void initFacebookStuff() {
         fbLoginManager = LoginManager.getInstance();
         facebookCallbackManager = CallbackManager.Factory.create();
 
@@ -127,7 +134,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onClick(View view) {
-        switch(view.getId()){
+        switch (view.getId()) {
             case R.id.login_btn:
                 Utils.hideInput(passwordEt);
                 mobileLogin();
@@ -143,56 +150,38 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         }
     }
 
-    private void mobileLogin(){
+    private void mobileLogin() {
         final String mobile = mobileEt.getText().toString().trim();
         final String password = passwordEt.getText().toString().trim();
-
         beforeLogin(false);
-        AndroidNetworking.post(Constants.LOGIN)
-                .addBodyParameter("countryCode", "65")
-                .addBodyParameter("mobile", mobile)
-                .addBodyParameter("password", password)
-                .addBodyParameter("type", "mobile")
-                .setPriority(Priority.MEDIUM)
-                .build()
-                .getAsJSONObject(new JSONObjectRequestListener() {
+        HashMap<String, String> map = new HashMap<>(4);
+        map.put("countryCode", "65");
+        map.put("mobile", mobile);
+        map.put("password", password);
+        map.put("type", "mobile");
+        ApiServer.basePostRequest(this, Constants.LOGIN, map, new TypeToken<ResponseData<LoginData>>(){})
+                .subscribe(new NetworkSubscriber<LoginData>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-
-                        try {
-                            int errorCode = response.getInt("errorCode");
-                            String message = response.getString("message");
-                            if (errorCode == 1) {
-                                JSONObject data = response.getJSONObject("data");
-                                AuthInfo authInfo = new AuthInfo(data);
-                                authInfo.setMobile(mobile);
-                                authInfo.setDialNo("65");
-//                                authInfo.mobile = mobile;
-//                                authInfo.dialNo = "65";
-                                AuthUtils.getInstance(LoginActivity.this).saveAuthInfo(authInfo);
-                                LoginActivity.this.finish();
-                            } else {
-                                toastLong(message);
-                            }
-                        }catch (JSONException e){
-                            Log.e(TAG, e.getLocalizedMessage());
-                        }
+                    protected void onSuccess(LoginData loginData) {
                         afterLogin(true);
+                        AuthUtils.getInstance(getApplicationContext()).saveMobileLoginInfo(loginData);
+                        LoginActivity.this.finish();
                     }
+
                     @Override
-                    public void onError(ANError error) {
-                        Log.e(TAG, error.getLocalizedMessage());
+                    protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
                         afterLogin(true);
+                        return super.dealHttpException(code, errorMsg, e);
                     }
                 });
     }
 
-    private void facebookLogin(){
+    private void facebookLogin() {
         fbLoginManager.logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile"));
 
     }
 
-    private void afterFacebookLogin(final LoginResult loginResult){
+    private void afterFacebookLogin(final LoginResult loginResult) {
 
         beforeLogin(true);
         AndroidNetworking.post(Constants.LOGIN)
@@ -223,12 +212,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                             } else {
                                 toastLong(message);
                             }
-                        }catch (JSONException e){
+                        } catch (JSONException e) {
                             Log.e(TAG, e.getLocalizedMessage());
                         }
 
                         afterLogin(true);
                     }
+
                     @Override
                     public void onError(ANError error) {
                         Log.e(TAG, error.getLocalizedMessage());
@@ -237,24 +227,24 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 });
     }
 
-    private void beforeLogin(boolean isFB){
-        if(isFB){
+    private void beforeLogin(boolean isFB) {
+        if (isFB) {
             fbLoginLoadingBar.start();
             facebookBtn.setVisibility(View.INVISIBLE);
             loginBtn.setEnabled(false);
-        }else{
+        } else {
             loginLoading.start();
             facebookBtn.setEnabled(false);
             loginBtn.setVisibility(View.INVISIBLE);
         }
     }
 
-    private void afterLogin(boolean isFB){
-        if(isFB){
+    private void afterLogin(boolean isFB) {
+        if (isFB) {
             fbLoginLoadingBar.stop();
             facebookBtn.setVisibility(View.VISIBLE);
             loginBtn.setEnabled(true);
-        }else{
+        } else {
             loginLoading.stop();
             facebookBtn.setEnabled(true);
             loginBtn.setVisibility(View.VISIBLE);
@@ -271,7 +261,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void did2FAVerify(AuthInfo authInfo) {
-        if(authInfo != null){
+        if (authInfo != null) {
             AuthUtils.getInstance(this).saveAuthInfo(authInfo);
         }
         finish();
