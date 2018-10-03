@@ -6,28 +6,21 @@ import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.HashMap;
-import java.util.List;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
 import ekoolab.com.show.beans.TextPicture;
-import ekoolab.com.show.beans.Video;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
-import ekoolab.com.show.utils.EventBusMsg;
-import ekoolab.com.show.utils.ListUtils;
 
 public class PostTextActivity extends BaseActivity {
 
-    private TextView tv_name,tv_cancel,tv_save,tv_permission;
+    private TextView tv_name, tv_cancel, tv_save, tv_permission;
     private EditText et_content;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_post_text;
@@ -57,19 +50,19 @@ public class PostTextActivity extends BaseActivity {
     }
 
     private void postText() {
-        HashMap<String,String> map = new HashMap<>(4);
+        HashMap<String, String> map = new HashMap<>(4);
         map.put("body", et_content.getText().toString());
         map.put("type", "text");
         map.put("permission", "public");
         map.put("token", AuthUtils.getInstance(PostTextActivity.this).getApiToken());
-        ApiServer.basePostRequest(this, Constants.TextPost, map,
+        ApiServer.baseUploadRequest(this, Constants.TextPost, map, null,
                 new TypeToken<ResponseData<TextPicture>>() {
                 })
                 .subscribe(new NetworkSubscriber<TextPicture>() {
                     @Override
                     protected void onSuccess(TextPicture textPicture) {
                         try {
-                            System.out.println("===body==="+textPicture.body);
+                            System.out.println("===body===" + textPicture.body);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -77,7 +70,7 @@ public class PostTextActivity extends BaseActivity {
 
                     @Override
                     protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
-                        System.out.println("===errorMsg==="+errorMsg);
+                        System.out.println("===errorMsg===" + errorMsg);
                         return super.dealHttpException(code, errorMsg, e);
                     }
                 });

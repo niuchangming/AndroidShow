@@ -109,8 +109,9 @@ public class TabFragment extends BaseFragment implements View.OnClickListener {
                 doCommit = true;
             }
         }
-        if (doCommit)
-            transaction.commitNow();
+        if (doCommit) {
+            transaction.commit();
+        }
     }
 
     private void doSelect(TabButton newNavButton) {
