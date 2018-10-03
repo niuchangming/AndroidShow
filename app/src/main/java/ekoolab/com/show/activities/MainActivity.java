@@ -53,7 +53,7 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
     private XXDialog xxDialog = null;
     private GifImageView ivPlayGif;
     private LinkedList<String> animImages = new LinkedList<>();
-    private List<LocalMedia> localMedias = new ArrayList<>();
+    private ArrayList<LocalMedia> localMedias = new ArrayList<>();
 //    private GifHandler gifHandler = null;
 
     @Override
@@ -253,14 +253,14 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PictureConfig.CHOOSE_REQUEST) {
-            localMedias = PictureSelector.obtainMultipleResult(data);
-            Intent intent = new Intent(this,PostPictureActivity.class);
-            ArrayList<String> arrayList = new ArrayList<>();
-            for(int i=0;i<localMedias.size();i++){
-                arrayList.add(i,localMedias.get(i).getPath());
+            localMedias = (ArrayList<LocalMedia>)PictureSelector.obtainMultipleResult(data);
+            if(localMedias.size()==0){
+
+            }else{
+                Intent intent = new Intent(this,PostPictureActivity.class);
+                intent.putParcelableArrayListExtra("url",localMedias);
+                startActivity(intent);
             }
-            intent.putStringArrayListExtra("url",arrayList);
-            startActivity(intent);
         }
     }
 }
