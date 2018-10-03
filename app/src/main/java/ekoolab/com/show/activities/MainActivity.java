@@ -2,6 +2,7 @@ package ekoolab.com.show.activities;
 
 import android.Manifest;
 import android.animation.ValueAnimator;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -85,12 +86,39 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
                         cancelDialog();
                         gotoTakeVideo();
                     });
+                    holder.setOnClick(R.id.tv_text, view -> {
+                        cancelDialog();
+                        gotoTakeText();
+                    });
+                    holder.setOnClick(R.id.tv_pictures,view -> {
+                        cancelDialog();
+                        gotoTakePicture();
+                    });
                     holder.setOnClick(R.id.tv_cancel, view -> cancelDialog());
                 }
             }.fromBottom().fullWidth();
         }
         xxDialog.showDialog();
     }
+
+    private void gotoTakeText() {
+        Intent intent = new Intent(this,PostTextActivity.class);
+        startActivity(intent);
+
+    }
+
+    private void gotoTakePicture() {
+        rxPermissions.request(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
+                .subscribe(aBoolean -> {
+                    if (aBoolean) {
+                        CameraActivity.navToCameraOnlyVideoThenJump(MainActivity.this,
+                                Constants.VIDEO_PATH, Constants.IMAGE_PATH, PostVideoActivity.class);
+//                        startActivity(new Intent(MainActivity.this, PostVideoActivity.class));
+                    }
+                });
+    }
+
 
     private void gotoTakeVideo() {
         rxPermissions.request(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
