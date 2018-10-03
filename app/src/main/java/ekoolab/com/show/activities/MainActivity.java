@@ -17,6 +17,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomViewTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.luck.picture.lib.CameraActivity;
+import com.luck.picture.lib.PictureSelector;
+import com.luck.picture.lib.config.PictureConfig;
+import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.utils.AppManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -24,7 +27,9 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.dialogs.DialogViewHolder;
@@ -34,6 +39,7 @@ import ekoolab.com.show.fragments.subhomes.MomentFragment;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.DisplayUtils;
 import ekoolab.com.show.utils.EventBusMsg;
+import ekoolab.com.show.utils.ImageSeclctUtils;
 import ekoolab.com.show.utils.ListUtils;
 import ekoolab.com.show.utils.ToastUtils;
 import ekoolab.com.show.views.TabButton;
@@ -48,6 +54,7 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
     private XXDialog xxDialog = null;
     private GifImageView ivPlayGif;
     private LinkedList<String> animImages = new LinkedList<>();
+    private List<LocalMedia> localMedias = new ArrayList<>();
 //    private GifHandler gifHandler = null;
 
     @Override
@@ -120,8 +127,7 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
                 Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
                 .subscribe(aBoolean -> {
                     if (aBoolean) {
-                        Intent intent = new Intent(this,PostPictureActivity.class);
-                        startActivity(intent);
+                        ImageSeclctUtils.openBulm(MainActivity.this, localMedias);
                     }
                 });
     }
@@ -242,6 +248,21 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
         } else {
             ivPlayGif.setImageResource(0);
             ivPlayGif.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PictureConfig.CHOOSE_REQUEST) {
+            localMedias = PictureSelector.obtainMultipleResult(data);
+            Intent intent = new Intent(this,PostPictureActivity.class);
+            ArrayList<String> arrayList = new ArrayList<>();
+            for(int i=0;i<localMedias.size();i++){
+                arrayList.add(i,localMedias.get(i).getPath());
+            }
+            intent.putStringArrayListExtra("url",arrayList);
+            startActivity(intent);
         }
     }
 }

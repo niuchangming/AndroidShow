@@ -19,7 +19,7 @@
     <EditText
         android:id="@+id/et_content"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="100dp"
         android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp"
         android:background="@color/transparent"
@@ -30,11 +30,19 @@
         android:textColorHint="@color/black"
         app:layout_constraintTop_toBottomOf="@id/space" />
 
+    <com.luck.picture.lib.PictureSelectorView
+        android:id="@+id/psv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/et_content" >
+
+    </com.luck.picture.lib.PictureSelectorView>
+
     <View
         android:layout_width="fill_parent"
         android:layout_height="1px"
         android:background="@color/text_color_gray"
-        app:layout_constraintTop_toBottomOf="@id/et_content" />
+        app:layout_constraintTop_toBottomOf="@id/psv" />
 
     <RelativeLayout
         android:id="@+id/rl_permission"
@@ -42,14 +50,14 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/et_content">
+        app:layout_constraintTop_toBottomOf="@id/psv">
 
         <TextView
             android:id="@+id/tv_permission_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableLeft="@mipmap/unlock"
-            android:gravity="center"
+            android:layout_centerVertical="true"
             android:text="@string/permission"
             android:textColor="@color/black"
             android:textSize="16sp"
