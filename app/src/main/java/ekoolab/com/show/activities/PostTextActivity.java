@@ -1,6 +1,8 @@
 package ekoolab.com.show.activities;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -16,8 +18,10 @@ import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
 import ekoolab.com.show.beans.TextPicture;
+import ekoolab.com.show.fragments.subhomes.MomentFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
+import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.views.EasyPopup;
 import ekoolab.com.show.views.HorizontalGravity;
 
@@ -49,6 +53,7 @@ public class PostTextActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void postText() {
+        Utils.hideInput(et_content);
         tv_save.setVisibility(View.INVISIBLE);
         progressView.setVisibility(View.VISIBLE);
         progressView.start();
@@ -64,13 +69,8 @@ public class PostTextActivity extends BaseActivity implements View.OnClickListen
                 .subscribe(new NetworkSubscriber<TextPicture>() {
                     @Override
                     protected void onSuccess(TextPicture textPicture) {
-                        try {
-                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-                            PostTextActivity.this.finish();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(new Intent(MomentFragment.ACTION_REFRESH_DATA));
+                        PostTextActivity.this.finish();
                     }
 
                     @Override

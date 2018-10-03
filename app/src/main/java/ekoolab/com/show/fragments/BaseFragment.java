@@ -1,11 +1,15 @@
 package ekoolab.com.show.fragments;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +19,8 @@ import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.uber.autodispose.AutoDispose;
 import com.uber.autodispose.AutoDisposeConverter;
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider;
+
+import java.util.List;
 
 import ekoolab.com.show.utils.ViewHolder;
 
@@ -61,6 +67,8 @@ public abstract class BaseFragment extends Fragment {
             ft.commit();
         }
         rxPermissions = new RxPermissions(this);
+        //初始化广播
+        initBroadcastAction();
     }
 
     @Override
@@ -82,8 +90,9 @@ public abstract class BaseFragment extends Fragment {
 
         if (mRoot != null) {
             ViewGroup parent = (ViewGroup) mRoot.getParent();
-            if (parent != null)
+            if (parent != null) {
                 parent.removeView(mRoot);
+            }
         } else {
             mViewHolder = new ViewHolder(inflater, container, getLayoutId());
             mRoot = mViewHolder.getRootView();
@@ -122,7 +131,70 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        if (broadcastReceiver != null && mContext != null) {
+            //取消注册广播
+            mContext.unregisterReceiver(broadcastReceiver);
+        }
+        if (localBroadcastReceiver != null && mContext != null) {
+            LocalBroadcastManager.getInstance(mContext).unregisterReceiver(localBroadcastReceiver);
+        }
+        super.onDestroy();
+    }
+
     public <T> AutoDisposeConverter<T> autoDisposable() {
         return AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(this));
+    }
+
+    /**
+     * 子类添加的action
+     */
+    public List<String> getBroadcastAction() {
+        return null;
+    }
+
+    public List<String> getLocalBroadcastAction() {  //钩子函数
+        return null;
+    }
+
+    public void dealWithBroadcastAction(Context context, Intent intent) {
+    }
+
+
+    // 处理系统发出的广播
+    private BroadcastReceiver broadcastReceiver = null, localBroadcastReceiver = null;
+
+    //注册广播
+    private void initBroadcastAction() {
+        List<String> broadcastAction = getBroadcastAction();
+        if (broadcastAction != null && broadcastAction.size() > 0) {
+            broadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    dealWithBroadcastAction(context, intent);
+                }
+            };
+            IntentFilter intentFilter = new IntentFilter();
+            for (String action : broadcastAction) {
+                intentFilter.addAction(action);
+            }
+            mContext.registerReceiver(broadcastReceiver, intentFilter);
+        }
+
+        List<String> localBroadcastAction = getLocalBroadcastAction();
+        if (localBroadcastAction != null && !localBroadcastAction.isEmpty()) {
+            localBroadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    dealWithBroadcastAction(context, intent);
+                }
+            };
+            IntentFilter intentFilter = new IntentFilter();
+            for (String action : localBroadcastAction) {
+                intentFilter.addAction(action);
+            }
+            LocalBroadcastManager.getInstance(mContext).registerReceiver(localBroadcastReceiver, intentFilter);
+        }
     }
 }

@@ -3,22 +3,17 @@ package ekoolab.com.show.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
-import com.luck.picture.lib.CameraActivity;
 import com.luck.picture.lib.PictureSelectorView;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.entity.LocalMedia;
-import com.luck.picture.lib.utils.AppManager;
 import com.rey.material.widget.ProgressView;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -30,23 +25,24 @@ import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
 import ekoolab.com.show.beans.TextPicture;
+import ekoolab.com.show.fragments.subhomes.MomentFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.DisplayUtils;
-import ekoolab.com.show.utils.EventBusMsg;
-import ekoolab.com.show.utils.ImageSeclctUtils;
 import ekoolab.com.show.utils.ToastUtils;
+import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.views.EasyPopup;
 import ekoolab.com.show.views.HorizontalGravity;
 
-public class PostPictureActivity extends BaseActivity implements View.OnClickListener{
+public class PostPictureActivity extends BaseActivity implements View.OnClickListener {
 
-    private TextView tv_name,tv_cancel,tv_save,tv_permission;
+    private TextView tv_name, tv_cancel, tv_save, tv_permission;
     private EditText et_content;
     private EasyPopup easyPopup;
     private PictureSelectorView pictureSelectorView;
     List<LocalMedia> arrayList = new ArrayList<>();
     private ProgressView progressView;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_post_picture;
@@ -67,9 +63,10 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
         tv_save.setOnClickListener(this);
         tv_permission.setOnClickListener(this);
         pictureSelectorView.setOutputCameraPath(Constants.IMAGE_PATH);
-        pictureSelectorView.initData(this, 3, 9, DisplayUtils.getScreenWidth() - DisplayUtils.dip2px(30),() -> pictureSelectorView.getOnAddPicClickListener().onAddPicClick());
+        pictureSelectorView.initData(this, 3, 9, DisplayUtils.getScreenWidth() - DisplayUtils.dip2px(30), () -> pictureSelectorView.getOnAddPicClickListener().onAddPicClick());
         pictureSelectorView.setDataForPicSelectView(arrayList);
     }
+
     @Override
     protected void initData() {
         super.initData();
@@ -78,14 +75,13 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.tv_cancel:
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
                 PostPictureActivity.this.finish();
                 break;
             case R.id.tv_save:
-
                 postPicture();
                 break;
             case R.id.tv_permission:
@@ -122,12 +118,13 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void postPicture() {
+        Utils.hideInput(et_content);
         tv_save.setVisibility(View.INVISIBLE);
         progressView.setVisibility(View.VISIBLE);
         progressView.start();
         setViewClickable(false);
         List<File> files = new ArrayList<>();
-        for(int i=0;i<arrayList.size();i++){
+        for (int i = 0; i < arrayList.size(); i++) {
             files.add(new File(arrayList.get(i).getPath()));
         }
         HashMap<String, String> map = new HashMap<>(4);
@@ -135,25 +132,20 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
         map.put("type", "picture");
         map.put("permission", tv_permission.getText().toString().toLowerCase());
         map.put("token", AuthUtils.getInstance(PostPictureActivity.this).getApiToken());
-        ApiServer.baseUploadMoreFilesRequest(this, Constants.TextPost, map, "momentPhotos",files,
+        ApiServer.baseUploadMoreFilesRequest(this, Constants.TextPost, map, "momentPhotos", files,
                 new TypeToken<ResponseData<TextPicture>>() {
                 })
                 .subscribe(new NetworkSubscriber<TextPicture>() {
                     @Override
                     protected void onSuccess(TextPicture textPicture) {
-                        try {
-                            ToastUtils.showToast("Post Success");
-                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-                            PostPictureActivity.this.finish();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        ToastUtils.showToast("Post Success");
+                        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(new Intent(MomentFragment.ACTION_REFRESH_DATA));
+                        PostPictureActivity.this.finish();
                     }
 
                     @Override
                     protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
-                        System.out.println("===errorMsg==="+errorMsg);
+                        System.out.println("===errorMsg===" + errorMsg);
                         tv_save.setVisibility(View.VISIBLE);
                         setViewClickable(true);
                         progressView.setVisibility(View.GONE);

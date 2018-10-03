@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.FloatEvaluator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -36,6 +37,7 @@ import org.reactivestreams.Publisher;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -79,6 +81,7 @@ import me.shihao.library.XRecyclerView;
 
 public class MomentFragment extends BaseFragment {
     public static final long TIPS_LIVE_TIME = 3000;
+    public static final String ACTION_REFRESH_DATA = "ekoolab.com.show.fragments.subhomes.MomentFragment.refresh_data";
     private int pageIndex;
     private EmptyView mEmptyView;
     private XRecyclerView mRecyclerView;
@@ -639,5 +642,18 @@ public class MomentFragment extends BaseFragment {
             mHandler.removeMessages(i);
         }
         super.onDestroyView();
+    }
+
+    @Override
+    public void dealWithBroadcastAction(Context context, Intent intent) {
+        String action = intent.getAction();
+        if (ACTION_REFRESH_DATA.equals(action)) {
+            getMomentData(true);
+        }
+    }
+
+    @Override
+    public List<String> getLocalBroadcastAction() {
+        return Arrays.asList(ACTION_REFRESH_DATA);
     }
 }
