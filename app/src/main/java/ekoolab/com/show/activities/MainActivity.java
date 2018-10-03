@@ -20,7 +20,6 @@ import com.luck.picture.lib.CameraActivity;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.entity.LocalMedia;
-import com.luck.picture.lib.utils.AppManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -73,8 +72,7 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
         rxPermissions.request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .subscribe(aBoolean -> {
                     if (!aBoolean) {
-                        ToastUtils.showToast("Please open storage permission");
-                        AppManager.getInstance().AppExit(getApplicationContext());
+                        ToastUtils.showToast("Please open storage permission for better experience");
                     }
                 });
     }
