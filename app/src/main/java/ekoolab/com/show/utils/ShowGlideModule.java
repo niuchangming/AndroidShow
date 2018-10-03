@@ -28,12 +28,16 @@ public class ShowGlideModule extends AppGlideModule {
     public void applyOptions(Context context, GlideBuilder builder) {
         builder.setDefaultRequestOptions(new RequestOptions().format(DecodeFormat.PREFER_RGB_565).disallowHardwareConfig());
         //设置缓存目录
-        File cacheDir = new File(Constants.IMAGE_CACHE_PATH);
-        if (!cacheDir.exists()) {
-            cacheDir.mkdirs();
+        try {
+            File cacheDir = new File(Constants.IMAGE_CACHE_PATH);
+            if (!cacheDir.exists()) {
+                cacheDir.mkdirs();
+            }
+            DiskCache cache = DiskLruCacheWrapper.create(cacheDir, DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE);
+            builder.setDiskCache(() -> cache);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        DiskCache cache = DiskLruCacheWrapper.create(cacheDir, DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE);
-        builder.setDiskCache(() -> cache);
         //设置memory和Bitmap池的大小
         MemorySizeCalculator calculator = new MemorySizeCalculator.Builder(context).build();
         int defaultMemoryCacheSize = calculator.getMemoryCacheSize();

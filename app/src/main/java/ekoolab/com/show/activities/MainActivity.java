@@ -65,15 +65,14 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
     @Override
     protected void initViews() {
         super.initViews();
+        tabFragment = new TabFragment();
+        addFragment(R.id.bottom_bar, tabFragment);
+        tabFragment.setup(R.id.main_container, this);
+        ivPlayGif = findViewById(R.id.iv_play_gif);
+        ivPlayGif.getLayoutParams().height = DisplayUtils.getScreenWidth();
         rxPermissions.request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .subscribe(aBoolean -> {
-                    if (aBoolean) {
-                        tabFragment = new TabFragment();
-                        addFragment(R.id.bottom_bar, tabFragment);
-                        tabFragment.setup(R.id.main_container, this);
-                        ivPlayGif = findViewById(R.id.iv_play_gif);
-                        ivPlayGif.getLayoutParams().height = DisplayUtils.getScreenWidth();
-                    } else {
+                    if (!aBoolean) {
                         ToastUtils.showToast("Please open storage permission");
                         AppManager.getInstance().AppExit(getApplicationContext());
                     }
