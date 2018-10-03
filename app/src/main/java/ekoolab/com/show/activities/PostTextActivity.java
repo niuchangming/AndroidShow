@@ -60,8 +60,8 @@ public class PostTextActivity extends BaseActivity {
         HashMap<String,String> map = new HashMap<>(4);
         map.put("body", et_content.getText().toString());
         map.put("type", "text");
-        map.put("permission", "private");
-        map.put("token", AuthUtils.getInstance(this).getApiToken());
+        map.put("permission", "public");
+        map.put("token", AuthUtils.getInstance(PostTextActivity.this).getApiToken());
         ApiServer.basePostRequest(this, Constants.TextPost, map,
                 new TypeToken<ResponseData<TextPicture>>() {
                 })
@@ -77,6 +77,7 @@ public class PostTextActivity extends BaseActivity {
 
                     @Override
                     protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
+                        System.out.println("===errorMsg==="+errorMsg);
                         return super.dealHttpException(code, errorMsg, e);
                     }
                 });
