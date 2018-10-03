@@ -1,6 +1,8 @@
 package ekoolab.com.show.activities;
 
+import android.content.Context;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -88,6 +90,8 @@ public class PostTextActivity extends BaseActivity implements View.OnClickListen
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.tv_cancel:
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
                 PostTextActivity.this.finish();
                 break;
             case R.id.tv_save:
