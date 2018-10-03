@@ -152,9 +152,6 @@ public class PictureExternalPreviewActivity extends PictureBaseActivity implemen
                             .centerCrop()
                             .priority(Priority.HIGH)
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .placeholder(R.drawable.falseimg)
-                            .fallback(R.drawable.falseimg)
-                            .error(R.drawable.falseimg)
                             .override(960, 1280);
                     Glide.with(mContext)
                             .load(path)
@@ -194,9 +191,6 @@ public class PictureExternalPreviewActivity extends PictureBaseActivity implemen
                             .centerCrop()
                             .priority(Priority.HIGH)
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .placeholder(R.drawable.falseimg)
-                            .fallback(R.drawable.falseimg)
-                            .error(R.drawable.falseimg)
                             .override(960, 1280);
                     Glide.with(mContext)
                             .load(path)
