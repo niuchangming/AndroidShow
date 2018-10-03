@@ -7,33 +7,26 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+import com.rey.material.widget.ProgressView;
 
 import java.util.HashMap;
-import java.util.List;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
 import ekoolab.com.show.beans.TextPicture;
-import ekoolab.com.show.beans.Video;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
-import ekoolab.com.show.utils.EventBusMsg;
-import ekoolab.com.show.utils.ImageSeclctUtils;
-import ekoolab.com.show.utils.ListUtils;
 import ekoolab.com.show.views.EasyPopup;
 import ekoolab.com.show.views.HorizontalGravity;
 
-public class PostTextActivity extends BaseActivity implements View.OnClickListener{
+public class PostTextActivity extends BaseActivity implements View.OnClickListener {
 
-    private TextView tv_name,tv_cancel,tv_save,tv_permission;
+    private TextView tv_name, tv_cancel, tv_save, tv_permission;
     private EditText et_content;
     private EasyPopup easyPopup;
+    private ProgressView progressView;
 
     @Override
     protected int getLayoutId() {
@@ -47,6 +40,7 @@ public class PostTextActivity extends BaseActivity implements View.OnClickListen
         tv_cancel = findViewById(R.id.tv_cancel);
         tv_save = findViewById(R.id.tv_save);
         tv_permission = findViewById(R.id.tv_permission);
+        progressView = findViewById(R.id.progress_bar);
         et_content = findViewById(R.id.et_content);
         tv_name.setText(getResources().getString(R.string.moment));
         tv_cancel.setOnClickListener(this);
@@ -55,6 +49,10 @@ public class PostTextActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void postText() {
+        tv_save.setVisibility(View.INVISIBLE);
+        progressView.setVisibility(View.VISIBLE);
+        progressView.start();
+        setViewClickable(false);
         HashMap<String, String> map = new HashMap<>(4);
         map.put("body", et_content.getText().toString());
         map.put("type", "text");
@@ -67,7 +65,9 @@ public class PostTextActivity extends BaseActivity implements View.OnClickListen
                     @Override
                     protected void onSuccess(TextPicture textPicture) {
                         try {
-                        PostTextActivity.this.finish();
+                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+                            PostTextActivity.this.finish();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -75,9 +75,19 @@ public class PostTextActivity extends BaseActivity implements View.OnClickListen
 
                     @Override
                     protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
+                        tv_save.setVisibility(View.VISIBLE);
+                        setViewClickable(true);
+                        progressView.setVisibility(View.GONE);
+                        progressView.stop();
                         return super.dealHttpException(code, errorMsg, e);
                     }
                 });
+    }
+
+    private void setViewClickable(boolean clickable) {
+        et_content.setClickable(clickable);
+        et_content.setEnabled(clickable);
+        tv_permission.setClickable(clickable);
     }
 
     @Override
@@ -88,7 +98,7 @@ public class PostTextActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.tv_cancel:
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);

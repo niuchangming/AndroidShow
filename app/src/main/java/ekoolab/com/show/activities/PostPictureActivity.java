@@ -143,6 +143,8 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
                     protected void onSuccess(TextPicture textPicture) {
                         try {
                             ToastUtils.showToast("Post Success");
+                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
                             PostPictureActivity.this.finish();
                         } catch (Exception e) {
                             e.printStackTrace();
