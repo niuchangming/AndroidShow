@@ -31,6 +31,8 @@ public class Constants {
 
     public static final String GIFTLIST = HOST + "gift/getGifts";
 
+    public static final String TextPost = HOST + "moment/publish";
+
     public static final String ROOT_PATH = Environment.getExternalStorageDirectory().getAbsolutePath()
             + File.separator + "AndroidShow" + File.separator;
 
