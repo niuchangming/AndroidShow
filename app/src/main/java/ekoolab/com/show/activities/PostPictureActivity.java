@@ -18,6 +18,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -121,13 +122,16 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
         progressView.setVisibility(View.VISIBLE);
         progressView.start();
         setViewClickable(false);
-        HashMap<String, String> map = new HashMap<>(5);
+        List<File> files = new ArrayList<>();
+        for(int i=0;i<arrayList.size();i++){
+            files.add(new File(arrayList.get(i).getPath()));
+        }
+        HashMap<String, String> map = new HashMap<>(4);
         map.put("body", et_content.getText().toString());
-        map.put("momentPhotos", "picture");
         map.put("type", "picture");
         map.put("permission", tv_permission.getText().toString());
         map.put("token", AuthUtils.getInstance(PostPictureActivity.this).getApiToken());
-        ApiServer.baseUploadRequest(this, Constants.TextPost, map, null,
+        ApiServer.baseUploadMoreFilesRequest(this, Constants.TextPost, map, "momentPhotos",files,
                 new TypeToken<ResponseData<TextPicture>>() {
                 })
                 .subscribe(new NetworkSubscriber<TextPicture>() {
@@ -143,6 +147,7 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
 
                     @Override
                     protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
+                        System.out.println("===errorMsg==="+errorMsg);
                         tv_save.setVisibility(View.VISIBLE);
                         setViewClickable(true);
                         progressView.setVisibility(View.GONE);
