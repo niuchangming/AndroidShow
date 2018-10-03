@@ -367,7 +367,13 @@ public class MomentFragment extends BaseFragment {
                         curMoment.comments = new ArrayList<>(10);
                     }
                     if (curCommentBean != null) {
-                        int index = curMoment.comments.indexOf(curCommentBean);
+                        int index;
+                        if (ListUtils.isNotEmpty(curCommentBean.comments)) {
+                            Moment.CommentsBean lastBean = curCommentBean.comments.get(curCommentBean.comments.size() - 1);
+                            index = curMoment.comments.indexOf(lastBean);
+                        } else {
+                            index = curMoment.comments.indexOf(curCommentBean);
+                        }
                         curMoment.comments.add(index + 1, commentsBean);
                     } else {
                         curMoment.comments.add(commentsBean);
