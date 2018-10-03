@@ -86,7 +86,7 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
                 break;
             case R.id.tv_permission:
                 if (easyPopup == null) {
-                    View contentView = getLayoutInflater().inflate(R.layout.popup_post_permission, null);
+                    View contentView = getLayoutInflater().inflate(R.layout.popup_post_permission_moment, null);
                     TextView tvPublic = contentView.findViewById(R.id.tv_public);
                     TextView tvFriend = contentView.findViewById(R.id.tv_friend);
                     TextView tvPrivate = contentView.findViewById(R.id.tv_private);
@@ -129,7 +129,7 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
         HashMap<String, String> map = new HashMap<>(4);
         map.put("body", et_content.getText().toString());
         map.put("type", "picture");
-        map.put("permission", tv_permission.getText().toString());
+        map.put("permission", tv_permission.getText().toString().toLowerCase());
         map.put("token", AuthUtils.getInstance(PostPictureActivity.this).getApiToken());
         ApiServer.baseUploadMoreFilesRequest(this, Constants.TextPost, map, "momentPhotos",files,
                 new TypeToken<ResponseData<TextPicture>>() {

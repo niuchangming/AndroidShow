@@ -56,7 +56,7 @@ public class PostTextActivity extends BaseActivity implements View.OnClickListen
         HashMap<String, String> map = new HashMap<>(4);
         map.put("body", et_content.getText().toString());
         map.put("type", "text");
-        map.put("permission", tv_permission.getText().toString());
+        map.put("permission", tv_permission.getText().toString().toLowerCase());
         map.put("token", AuthUtils.getInstance(PostTextActivity.this).getApiToken());
         ApiServer.baseUploadRequest(this, Constants.TextPost, map, null,
                 new TypeToken<ResponseData<TextPicture>>() {
@@ -95,7 +95,7 @@ public class PostTextActivity extends BaseActivity implements View.OnClickListen
                 break;
             case R.id.tv_permission:
                 if (easyPopup == null) {
-                    View contentView = getLayoutInflater().inflate(R.layout.popup_post_permission, null);
+                    View contentView = getLayoutInflater().inflate(R.layout.popup_post_permission_moment, null);
                     TextView tvPublic = contentView.findViewById(R.id.tv_public);
                     TextView tvFriend = contentView.findViewById(R.id.tv_friend);
                     TextView tvPrivate = contentView.findViewById(R.id.tv_private);
