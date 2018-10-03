@@ -32,6 +32,7 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
     private EditText et_content;
     private EasyPopup easyPopup;
     private PictureSelectorView pictureSelectorView;
+    ArrayList<String> arrayList = new ArrayList<>();
     @Override
     protected int getLayoutId() {
         return R.layout.activity_post_picture;
@@ -50,14 +51,13 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
         tv_cancel.setOnClickListener(this);
         tv_save.setOnClickListener(this);
         tv_permission.setOnClickListener(this);
+        pictureSelectorView.setOutputCameraPath(Constants.IMAGE_PATH);
+        pictureSelectorView.initData(this,3,arrayList.size(),200);
     }
     @Override
     protected void initData() {
         super.initData();
-        ArrayList<String> arrayList = getIntent().getStringArrayListExtra("url");
-        pictureSelectorView.setOutputCameraPath(Constants.IMAGE_PATH);
-        pictureSelectorView.initData(this,3,arrayList.size(),200);
-
+        arrayList = getIntent().getStringArrayListExtra("url");
     }
 
     @Override
