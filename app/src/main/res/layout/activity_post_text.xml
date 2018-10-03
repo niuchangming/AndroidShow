@@ -19,57 +19,65 @@
     <EditText
         android:id="@+id/et_content"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:padding="10dp"
+        android:layout_height="150dp"
         android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp"
         android:background="@color/transparent"
         android:gravity="left|top"
         android:hint="@string/post_video_content_hint"
+        android:padding="10dp"
         android:textColor="@color/black"
         android:textColorHint="@color/black"
         app:layout_constraintTop_toBottomOf="@id/space" />
 
-
-    <Space
-        android:id="@+id/space_1"
-        android:layout_width="match_parent"
+    <View
+        android:layout_width="fill_parent"
         android:layout_height="1px"
+        android:background="@color/text_color_gray"
         app:layout_constraintTop_toBottomOf="@id/et_content" />
 
-    <TextView
-        android:id="@+id/tv_permission_label"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/rl_permission"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:drawableLeft="@mipmap/unlock"
+        android:layout_marginTop="10dp"
         android:gravity="center"
-        android:text="@string/permission"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        app:layout_constraintLeft_toLeftOf="@id/tv_at_friend"
-        app:layout_constraintTop_toBottomOf="@id/et_content" />
+        app:layout_constraintTop_toBottomOf="@id/et_content">
 
-    <TextView
-        android:id="@+id/tv_permission"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:drawableRight="@mipmap/right_arrow_icon"
-        android:gravity="right|center_vertical"
-        android:hint="public"
-        android:text="Public"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@id/tv_permission_label"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintLeft_toRightOf="@id/tv_permission_label"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tv_permission_label" />
+        <TextView
+            android:id="@+id/tv_permission_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@mipmap/unlock"
+            android:gravity="center_vertical"
+            android:layout_centerVertical="true"
+            android:text="@string/permission"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
 
-    <Space
-        android:id="@+id/space_2"
-        android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tv_permission"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:drawableRight="@mipmap/right_arrow_icon"
+            android:gravity="right|center_vertical"
+            android:hint="public"
+            android:text="Public"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/tv_permission_label"
+            app:layout_constraintLeft_toRightOf="@id/tv_permission_label"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_permission_label" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="fill_parent"
         android:layout_height="1px"
-        app:layout_constraintTop_toBottomOf="@id/et_content" />
+        android:layout_marginTop="10dp"
+        android:background="@color/text_color_gray"
+        app:layout_constraintTop_toBottomOf="@id/rl_permission" />
 
 </android.support.constraint.ConstraintLayout>
