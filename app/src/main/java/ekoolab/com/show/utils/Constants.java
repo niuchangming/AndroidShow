@@ -38,6 +38,7 @@ public class Constants {
 
     public static final String VIDEO_PATH = ROOT_PATH + "videos" + File.separator;
     public static final String IMAGE_PATH = ROOT_PATH + "images" + File.separator;
+    public static final String IMAGE_CACHE_PATH = ROOT_PATH + "imageCache" + File.separator;
 
     public static final int PAGE_SIZE = 20;
 

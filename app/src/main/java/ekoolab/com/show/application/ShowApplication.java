@@ -44,6 +44,7 @@ public class ShowApplication extends Application implements Thread.UncaughtExcep
         Fresco.initialize(this);
         FileUtils.createOrExistsDir(Constants.VIDEO_PATH);
         FileUtils.createOrExistsDir(Constants.IMAGE_PATH);
+        FileUtils.createOrExistsDir(Constants.IMAGE_CACHE_PATH);
         // 在使用 SDK 各组间之前初始化 context 信息，传入 ApplicationContext
         SDKInitializer.initialize(this);
         //自4.3.0起，百度地图SDK所有接口均支持百度坐标和国测局坐标，用此方法设置您使用的坐标类型.

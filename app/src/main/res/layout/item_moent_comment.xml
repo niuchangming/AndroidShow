@@ -3,10 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/grayColorBg"
-    android:paddingBottom="8dp"
+    android:paddingBottom="2dp"
     android:paddingLeft="4dp"
     android:paddingRight="4dp"
-    android:paddingTop="8dp">
+    android:paddingTop="2dp">
 
     <TextView
         android:id="@+id/tv_comment"
