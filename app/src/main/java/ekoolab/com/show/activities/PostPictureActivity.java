@@ -7,9 +7,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
+import com.luck.picture.lib.CameraActivity;
 import com.luck.picture.lib.PictureSelectorView;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.entity.LocalMedia;
+import com.luck.picture.lib.utils.AppManager;
+import com.rey.material.widget.ProgressView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -29,6 +32,7 @@ import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.DisplayUtils;
 import ekoolab.com.show.utils.EventBusMsg;
 import ekoolab.com.show.utils.ImageSeclctUtils;
+import ekoolab.com.show.utils.ToastUtils;
 import ekoolab.com.show.views.EasyPopup;
 import ekoolab.com.show.views.HorizontalGravity;
 
@@ -39,6 +43,7 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
     private EasyPopup easyPopup;
     private PictureSelectorView pictureSelectorView;
     List<LocalMedia> arrayList = new ArrayList<>();
+    private ProgressView progressView;
     @Override
     protected int getLayoutId() {
         return R.layout.activity_post_picture;
@@ -51,6 +56,7 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
         tv_cancel = findViewById(R.id.tv_cancel);
         tv_save = findViewById(R.id.tv_save);
         tv_permission = findViewById(R.id.tv_permission);
+        progressView = findViewById(R.id.progress_bar);
         et_content = findViewById(R.id.et_content);
         tv_name.setText(getResources().getString(R.string.moment));
         pictureSelectorView = findViewById(R.id.psv);
@@ -74,6 +80,7 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
                 PostPictureActivity.this.finish();
                 break;
             case R.id.tv_save:
+
                 postPicture();
                 break;
             case R.id.tv_permission:
@@ -103,7 +110,17 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
         }
     }
 
+    private void setViewClickable(boolean clickable) {
+        et_content.setClickable(clickable);
+        et_content.setEnabled(clickable);
+        tv_permission.setClickable(clickable);
+    }
+
     private void postPicture() {
+        tv_save.setVisibility(View.INVISIBLE);
+        progressView.setVisibility(View.VISIBLE);
+        progressView.start();
+        setViewClickable(false);
         HashMap<String, String> map = new HashMap<>(5);
         map.put("body", et_content.getText().toString());
         map.put("momentPhotos", "picture");
@@ -117,6 +134,7 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
                     @Override
                     protected void onSuccess(TextPicture textPicture) {
                         try {
+                            ToastUtils.showToast("Post Success");
                             PostPictureActivity.this.finish();
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -125,6 +143,10 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
 
                     @Override
                     protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
+                        tv_save.setVisibility(View.VISIBLE);
+                        setViewClickable(true);
+                        progressView.setVisibility(View.GONE);
+                        progressView.stop();
                         return super.dealHttpException(code, errorMsg, e);
                     }
                 });
