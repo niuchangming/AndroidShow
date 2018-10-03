@@ -81,8 +81,6 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
     @Override
     protected void onStart() {
         super.onStart();
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
         EventBus.getDefault().register(this);
     }
 
