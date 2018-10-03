@@ -1,11 +1,15 @@
 package ekoolab.com.show.activities;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
 import com.luck.picture.lib.PictureSelectorView;
+import com.luck.picture.lib.config.PictureConfig;
+import com.luck.picture.lib.entity.LocalMedia;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -13,6 +17,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.api.ApiServer;
@@ -21,6 +26,7 @@ import ekoolab.com.show.api.ResponseData;
 import ekoolab.com.show.beans.TextPicture;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
+import ekoolab.com.show.utils.DisplayUtils;
 import ekoolab.com.show.utils.EventBusMsg;
 import ekoolab.com.show.utils.ImageSeclctUtils;
 import ekoolab.com.show.views.EasyPopup;
@@ -32,7 +38,7 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
     private EditText et_content;
     private EasyPopup easyPopup;
     private PictureSelectorView pictureSelectorView;
-    ArrayList<String> arrayList = new ArrayList<>();
+    List<LocalMedia> arrayList = new ArrayList<>();
     @Override
     protected int getLayoutId() {
         return R.layout.activity_post_picture;
@@ -52,12 +58,13 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
         tv_save.setOnClickListener(this);
         tv_permission.setOnClickListener(this);
         pictureSelectorView.setOutputCameraPath(Constants.IMAGE_PATH);
-        pictureSelectorView.initData(this,3,arrayList.size(),200);
+        pictureSelectorView.initData(this, 3, 9, DisplayUtils.getScreenWidth() - DisplayUtils.dip2px(30),() -> pictureSelectorView.getOnAddPicClickListener().onAddPicClick());
+        pictureSelectorView.setDataForPicSelectView(arrayList);
     }
     @Override
     protected void initData() {
         super.initData();
-        arrayList = getIntent().getStringArrayListExtra("url");
+        arrayList = getIntent().getParcelableArrayListExtra("url");
     }
 
     @Override
@@ -121,5 +128,25 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
                         return super.dealHttpException(code, errorMsg, e);
                     }
                 });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        pictureSelectorView.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
+                case PictureConfig.CHOOSE_REQUEST:
+                    // 图片选择结果回调
+                    arrayList = pictureSelectorView.getSelectList();
+                    // 例如 LocalMedia 里面返回三种path
+                    // 1.media.getPath(); 为原图path
+                    // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
+                    // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
+                    // 如果裁剪并压缩了，已取压缩路径为准，因为是先裁剪后压缩的
+                default:
+                    break;
+            }
+        }
     }
 }
