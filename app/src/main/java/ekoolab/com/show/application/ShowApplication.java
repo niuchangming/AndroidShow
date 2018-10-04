@@ -30,6 +30,8 @@ public class ShowApplication extends Application implements Thread.UncaughtExcep
 
     public static Application application;
 
+    public static String TEMP_FILE;
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -40,6 +42,7 @@ public class ShowApplication extends Application implements Thread.UncaughtExcep
     public void onCreate() {
         super.onCreate();
         application = this;
+        TEMP_FILE = getCacheDir().getAbsolutePath() + "/temp.txt";
         Thread.setDefaultUncaughtExceptionHandler(this);
 
         Context context = getApplicationContext();
@@ -59,6 +62,7 @@ public class ShowApplication extends Application implements Thread.UncaughtExcep
             FileUtils.createOrExistsDir(Constants.VIDEO_PATH);
             FileUtils.createOrExistsDir(Constants.IMAGE_PATH);
             FileUtils.createOrExistsDir(Constants.IMAGE_CACHE_PATH);
+            FileUtils.createOrExistsFile(TEMP_FILE);
             // 在使用 SDK 各组间之前初始化 context 信息，传入 ApplicationContext
             SDKInitializer.initialize(this);
             //自4.3.0起，百度地图SDK所有接口均支持百度坐标和国测局坐标，用此方法设置您使用的坐标类型.

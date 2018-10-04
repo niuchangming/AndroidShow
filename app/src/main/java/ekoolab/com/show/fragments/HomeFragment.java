@@ -101,6 +101,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener{
 
         viewPager = holder.get(R.id.viewpager);
         pagerAdapter =  new HomeAdapter(getFragmentManager(), fragments);
+        viewPager.setOffscreenPageLimit(3);
         viewPager.setAdapter(pagerAdapter);
 
         ShapeDrawable lineDrawable = new ShapeDrawable(new BorderShape(new RectF(0, 0, 0, 1)));

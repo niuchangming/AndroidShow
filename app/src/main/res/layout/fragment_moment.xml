@@ -35,10 +35,23 @@
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="match_parent">-->
 
-        <me.shihao.library.XRecyclerView
-            android:id="@+id/recycler_view"
+        <com.yan.pullrefreshlayout.PullRefreshLayout
+            android:id="@+id/refreshLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            app:prl_targetId="@+id/recyclerView">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="never" />
+        </com.yan.pullrefreshlayout.PullRefreshLayout>
+
+        <!--<me.shihao.library.XRecyclerView-->
+            <!--android:id="@+id/recycler_view"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent" />-->
         <!--</android.support.v4.widget.SwipeRefreshLayout>-->
     </com.santalu.emptyview.EmptyView>
 

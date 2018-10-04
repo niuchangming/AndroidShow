@@ -10,7 +10,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.SimpleItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.ArrayMap;
@@ -32,6 +33,8 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.reflect.TypeToken;
 import com.luck.picture.lib.utils.ThreadExecutorManager;
 import com.santalu.emptyview.EmptyView;
+import com.yan.pullrefreshlayout.PullRefreshLayout;
+import com.yan.pullrefreshlayout.ShowGravity;
 
 import org.reactivestreams.Publisher;
 
@@ -72,19 +75,20 @@ import ekoolab.com.show.views.nestlistview.NestFullListView;
 import ekoolab.com.show.views.nestlistview.NestFullListViewAdapter;
 import ekoolab.com.show.views.nestlistview.NestFullViewHolder;
 import ekoolab.com.show.views.ninegridview.NewNineGridlayout;
+import ekoolab.com.show.views.pullrefresh.MaterialHeader;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
-import me.shihao.library.XRecyclerView;
 
-public class MomentFragment extends BaseFragment {
+public class MomentFragment extends BaseFragment implements PullRefreshLayout.OnRefreshListener {
     public static final long TIPS_LIVE_TIME = 3000;
     public static final String ACTION_REFRESH_DATA = "ekoolab.com.show.fragments.subhomes.MomentFragment.refresh_data";
     private int pageIndex;
     private EmptyView mEmptyView;
-    private XRecyclerView mRecyclerView;
+    private PullRefreshLayout refreshLayout;
+    private RecyclerView recyclerView;
     private LinearLayout llTipsContainer;
     private BaseQuickAdapter<Moment, BaseViewHolder> mAdapter = null;
     private List<Moment> moments = new ArrayList<>(20);
@@ -137,32 +141,46 @@ public class MomentFragment extends BaseFragment {
     @Override
     protected void initViews(ViewHolder holder, View root) {
         mEmptyView = holder.get(R.id.empty_view);
-        mRecyclerView = holder.get(R.id.recycler_view);
-        mRecyclerView.verticalLayoutManager();
-        mRecyclerView.getRecyclerView().addItemDecoration(new LinearItemDecoration(mContext,
+        recyclerView = holder.get(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        recyclerView.addItemDecoration(new LinearItemDecoration(mContext,
                 1, R.color.gray_very_light, DisplayUtils.dip2px(15)));
-        ((SimpleItemAnimator) mRecyclerView.getRecyclerView().getItemAnimator()).setSupportsChangeAnimations(false);
+        refreshLayout = holder.get(R.id.refreshLayout);
+        initRefreshLayout();
         initAdapter();
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setOnRefreshListener(new XRecyclerView.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getMomentData(true);
-            }
-
-            @Override
-            public void onLoadMore() {
-                getMomentData(false);
-            }
-        });
+        recyclerView.setAdapter(mAdapter);
         llTipsContainer = holder.get(R.id.ll_tips_container);
+    }
+
+    private void initRefreshLayout() {
+        refreshLayout.setTwinkEnable(true);
+        refreshLayout.setLoadMoreEnable(true);
+        refreshLayout.setAutoLoadingEnable(true);
+
+        refreshLayout.setRefreshTriggerDistance(200);
+        refreshLayout.setLoadTriggerDistance(200);
+        refreshLayout.setPullDownMaxDistance(300);
+        refreshLayout.setPullUpMaxDistance(300);
+        refreshLayout.setHeaderView(new MaterialHeader(getContext().getApplicationContext(), refreshLayout, 500F / 300));// 触发距离/拖动范围
+        refreshLayout.setHeaderShowGravity(ShowGravity.FOLLOW);
+        refreshLayout.setHeaderFront(true);
+        refreshLayout.setFooterView(new MaterialHeader(getContext().getApplicationContext(), refreshLayout, 500F / 300));
+        refreshLayout.setFooterShowGravity(ShowGravity.FOLLOW);
+        refreshLayout.setFooterFront(true);
+        refreshLayout.setMoveWithContent(false);
+        refreshLayout.setOnRefreshListener(this);
+    }
+
+    @Override
+    public void lazyLoadData(View view) {
+        mEmptyView.showLoading();
+        getMomentData(true);
+        getGifts();
     }
 
     @Override
     protected void initData() {
-        mEmptyView.showLoading();
-        getMomentData(true);
-        getGifts();
+
     }
 
     private void initAdapter() {
@@ -309,8 +327,8 @@ public class MomentFragment extends BaseFragment {
                 .compose(RxUtils.rxThreadHelper())
                 .flatMap((Function<HashMap<String, String>, Publisher<ResponseData<String>>>)
                         map -> ApiServer.basePostRequestNoDisposable(MomentFragment.this,
-                        Constants.MOMENT_SENDGIFT, map, new TypeToken<ResponseData<String>>() {
-                        }))
+                                Constants.MOMENT_SENDGIFT, map, new TypeToken<ResponseData<String>>() {
+                                }))
                 .subscribe(new NetworkSubscriber<String>() {
                     @Override
                     protected void onSuccess(String s) {
@@ -465,14 +483,15 @@ public class MomentFragment extends BaseFragment {
                             }
                             mEmptyView.showContent();
                             if (momentList.size() < Constants.PAGE_SIZE) {
-                                mRecyclerView.loadMoreNoData();
+                                refreshLayout.setLoadMoreEnable(false);
                             } else {
                                 pageIndex++;
                             }
                         } else {
                             mEmptyView.showEmpty();
                         }
-                        mRecyclerView.refreshComlete();
+                        refreshLayout.refreshComplete();
+                        refreshLayout.loadMoreComplete();
                     }
 
                     @Override
@@ -480,7 +499,8 @@ public class MomentFragment extends BaseFragment {
                         if (isRefresh) {
                             mEmptyView.error(e).show();
                         }
-                        mRecyclerView.refreshComlete();
+                        refreshLayout.refreshComplete();
+                        refreshLayout.loadMoreComplete();
                         return super.dealHttpException(code, errorMsg, e);
                     }
                 });
@@ -535,6 +555,16 @@ public class MomentFragment extends BaseFragment {
                         }
                     }
                 });
+    }
+
+    @Override
+    public void onRefresh() {
+        getMomentData(true);
+    }
+
+    @Override
+    public void onLoading() {
+        getMomentData(false);
     }
 
     public interface OnInteractivePlayGifListener {

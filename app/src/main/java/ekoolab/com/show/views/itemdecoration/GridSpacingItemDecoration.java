@@ -1,4 +1,4 @@
-package ekoolab.com.show.views;
+package ekoolab.com.show.views.itemdecoration;
 
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
