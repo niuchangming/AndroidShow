@@ -114,7 +114,7 @@ public class CameraActivity extends AppCompatActivity {
                 }
                 String path = FileUtil.saveBitmap(dir, bitmap);
                 Intent intent = new Intent();
-                intent.putExtra(EXTRA_VIDEO_PATH, path);
+                intent.putExtra(EXTRA_IMAGE_PATH, path);
                 setResult(PictureSelectorActivity.RESULT_OK, intent);
                 finish();
             }

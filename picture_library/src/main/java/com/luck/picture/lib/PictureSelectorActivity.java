@@ -978,7 +978,7 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
 
     private void dealWithCustomCamera(Intent data, List<LocalMedia> medias) {
         LocalMedia media;
-        String path = data.getStringExtra("path");
+        String path = data.getStringExtra(CameraActivity.EXTRA_IMAGE_PATH);
         final File file = new File(path);
         sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
         String toType = PictureMimeType.fileToType(file);
