@@ -2,7 +2,6 @@ package ekoolab.com.show.activities;
 
 import android.Manifest;
 import android.animation.ValueAnimator;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -11,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 
 import com.army.gifdemo.GifHandler;
@@ -22,6 +20,7 @@ import com.luck.picture.lib.CameraActivity;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.entity.LocalMedia;
+import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -49,7 +48,7 @@ import pl.droidsonroids.gif.GifImageView;
 
 public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSelectedListener,
         MomentFragment.OnInteractivePlayGifListener, GifHandler.OnGifPlayFinishListener, AnimationListener {
-
+    public static final String BUNDLE_ERROR_MSG = "bundle_error_msg";
     private TabFragment tabFragment;
     private XXDialog xxDialog = null;
     private GifImageView ivPlayGif;
@@ -76,6 +75,9 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
                         ToastUtils.showToast("Please open storage permission for better experience");
                     }
                 });
+        if (getIntent().hasExtra(BUNDLE_ERROR_MSG)) {
+            Logger.e(getIntent().getStringExtra(BUNDLE_ERROR_MSG));
+        }
     }
 
     @Override
