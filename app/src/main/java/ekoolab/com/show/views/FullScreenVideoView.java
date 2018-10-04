@@ -2,6 +2,8 @@ package ekoolab.com.show.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.view.WindowManager;
 import android.widget.VideoView;
 
 public class FullScreenVideoView extends VideoView {
@@ -23,6 +25,12 @@ public class FullScreenVideoView extends VideoView {
         int width = getDefaultSize(0, widthMeasureSpec);
         int height = getDefaultSize(0, heightMeasureSpec);
         setMeasuredDimension(width, height);
-    }
 
+//        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+//        DisplayMetrics metrics = new DisplayMetrics();
+//        wm.getDefaultDisplay().getMetrics(metrics);
+//        int width = metrics.widthPixels;  //以要素为单位
+//        int height = metrics.heightPixels;
+//        setMeasuredDimension(width, height);
+    }
 }

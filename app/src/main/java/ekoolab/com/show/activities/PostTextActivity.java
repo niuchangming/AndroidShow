@@ -6,6 +6,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
@@ -21,6 +22,7 @@ import ekoolab.com.show.beans.TextPicture;
 import ekoolab.com.show.fragments.subhomes.MomentFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
+import ekoolab.com.show.utils.ToastUtils;
 import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.views.EasyPopup;
 import ekoolab.com.show.views.HorizontalGravity;
@@ -31,6 +33,7 @@ public class PostTextActivity extends BaseActivity implements View.OnClickListen
     private EditText et_content;
     private EasyPopup easyPopup;
     private ProgressView progressView;
+    private ImageView iv_img;
 
     @Override
     protected int getLayoutId() {
@@ -45,11 +48,13 @@ public class PostTextActivity extends BaseActivity implements View.OnClickListen
         tv_save = findViewById(R.id.tv_save);
         tv_permission = findViewById(R.id.tv_permission);
         progressView = findViewById(R.id.progress_bar);
-        et_content = findViewById(R.id.et_content);
+        et_content= findViewById(R.id.et_content);
         tv_name.setText(getResources().getString(R.string.moment));
         tv_cancel.setOnClickListener(this);
         tv_save.setOnClickListener(this);
         tv_permission.setOnClickListener(this);
+        iv_img = findViewById(R.id.iv_img);
+        iv_img.setColorFilter(R.color.black);
     }
 
     private void postText() {
@@ -69,12 +74,14 @@ public class PostTextActivity extends BaseActivity implements View.OnClickListen
                 .subscribe(new NetworkSubscriber<TextPicture>() {
                     @Override
                     protected void onSuccess(TextPicture textPicture) {
+                        ToastUtils.showToast("Post Success");
                         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(new Intent(MomentFragment.ACTION_REFRESH_DATA));
                         PostTextActivity.this.finish();
                     }
 
                     @Override
                     protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
+                        System.out.println("===errorMsg==="+errorMsg);
                         tv_save.setVisibility(View.VISIBLE);
                         setViewClickable(true);
                         progressView.setVisibility(View.GONE);

@@ -5,12 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ekoolab.com.show.views.FullScreenVideoView
+    <!--<ekoolab.com.show.views.FullScreenVideoView-->
+        <!--android:id="@+id/video_view"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:clickable="false"-->
+        <!--android:focusable="false" />-->
+
+    <VideoView
+        android:layout_marginTop="1dp"
         android:id="@+id/video_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:scaleType="fitXY"
         android:clickable="false"
-        android:focusable="false" />
+        android:focusable="false"/>
+
 
     <!--<com.juziwl.ijkplayerlib.media.IjkVideoView-->
         <!--android:id="@+id/video_view"-->

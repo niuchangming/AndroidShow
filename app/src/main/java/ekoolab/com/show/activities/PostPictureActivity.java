@@ -7,6 +7,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
@@ -42,6 +43,7 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
     private PictureSelectorView pictureSelectorView;
     List<LocalMedia> arrayList = new ArrayList<>();
     private ProgressView progressView;
+    private ImageView iv_img;
 
     @Override
     protected int getLayoutId() {
@@ -65,6 +67,8 @@ public class PostPictureActivity extends BaseActivity implements View.OnClickLis
         pictureSelectorView.setOutputCameraPath(Constants.IMAGE_PATH);
         pictureSelectorView.initData(this, 3, 9, DisplayUtils.getScreenWidth() - DisplayUtils.dip2px(30), () -> pictureSelectorView.getOnAddPicClickListener().onAddPicClick());
         pictureSelectorView.setDataForPicSelectView(arrayList);
+        iv_img = findViewById(R.id.iv_img);
+        iv_img.setColorFilter(R.color.black);
     }
 
     @Override

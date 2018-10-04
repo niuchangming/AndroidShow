@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import ekoolab.com.show.R;
 import ekoolab.com.show.adapters.VideoPlayerAdapter;
 import ekoolab.com.show.beans.Video;
+import ekoolab.com.show.views.FixedTextureVideoView;
+import ekoolab.com.show.views.FullScreenVideoView;
 
 public class VideoPlayerActivity extends BaseActivity {
     private final String TAG = "VideoPlayerActivity";
@@ -122,12 +124,22 @@ public class VideoPlayerActivity extends BaseActivity {
             @Override
             public void onPrepared(MediaPlayer mp) {
                 Log.v(TAG, "onPrepared");
-
+                if(videoView.getWidth()<videoView.getHeight()){
+                    mp.setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
+                }else{
+                    mp.setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT);
+                }
+//                videoView.setFixedSize(videoView.getWidth(), videoView.getHeight());
+                System.out.println("==videoView.getWidth()==" + videoView.getWidth());
+                System.out.println("==videoView.getHeight()==" + videoView.getHeight());
+//                videoView.invalidate();
             }
         });
+
         videoView.requestFocus();
         videoView.start();
     }
+
 
     private void releaseVideo(int index) {
         View itemView = recyclerView.getChildAt(index);
