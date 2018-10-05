@@ -22,7 +22,7 @@ public class ImageLoader {
 
     public static void displayImage(String imageUrl, ImageView imageView) {
         if (TextUtils.isEmpty(imageUrl)) {
-            imageView.setImageResource(R.mipmap.ic_launcher);
+            imageView.setImageResource(ERROR_PLACEHOLDER);
             return;
         }
         Glide.with(imageView.getContext())
