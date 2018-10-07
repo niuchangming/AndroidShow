@@ -160,15 +160,10 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
     }
 
     @Override
-    public void lazyLoadData(View view) {
+    protected void initData() {
         mEmptyView.showLoading();
         getMomentData(true);
         getGifts();
-    }
-
-    @Override
-    protected void initData() {
-
     }
 
     private void initAdapter() {
