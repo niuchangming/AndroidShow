@@ -24,7 +24,7 @@ import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.JsonParser.JSONParser.ParserListener;
 import ekoolab.com.show.utils.ListUtils;
 import ekoolab.com.show.utils.ViewHolder;
-import ekoolab.com.show.views.GridSpacingItemDecoration;
+import ekoolab.com.show.views.itemdecoration.GridSpacingItemDecoration;
 import me.shihao.library.XRecyclerView;
 
 public class VideoFragment extends BaseFragment implements ParserListener, VideoAdapter.OnItemClickListener {

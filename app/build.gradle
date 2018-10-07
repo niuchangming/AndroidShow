@@ -75,4 +75,6 @@ dependencies {
     implementation 'com.alibaba:fastjson:1.1.70.android'
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.15'
     implementation 'com.tencent.bugly:crashreport:2.6.6'
+    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-14'
+    implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-14'
 }

@@ -14,6 +14,14 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.luck.picture.lib.utils.AppManager;
 import com.orhanobut.logger.LogLevel;
 import com.orhanobut.logger.Logger;
+import com.scwang.smartrefresh.header.MaterialHeader;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.DefaultRefreshFooterCreator;
+import com.scwang.smartrefresh.layout.api.DefaultRefreshHeaderCreator;
+import com.scwang.smartrefresh.layout.api.RefreshFooter;
+import com.scwang.smartrefresh.layout.api.RefreshHeader;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.BufferedReader;
@@ -30,6 +38,29 @@ public class ShowApplication extends Application implements Thread.UncaughtExcep
 
     public static Application application;
 
+    public static String TEMP_FILE;
+
+    static {
+        //设置全局的Header构建器
+        SmartRefreshLayout.setDefaultRefreshHeaderCreator(new DefaultRefreshHeaderCreator() {
+            @Override
+            public RefreshHeader createRefreshHeader(Context context, RefreshLayout layout) {
+                //全局设置主题颜色
+//                layout.setPrimaryColorsId(R.color.colorPrimary, android.R.color.white);
+                //.setTimeFormat(new DynamicTimeFormat("更新于 %s"));//指定为经典Header，默认是 贝塞尔雷达Header
+                return new MaterialHeader(context);
+            }
+        });
+        //设置全局的Footer构建器
+        SmartRefreshLayout.setDefaultRefreshFooterCreator(new DefaultRefreshFooterCreator() {
+            @Override
+            public RefreshFooter createRefreshFooter(Context context, RefreshLayout layout) {
+                //指定为经典Footer，默认是 BallPulseFooter
+                return new ClassicsFooter(context).setDrawableSize(20);
+            }
+        });
+    }
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -40,6 +71,7 @@ public class ShowApplication extends Application implements Thread.UncaughtExcep
     public void onCreate() {
         super.onCreate();
         application = this;
+        TEMP_FILE = getCacheDir().getAbsolutePath() + "/temp.txt";
         Thread.setDefaultUncaughtExceptionHandler(this);
 
         Context context = getApplicationContext();
@@ -59,6 +91,7 @@ public class ShowApplication extends Application implements Thread.UncaughtExcep
             FileUtils.createOrExistsDir(Constants.VIDEO_PATH);
             FileUtils.createOrExistsDir(Constants.IMAGE_PATH);
             FileUtils.createOrExistsDir(Constants.IMAGE_CACHE_PATH);
+            FileUtils.createOrExistsFile(TEMP_FILE);
             // 在使用 SDK 各组间之前初始化 context 信息，传入 ApplicationContext
             SDKInitializer.initialize(this);
             //自4.3.0起，百度地图SDK所有接口均支持百度坐标和国测局坐标，用此方法设置您使用的坐标类型.

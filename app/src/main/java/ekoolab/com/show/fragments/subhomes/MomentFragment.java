@@ -9,8 +9,10 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.SimpleItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.ArrayMap;
@@ -26,12 +28,14 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
-import com.bumptech.glide.request.RequestOptions;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.reflect.TypeToken;
 import com.luck.picture.lib.utils.ThreadExecutorManager;
 import com.santalu.emptyview.EmptyView;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 
 import org.reactivestreams.Publisher;
 
@@ -60,6 +64,7 @@ import ekoolab.com.show.fragments.BaseFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.DisplayUtils;
+import ekoolab.com.show.utils.ImageLoader;
 import ekoolab.com.show.utils.ListUtils;
 import ekoolab.com.show.utils.RxUtils;
 import ekoolab.com.show.utils.TimeUtils;
@@ -77,14 +82,14 @@ import io.reactivex.Flowable;
 import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
-import me.shihao.library.XRecyclerView;
 
-public class MomentFragment extends BaseFragment {
+public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreListener {
     public static final long TIPS_LIVE_TIME = 3000;
     public static final String ACTION_REFRESH_DATA = "ekoolab.com.show.fragments.subhomes.MomentFragment.refresh_data";
     private int pageIndex;
     private EmptyView mEmptyView;
-    private XRecyclerView mRecyclerView;
+    private SmartRefreshLayout refreshLayout;
+    private RecyclerView recyclerView;
     private LinearLayout llTipsContainer;
     private BaseQuickAdapter<Moment, BaseViewHolder> mAdapter = null;
     private List<Moment> moments = new ArrayList<>(20);
@@ -137,50 +142,43 @@ public class MomentFragment extends BaseFragment {
     @Override
     protected void initViews(ViewHolder holder, View root) {
         mEmptyView = holder.get(R.id.empty_view);
-        mRecyclerView = holder.get(R.id.recycler_view);
-        mRecyclerView.verticalLayoutManager();
-        mRecyclerView.getRecyclerView().addItemDecoration(new LinearItemDecoration(mContext,
+        recyclerView = holder.get(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        recyclerView.addItemDecoration(new LinearItemDecoration(mContext,
                 1, R.color.gray_very_light, DisplayUtils.dip2px(15)));
-        ((SimpleItemAnimator) mRecyclerView.getRecyclerView().getItemAnimator()).setSupportsChangeAnimations(false);
+        refreshLayout = holder.get(R.id.refreshLayout);
+        initRefreshLayout();
         initAdapter();
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setOnRefreshListener(new XRecyclerView.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getMomentData(true);
-            }
-
-            @Override
-            public void onLoadMore() {
-                getMomentData(false);
-            }
-        });
+        recyclerView.setAdapter(mAdapter);
         llTipsContainer = holder.get(R.id.ll_tips_container);
+    }
+
+    private void initRefreshLayout() {
+        refreshLayout.setEnableAutoLoadMore(true);
+        refreshLayout.setEnableLoadMore(true);
+        refreshLayout.setOnRefreshLoadMoreListener(this);
+    }
+
+    @Override
+    public void lazyLoadData(View view) {
+        mEmptyView.showLoading();
+        getMomentData(true);
+        getGifts();
     }
 
     @Override
     protected void initData() {
-        mEmptyView.showLoading();
-        getMomentData(true);
-        getGifts();
+
     }
 
     private void initAdapter() {
         mAdapter = new BaseQuickAdapter<Moment, BaseViewHolder>(R.layout.item_moment_list, moments) {
 
             private int nineTotalWidth = DisplayUtils.getScreenWidth() - DisplayUtils.dip2px(60 * 2);
-            private RequestOptions requestOptions = null;
 
             @Override
             protected void convert(BaseViewHolder helper, Moment item) {
-                if (requestOptions == null) {
-                    requestOptions = new RequestOptions();
-                    requestOptions.centerCrop();
-                }
-                Glide.with(MomentFragment.this)
-                        .load(item.creator.avatar.small)
-                        .apply(requestOptions)
-                        .into((ImageView) helper.getView(R.id.iv_icon));
+                ImageLoader.displayImage(item.creator.avatar.small, helper.getView(R.id.iv_icon));
                 helper.setText(R.id.tv_name, item.creator.name);
                 helper.setText(R.id.tv_time, TimeUtils.formatTime(item.uploadTime));
                 helper.setGone(R.id.tv_content, !TextUtils.isEmpty(item.body));
@@ -309,8 +307,8 @@ public class MomentFragment extends BaseFragment {
                 .compose(RxUtils.rxThreadHelper())
                 .flatMap((Function<HashMap<String, String>, Publisher<ResponseData<String>>>)
                         map -> ApiServer.basePostRequestNoDisposable(MomentFragment.this,
-                        Constants.MOMENT_SENDGIFT, map, new TypeToken<ResponseData<String>>() {
-                        }))
+                                Constants.MOMENT_SENDGIFT, map, new TypeToken<ResponseData<String>>() {
+                                }))
                 .subscribe(new NetworkSubscriber<String>() {
                     @Override
                     protected void onSuccess(String s) {
@@ -465,14 +463,15 @@ public class MomentFragment extends BaseFragment {
                             }
                             mEmptyView.showContent();
                             if (momentList.size() < Constants.PAGE_SIZE) {
-                                mRecyclerView.loadMoreNoData();
+                                refreshLayout.setEnableLoadMore(false);
                             } else {
                                 pageIndex++;
                             }
                         } else {
                             mEmptyView.showEmpty();
                         }
-                        mRecyclerView.refreshComlete();
+                        refreshLayout.finishRefresh();
+                        refreshLayout.finishLoadMore();
                     }
 
                     @Override
@@ -480,7 +479,8 @@ public class MomentFragment extends BaseFragment {
                         if (isRefresh) {
                             mEmptyView.error(e).show();
                         }
-                        mRecyclerView.refreshComlete();
+                        refreshLayout.finishRefresh();
+                        refreshLayout.finishLoadMore();
                         return super.dealHttpException(code, errorMsg, e);
                     }
                 });
@@ -535,6 +535,16 @@ public class MomentFragment extends BaseFragment {
                         }
                     }
                 });
+    }
+
+    @Override
+    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+        getMomentData(false);
+    }
+
+    @Override
+    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+        getMomentData(true);
     }
 
     public interface OnInteractivePlayGifListener {

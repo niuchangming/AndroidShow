@@ -8,13 +8,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
 import java.util.List;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.beans.Photo;
 import ekoolab.com.show.utils.DisplayUtils;
+import ekoolab.com.show.utils.ImageLoader;
 
 
 /**
@@ -108,7 +107,7 @@ public class NineGridlayout extends ViewGroup {
             if (getChildAt(i) instanceof ImageView) {
                 ImageView childrenView = (ImageView) getChildAt(i);
                 String image = getImageUrl(listData.get(i));
-                Glide.with(childrenView.getContext()).load(image).into(childrenView);
+                ImageLoader.displayImage(image, childrenView);
                 childrenView.layout(left, top, right, bottom);
             } else if (getChildAt(i) instanceof LinearLayout) {
                 getChildAt(i).layout(getWidth() - getChildAt(i).getMeasuredWidth() - 10, getWidth() - getChildAt(i).getMeasuredHeight() - 10, getWidth() - 10, getWidth() - 10);
@@ -194,6 +193,7 @@ public class NineGridlayout extends ViewGroup {
         }
         oneWidth = width;
         oneHeight = height;
+        this.quality = quality;
         removeAllViews();
         //初始化布局
         generateChildrenLayout(photos.size());
