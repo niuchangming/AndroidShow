@@ -386,7 +386,7 @@ public class FixedTextureVideoView extends TextureView
         matrix.preTranslate((getResizedWidth() - videoWidth) / 2, (getResizedHeight() - videoHeight) / 2);
 
         //第1步:因为默认视频是fitXY的形式显示的,所以首先要缩放还原回来.
-//        matrix.preScale(videoWidth / (float) getResizedWidth(), videoHeight / (float) getResizedHeight());
+        matrix.preScale(videoWidth / (float) getResizedWidth(), videoHeight / (float) getResizedHeight());
 
         //第3步,等比例放大或缩小,直到视频区的一边超过View一边, 另一边与View的另一边相等. 因为超过的部分超出了View的范围,所以是不会显示的,相当于裁剪了.
         matrix.postScale(maxScale, maxScale, getResizedWidth() / 2, getResizedHeight() / 2);//后两个参数坐标是以整个View的坐标系以参考的

@@ -1,14 +1,15 @@
 package ekoolab.com.show.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.VideoView;
 
 import com.dingmouren.layoutmanagergroup.viewpager.OnViewPagerListener;
 import com.dingmouren.layoutmanagergroup.viewpager.ViewPagerLayoutManager;
@@ -19,7 +20,6 @@ import ekoolab.com.show.R;
 import ekoolab.com.show.adapters.VideoPlayerAdapter;
 import ekoolab.com.show.beans.Video;
 import ekoolab.com.show.views.FixedTextureVideoView;
-import ekoolab.com.show.views.FullScreenVideoView;
 
 public class VideoPlayerActivity extends BaseActivity {
     private final String TAG = "VideoPlayerActivity";
@@ -123,16 +123,23 @@ public class VideoPlayerActivity extends BaseActivity {
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-                Log.v(TAG, "onPrepared");
-                if(videoView.getWidth()<=videoView.getHeight()){
-                    mp.setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
-                }else{
-                    mp.setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT);
+                try {
+                    Log.v(TAG, "onPrepared");
+                    WindowManager wm = (WindowManager) VideoPlayerActivity.this.getSystemService(Context.WINDOW_SERVICE);
+                    DisplayMetrics metrics = new DisplayMetrics();
+                    wm.getDefaultDisplay().getMetrics(metrics);
+                    int width = metrics.widthPixels;  //以要素为单位
+                    int height = metrics.heightPixels;
+                    int mpWidth = mp.getVideoWidth();
+                    int mpHeight = mp.getVideoHeight();
+                    if(mpWidth>mpHeight){
+                        videoView.setFixedSize(width, width*mpHeight/mpWidth);
+                    }else{
+                        videoView.setFixedSize(width, height);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
-//                videoView.setFixedSize(videoView.getWidth(), videoView.getHeight());
-                System.out.println("==videoView.getWidth()==" + videoView.getWidth());
-                System.out.println("==videoView.getHeight()==" + videoView.getHeight());
-//                videoView.invalidate();
             }
         });
 
