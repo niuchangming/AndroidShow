@@ -108,7 +108,7 @@ public class VideoPlayerActivity extends BaseActivity {
 
     private void playVideo(int position) {
         View itemView = recyclerView.getChildAt(position);
-        final VideoView videoView = itemView.findViewById(R.id.video_view);
+        final FixedTextureVideoView videoView = itemView.findViewById(R.id.video_view);
         final ImageView imgThumb = itemView.findViewById(R.id.preview_iv);
         final MediaPlayer[] mediaPlayer = new MediaPlayer[1];
         videoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
@@ -124,7 +124,7 @@ public class VideoPlayerActivity extends BaseActivity {
             @Override
             public void onPrepared(MediaPlayer mp) {
                 Log.v(TAG, "onPrepared");
-                if(videoView.getWidth()<videoView.getHeight()){
+                if(videoView.getWidth()<=videoView.getHeight()){
                     mp.setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
                 }else{
                     mp.setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT);
@@ -143,7 +143,7 @@ public class VideoPlayerActivity extends BaseActivity {
 
     private void releaseVideo(int index) {
         View itemView = recyclerView.getChildAt(index);
-        final VideoView videoView = itemView.findViewById(R.id.video_view);
+        final FixedTextureVideoView videoView = itemView.findViewById(R.id.video_view);
         final ImageView imgPlay = itemView.findViewById(R.id.preview_iv);
         videoView.stopPlayback();
         imgPlay.animate().alpha(0f).start();

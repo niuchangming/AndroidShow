@@ -57,7 +57,7 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        VideoView videoView;
+        FixedTextureVideoView videoView;
         ImageView previewIv;
         TextView descTv;
         TextView tv_share;
