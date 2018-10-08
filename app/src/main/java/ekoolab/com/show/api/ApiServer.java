@@ -38,9 +38,9 @@ public class ApiServer {
     }
 
     public static <T> Flowable<T> basePostRequestNoDisposable(BaseActivity activity,
-                                                                String url,
-                                                                HashMap<String, String> map,
-                                                                TypeToken<T> typeToken) {
+                                                              String url,
+                                                              HashMap<String, String> map,
+                                                              TypeToken<T> typeToken) {
         return Rx2AndroidNetworking
                 .post(url)
                 .addBodyParameter(map)
@@ -65,9 +65,9 @@ public class ApiServer {
     }
 
     public static <T> Flowable<T> basePostRequestNoDisposable(BaseFragment fragment,
-                                                  String url,
-                                                  HashMap<String, String> map,
-                                                  TypeToken<T> typeToken) {
+                                                              String url,
+                                                              HashMap<String, String> map,
+                                                              TypeToken<T> typeToken) {
         return Rx2AndroidNetworking
                 .post(url)
                 .addBodyParameter(map)
@@ -94,11 +94,11 @@ public class ApiServer {
     }
 
     public static <T> FlowableSubscribeProxy<T> baseUploadMoreFilesRequest(BaseActivity activity,
-                                                                  String url,
-                                                                  Map<String, String> valueMap,
-                                                                  String fileKey,
-                                                                  List<File> files,
-                                                                  TypeToken<T> typeToken) {
+                                                                           String url,
+                                                                           Map<String, String> valueMap,
+                                                                           String fileKey,
+                                                                           List<File> files,
+                                                                           TypeToken<T> typeToken) {
         return Rx2AndroidNetworking
                 .upload(url)
                 .addMultipartParameter(valueMap)

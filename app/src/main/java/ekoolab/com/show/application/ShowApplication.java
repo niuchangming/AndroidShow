@@ -26,13 +26,20 @@ import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.net.Proxy;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 import ekoolab.com.show.BuildConfig;
 import ekoolab.com.show.activities.MainActivity;
 import ekoolab.com.show.api.FastJsonParserFactory;
+import ekoolab.com.show.api.HttpLoggingInterceptor;
+import ekoolab.com.show.api.cookie.CookieJarImpl;
+import ekoolab.com.show.api.cookie.SPCookieStore;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.FileUtils;
 import ekoolab.com.show.utils.Utils;
+import okhttp3.OkHttpClient;
 
 public class ShowApplication extends Application implements Thread.UncaughtExceptionHandler {
 
@@ -85,7 +92,8 @@ public class ShowApplication extends Application implements Thread.UncaughtExcep
                     .methodCount(1)
                     .hideThreadInfo()
                     .logLevel(BuildConfig.DEBUG ? LogLevel.FULL : LogLevel.NONE);
-            AndroidNetworking.initialize(application);
+            OkHttpClient okHttpClient = getOkHttpClient();
+            AndroidNetworking.initialize(application, okHttpClient);
             AndroidNetworking.setParserFactory(new FastJsonParserFactory());
             Fresco.initialize(this);
             FileUtils.createOrExistsDir(Constants.VIDEO_PATH);
@@ -98,6 +106,22 @@ public class ShowApplication extends Application implements Thread.UncaughtExcep
             //包括BD09LL和GCJ02两种坐标，默认是BD09LL坐标。
             SDKInitializer.setCoordType(CoordType.BD09LL);
         }
+    }
+
+    public static OkHttpClient getOkHttpClient() {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor("okGo");
+        loggingInterceptor.setColorLevel(Level.INFO);
+        loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.BODY);
+        builder.addInterceptor(loggingInterceptor);
+        builder.cookieJar(new CookieJarImpl(new SPCookieStore(application)));
+        //全局的读取超时时间
+        builder.readTimeout(60_000, TimeUnit.MILLISECONDS);
+        //全局的写入超时时间
+        builder.writeTimeout(60_000, TimeUnit.MILLISECONDS);
+        //全局的连接超时时间
+        builder.connectTimeout(60_000, TimeUnit.MILLISECONDS);
+        return builder.build();
     }
 
     @Override

@@ -249,6 +249,9 @@ public class NineGridlayout extends ViewGroup {
     }
 
     private String getImageUrl(Photo photo) {
+        if (photo == null) {
+            return "";
+        }
         if (quality == NewNineGridlayout.PHOTO_QUALITY_ORIGIN) {
             return photo.origin;
         }

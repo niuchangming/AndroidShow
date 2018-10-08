@@ -79,7 +79,7 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
             emptyView.showLoading();
         }
         HashMap<String, String> map = new HashMap<>(4);
-        map.put("timestamp", System.currentTimeMillis() + "");
+//        map.put("timestamp", System.currentTimeMillis() + "");
         map.put("pageSize", Constants.PAGE_SIZE + "");
         map.put("pageIndex", pageIndex + "");
         map.put("token", AuthUtils.getInstance(getContext()).getApiToken());

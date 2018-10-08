@@ -434,7 +434,6 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
             pageIndex = 0;
         }
         HashMap<String, String> map = new HashMap<>(4);
-        map.put("timestamp", System.currentTimeMillis() + "");
         map.put("pageSize", Constants.PAGE_SIZE + "");
         map.put("pageIndex", pageIndex + "");
         map.put("token", AuthUtils.getInstance(getContext()).getApiToken());
