@@ -78,7 +78,7 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
         if (flag == 0) {
             emptyView.showLoading();
         }
-        HashMap<String, String> map = new HashMap<>(4);
+        HashMap<String, String> map = new HashMap<>(3);
 //        map.put("timestamp", System.currentTimeMillis() + "");
         map.put("pageSize", Constants.PAGE_SIZE + "");
         map.put("pageIndex", pageIndex + "");
@@ -90,6 +90,7 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
                     @Override
                     protected void onSuccess(List<Video> videoList) {
                         try {
+                            System.out.println("===videoList==="+videoList.size()+";pageIndex==="+pageIndex);
                             if (ListUtils.isNotEmpty(videoList)) {
                                 if (flag == 2) {
                                     videos.addAll(videoList);
@@ -111,7 +112,9 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
                                     recyclerView.loadMoreNoData();
                                 }
                                 emptyView.content().show();
-                            } else {
+                            } else if(videos.size()!=0){
+                                recyclerView.loadMoreNoData();
+                            } else{
                                 emptyView.showEmpty();
                             }
                         } catch (Exception e) {

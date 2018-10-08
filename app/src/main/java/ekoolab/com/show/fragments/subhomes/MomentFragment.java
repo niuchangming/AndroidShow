@@ -433,7 +433,9 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
         if (isRefresh) {
             pageIndex = 0;
         }
-        HashMap<String, String> map = new HashMap<>(4);
+        HashMap<String, String> map = new HashMap<>(3);
+//        map.put("timestamp", System.currentTimeMillis() + "");
+        map.put("pageSize", Constants.PAGE_SIZE + "");
         map.put("pageSize", Constants.PAGE_SIZE + "");
         map.put("pageIndex", pageIndex + "");
         map.put("token", AuthUtils.getInstance(getContext()).getApiToken());
@@ -443,6 +445,7 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
                 .subscribe(new NetworkSubscriber<List<Moment>>() {
                     @Override
                     protected void onSuccess(List<Moment> momentList) {
+                        System.out.println("===momentList==="+momentList.size()+";pageIndex==="+pageIndex);
                         if (ListUtils.isNotEmpty(momentList)) {
                             if (isRefresh) {
                                 moments.clear();
@@ -461,7 +464,9 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
                             } else {
                                 pageIndex++;
                             }
-                        } else {
+                        } else if(moments.size()!=0){
+                            refreshLayout.setEnableLoadMore(false);
+                        } else{
                             mEmptyView.showEmpty();
                         }
                         refreshLayout.finishRefresh();
