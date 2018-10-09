@@ -127,7 +127,7 @@ public class VideoPlayerActivity extends BaseActivity {
                     Log.v(TAG, "onPrepared");
                     WindowManager wm = (WindowManager) VideoPlayerActivity.this.getSystemService(Context.WINDOW_SERVICE);
                     DisplayMetrics metrics = new DisplayMetrics();
-                    wm.getDefaultDisplay().getMetrics(metrics);
+                    wm.getDefaultDisplay().getRealMetrics(metrics);
                     int width = metrics.widthPixels;  //以要素为单位
                     int height = metrics.heightPixels;
                     int mpWidth = mp.getVideoWidth();
