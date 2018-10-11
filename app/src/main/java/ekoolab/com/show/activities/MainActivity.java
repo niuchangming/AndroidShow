@@ -88,12 +88,13 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
 
     @Override
     public void onReselect(TabButton navigationButton) {
-        Fragment fragment = navigationButton.getFragment();
-
+        // get each tab fragment instance by navigationButton.getFragment()
     }
 
     @Override
     public void onCenterCameraClick() {
+        if (!authorized()){ return; }
+
         if (xxDialog == null) {
             xxDialog = new XXDialog(this, R.layout.dialog_choose_content) {
                 @Override

@@ -1,6 +1,5 @@
 package ekoolab.com.show.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,18 +14,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
-
 import com.luck.picture.lib.utils.AppManager;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.uber.autodispose.AutoDispose;
 import com.uber.autodispose.AutoDisposeConverter;
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider;
-
-import java.io.Serializable;
+import com.orhanobut.logger.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
 import ekoolab.com.show.R;
+import ekoolab.com.show.utils.AuthUtils;
+import ekoolab.com.show.utils.Utils;
+
+import static ekoolab.com.show.utils.AuthUtils.AuthType.LOGGED;
 
 public abstract class BaseActivity extends AppCompatActivity {
     private Toast mToast;
@@ -88,17 +89,15 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected <V extends Serializable> void openActivity(Class<?> cls, String key, V value) {
-        openActivity(this, cls, key, value);
-    }
-
-    /**
-     * 打开 Activity 的同时传递一个数据
-     */
-    public <V extends Serializable> void openActivity(Context context, Class<?> cls, String key, V value) {
-        Intent intent = new Intent(context, cls);
-        intent.putExtra(key, value);
-        context.startActivity(intent);
+    protected Boolean authorized(){
+        AuthUtils.AuthType authType = AuthUtils.getInstance(this).loginState();
+        String apiToken = AuthUtils.getInstance(this).getApiToken();
+        if (authType != LOGGED || Utils.isBlank(apiToken)) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            return false;
+        }
+        return true;
     }
 
     protected void addFragment(int frameLayoutId, Fragment fragment) {
