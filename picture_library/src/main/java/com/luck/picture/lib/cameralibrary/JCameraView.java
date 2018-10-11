@@ -247,6 +247,8 @@ public class JCameraView extends FrameLayout implements CameraInterface.CameraOp
     @Override
     public void cameraHasOpened() {
 //        CameraInterface.getInstance().doStartPreview(mVideoView.getHolder(), screenProp);
+        CameraInterface.getInstance().setW(surfaceView.getMeasuredWidth());
+        CameraInterface.getInstance().setH(surfaceView.getMeasuredHeight());
         CameraInterface.getInstance().doStartPreview(surfaceView.getHolder(), screenProp);
     }
 

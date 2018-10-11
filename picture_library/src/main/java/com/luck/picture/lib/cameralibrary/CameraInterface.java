@@ -55,6 +55,9 @@ import static android.graphics.Bitmap.createBitmap;
 public class CameraInterface implements Camera.PreviewCallback {
 
     private static final String TAG = "CJT";
+    private Context mContext;
+    private int widthSize;
+    private int heightSize;
 
     private volatile static CameraInterface mCameraInterface;
 
@@ -369,11 +372,12 @@ public class CameraInterface implements Camera.PreviewCallback {
         if (mCamera != null) {
             try {
                 mParams = mCamera.getParameters();
-                Camera.Size previewSize = CameraParamUtil.getInstance().getPreviewSize(mParams
-                        .getSupportedPreviewSizes(), 1200, screenProp);
+//                Camera.Size previewSize = CameraParamUtil.getInstance().getPreviewSize(mParams
+//                        .getSupportedPreviewSizes(), 1200, screenProp);
+                Camera.Size previewSize = CameraParamUtil.getInstance().getCloselyPreSize(true, widthSize, heightSize, mParams.getSupportedPreviewSizes());
+
                 Camera.Size pictureSize = CameraParamUtil.getInstance().getPictureSize(mParams
                         .getSupportedPictureSizes(), 1200, screenProp);
-
                 mParams.setPreviewSize(previewSize.width, previewSize.height);
 
                 preview_width = previewSize.width;
@@ -398,7 +402,7 @@ public class CameraInterface implements Camera.PreviewCallback {
                 mCamera.setPreviewCallback(this); //每一帧回调
                 mCamera.startPreview();//启动浏览
                 isPreviewing = true;
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -789,5 +793,13 @@ public class CameraInterface implements Camera.PreviewCallback {
 
     void isPreview(boolean res) {
         this.isPreviewing = res;
+    }
+
+    void setW(float widthSize) {
+        this.widthSize = (int) widthSize;
+    }
+
+    void setH(float heightSize) {
+        this.heightSize = (int) heightSize;
     }
 }
