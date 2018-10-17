@@ -78,4 +78,7 @@ dependencies {
     implementation 'com.tencent.bugly:crashreport:2.6.6'
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-14'
     implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-14'
+
+    implementation 'com.google.android.exoplayer:exoplayer:2.9.0'
+    compile 'com.googlecode.libphonenumber:libphonenumber:8.9.15'
 }

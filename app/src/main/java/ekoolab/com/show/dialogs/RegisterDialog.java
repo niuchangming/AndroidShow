@@ -10,13 +10,27 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import com.google.gson.reflect.TypeToken;
+import com.luck.picture.lib.tools.Constant;
+import com.orhanobut.logger.Logger;
 import com.rey.material.app.SimpleDialog;
 import com.rey.material.widget.ProgressView;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.List;
+
 import ekoolab.com.show.R;
+import ekoolab.com.show.api.ApiServer;
+import ekoolab.com.show.api.NetworkSubscriber;
+import ekoolab.com.show.api.ResponseData;
 import ekoolab.com.show.beans.AuthInfo;
+import ekoolab.com.show.beans.LoginData;
+import ekoolab.com.show.beans.Moment;
+import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
+import ekoolab.com.show.utils.ListUtils;
 
 public class RegisterDialog extends SimpleDialog implements View.OnClickListener{
     private final String TAG = "RegisterDialog";;
@@ -70,45 +84,71 @@ public class RegisterDialog extends SimpleDialog implements View.OnClickListener
         final String password = passwordEt.getText().toString().trim();
 
         beforeCall();
-        AndroidNetworking.post(Constants.SIGNUP)
-                .addBodyParameter("countryCode", "65")
-                .addBodyParameter("mobile", mobile)
-                .addBodyParameter("password", password)
-                .addBodyParameter("type", "mobile")
-                .setPriority(Priority.MEDIUM)
-                .build()
-                .getAsJSONObject(new JSONObjectRequestListener() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            int errorCode = response.getInt("errorCode");
-                            String message = response.getString("message");
-                            if (errorCode == 1) {;
-                                AuthInfo authInfo = new AuthInfo(response);
-                                authInfo.setMobile(mobile);
-                                authInfo.setDialNo("65");
-//                                authInfo.mobile = mobile;
-//                                authInfo.dialNo = "65";
 
-                                if(listener != null) {
-                                    listener.didRegistered(authInfo);
-                                }
+        HashMap<String, Object> map = new HashMap<>(3);
+        map.put("countryCode", "65");
+        map.put("mobile", mobile);
+        map.put("password", password);
+        map.put("type", "mobile");
 
-                                cancel();
-                            } else {
-                                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
-                            }
-                        }catch (JSONException e){
-                            Log.e(TAG, e.getLocalizedMessage());
-                        }
-                        afterCall();
-                    }
-                    @Override
-                    public void onError(ANError error) {
-                        Log.e(TAG, error.getLocalizedMessage());
-                        afterCall();
-                    }
-                });
+        ApiServer.basePostRequestNoDisposable(Constants.SIGNUP, map, new TypeToken<ResponseData<LoginData>>() {
+        }).subscribe(new NetworkSubscriber<LoginData>() {
+            @Override
+            protected void onSuccess(LoginData loginData) {
+                Logger.i("Login data: " + loginData);
+                afterCall();
+            }
+
+            @Override
+            protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
+                afterCall();
+                return super.dealHttpException(code, errorMsg, e);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+                afterCall();
+                Logger.i("Register Error: " + e.getLocalizedMessage());
+            }
+        });
+
+//        AndroidNetworking.post(Constants.SIGNUP)
+//                .addBodyParameter("countryCode", "65")
+//                .addBodyParameter("c", mobile)
+//                .addBodyParameter("password", password)
+//                .addBodyParameter("type", "mobile")
+//                .setPriority(Priority.MEDIUM)
+//                .build()
+//                .getAsJSONObject(new JSONObjectRequestListener() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        try {
+//                            int errorCode = response.getInt("errorCode");
+//                            String message = response.getString("message");
+//                            if (errorCode == 1) {;
+//                                AuthInfo authInfo = new AuthInfo(response);
+//                                authInfo.setMobile(mobile);
+//                                authInfo.setDialNo("65");
+//                                if(listener != null) {
+//                                    listener.didRegistered(authInfo);
+//                                }
+//
+//                                cancel();
+//                            } else {
+//                                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+//                            }
+//                        }catch (JSONException e){
+//                            Log.e(TAG, e.getLocalizedMessage());
+//                        }
+//                        afterCall();
+//                    }
+//                    @Override
+//                    public void onError(ANError error) {
+//                        Log.e(TAG, error.getLocalizedMessage());
+//                        afterCall();
+//                    }
+//                });
     }
 
     private void beforeCall(){

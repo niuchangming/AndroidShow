@@ -16,6 +16,5 @@ public class LoginData {
     public String nickName;
     public String token;
     public String userCode;
-    public long logintime;
     public Photo avatar;
 }

@@ -25,12 +25,5 @@ public class FullScreenVideoView extends VideoView {
         int width = getDefaultSize(0, widthMeasureSpec);
         int height = getDefaultSize(0, heightMeasureSpec);
         setMeasuredDimension(width, height);
-
-//        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-//        DisplayMetrics metrics = new DisplayMetrics();
-//        wm.getDefaultDisplay().getMetrics(metrics);
-//        int width = metrics.widthPixels;  //以要素为单位
-//        int height = metrics.heightPixels;
-//        setMeasuredDimension(width, height);
     }
 }

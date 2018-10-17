@@ -32,6 +32,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.reflect.TypeToken;
 import com.luck.picture.lib.utils.ThreadExecutorManager;
+import com.orhanobut.logger.Logger;
 import com.santalu.emptyview.EmptyView;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -54,9 +55,9 @@ import ekoolab.com.show.adapters.DialogGiftPagerAdapter;
 import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
+import ekoolab.com.show.beans.Friend;
 import ekoolab.com.show.beans.Gift;
 import ekoolab.com.show.beans.Moment;
-import ekoolab.com.show.beans.User;
 import ekoolab.com.show.dialogs.CommentDialog;
 import ekoolab.com.show.dialogs.DialogViewHolder;
 import ekoolab.com.show.dialogs.XXDialog;
@@ -205,7 +206,7 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
                 helper.setGone(R.id.nest_full_listview, notEmpty);
                 if (notEmpty) {
                     NestFullListView listView = helper.getView(R.id.nest_full_listview);
-                    listView.setAdapter(new NestFullListViewAdapter<Moment.CommentsBean>(R.layout.item_moent_comment, item.comments) {
+                    listView.setAdapter(new NestFullListViewAdapter<Moment.CommentsBean>(R.layout.item_moment_comment, item.comments) {
 
                         @Override
                         public void onBind(int position, Moment.CommentsBean bean, NestFullViewHolder holder) {
@@ -291,8 +292,8 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
     }
 
     private void sendGift(Gift gift) {
-        Flowable.create((FlowableOnSubscribe<HashMap<String, String>>) emitter -> {
-            HashMap<String, String> map = new HashMap<>(3);
+        Flowable.create((FlowableOnSubscribe<HashMap<String, Object>>) emitter -> {
+            HashMap<String, Object> map = new HashMap<>(3);
             map.put("momentId", curMoment.resourceId);
             map.put("token", AuthUtils.getInstance(getContext()).getApiToken());
             map.put("giftid", gift.giftid);
@@ -300,14 +301,19 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
             emitter.onComplete();
         }, BackpressureStrategy.BUFFER)
                 .compose(RxUtils.rxThreadHelper())
-                .flatMap((Function<HashMap<String, String>, Publisher<ResponseData<String>>>)
-                        map -> ApiServer.basePostRequestNoDisposable(MomentFragment.this,
-                                Constants.MOMENT_SENDGIFT, map, new TypeToken<ResponseData<String>>() {
+                .flatMap((Function<HashMap<String, Object>, Publisher<ResponseData<String>>>)
+                        map -> ApiServer.basePostRequestNoDisposable(Constants.MOMENT_SENDGIFT, map, new TypeToken<ResponseData<String>>() {
                                 }))
                 .subscribe(new NetworkSubscriber<String>() {
                     @Override
                     protected void onSuccess(String s) {
+                        Logger.i("Send Gift Result: " + s);
+                    }
 
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        Logger.i("Send Gift Result: " + e.getLocalizedMessage());
                     }
                 });
     }
@@ -343,7 +349,7 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
             String nickName = AuthUtils.getInstance(mContext).getName();
             Moment.CommentsBean bean = new Moment.CommentsBean();
             bean.body = content;
-            bean.creator = new User();
+            bean.creator = new Friend();
             bean.creator.name = nickName;
             bean.creator.userCode = userCode;
             if (curCommentBean == null) {
@@ -382,14 +388,14 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
                 })
                 .observeOn(Schedulers.io())
                 .flatMap((Function<Moment.CommentsBean, Publisher<ResponseData<String>>>) bean -> {
-                    HashMap<String, String> map = new HashMap<>(4);
+                    HashMap<String, Object> map = new HashMap<>(4);
                     map.put("resourceId", curMoment.resourceId);
                     map.put("token", AuthUtils.getInstance(getContext()).getApiToken());
                     map.put("body", bean.body);
                     if (curCommentBean != null) {
                         map.put("commentId", curCommentBean.commentId);
                     }
-                    return ApiServer.basePostRequestNoDisposable(MomentFragment.this, Constants.COMMENT,
+                    return ApiServer.basePostRequestNoDisposable(Constants.COMMENT,
                             map, new TypeToken<ResponseData<String>>() {
                             });
                 })
@@ -434,14 +440,13 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
             pageIndex = 0;
         }
         HashMap<String, String> map = new HashMap<>(3);
-//        map.put("timestamp", System.currentTimeMillis() + "");
         map.put("pageSize", Constants.PAGE_SIZE + "");
         map.put("pageSize", Constants.PAGE_SIZE + "");
         map.put("pageIndex", pageIndex + "");
         map.put("token", AuthUtils.getInstance(getContext()).getApiToken());
         ApiServer.basePostRequest(this, Constants.MOMENTLIST, map,
-                new TypeToken<ResponseData<List<Moment>>>() {
-                })
+                    new TypeToken<ResponseData<List<Moment>>>() {
+                    })
                 .subscribe(new NetworkSubscriber<List<Moment>>() {
                     @Override
                     protected void onSuccess(List<Moment> momentList) {
@@ -585,7 +590,7 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
             }
         }
         if (TextUtils.isEmpty(curUserSmallAvator)) {
-            curUserSmallAvator = AuthUtils.getInstance(mContext.getApplicationContext()).getAvator(AuthUtils.SMALL);
+            curUserSmallAvator = "https://pic.qqtn.com/up/2018-7/2018071708152519847.jpg";
         }
         ImageView ivHeader = view.findViewById(R.id.iv_header);
         ImageView ivGiftImage = view.findViewById(R.id.iv_gift_image);

@@ -3,6 +3,9 @@ package ekoolab.com.show.beans;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Live implements Parcelable {
 
     public String userCode;
@@ -17,10 +20,10 @@ public class Live implements Parcelable {
     public int ranking;
     public int commentCount;
     public int followingCount;
-    public int audienceCount;
     public int coinAmount;
     public Photo avatar;
     public Photo coverImage;
+    public List<String> audienceCount;
 
     public Live() {}
 
@@ -37,10 +40,10 @@ public class Live implements Parcelable {
         this.ranking = in.readInt();
         this.commentCount = in.readInt();
         this.followingCount = in.readInt();
-        this.audienceCount = in.readInt();
         this.coinAmount = in.readInt();
         this.avatar = in.readParcelable(Photo.class.getClassLoader());
         this.coverImage = in.readParcelable(Photo.class.getClassLoader());
+        this.audienceCount = in.createStringArrayList();
     }
 
     @Override
@@ -62,10 +65,10 @@ public class Live implements Parcelable {
         dest.writeInt(this.ranking);
         dest.writeInt(this.commentCount);
         dest.writeInt(this.followingCount);
-        dest.writeInt(this.audienceCount);
         dest.writeInt(this.coinAmount);
         dest.writeParcelable(this.avatar, flags);
         dest.writeParcelable(this.coverImage, flags);
+        dest.writeStringList(this.audienceCount);
     }
 
     public static final Creator<Live> CREATOR = new Creator<Live>() {

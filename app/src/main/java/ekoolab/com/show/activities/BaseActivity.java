@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 import com.luck.picture.lib.utils.AppManager;
@@ -30,6 +31,8 @@ import ekoolab.com.show.utils.Utils;
 import static ekoolab.com.show.utils.AuthUtils.AuthType.LOGGED;
 
 public abstract class BaseActivity extends AppCompatActivity {
+    public static final String IS_FULL_SCREEN = "is_full_screen";
+    private boolean isFullScreen;
     private Toast mToast;
     private Fragment mFragment;
     private long mBackPressedTime;
@@ -43,12 +46,22 @@ public abstract class BaseActivity extends AppCompatActivity {
         AppManager.getInstance().addActivity(this);
         setContentView(R.layout.activity_base);
         rxPermissions = new RxPermissions(this);
+
+        isFullScreen = getIntent().getBooleanExtra(IS_FULL_SCREEN, false);
+        if (isFullScreen) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                getWindow().getDecorView()
+                        .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            }
+        }
+
         initData();
         initViews();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            getWindow().getDecorView()
-                    .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        }
     }
 
     @LayoutRes
@@ -62,10 +75,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void initViews() {
         activityContainer = findViewById(R.id.activity_container);
         activityContainer.addView(LayoutInflater.from(this).inflate(getLayoutId(), activityContainer, false));
-    }
-
-    public void toastShort(String text) {
-        toast(text, Toast.LENGTH_SHORT);
     }
 
     public void toastLong(String text) {

@@ -79,4 +79,14 @@ public class Utils {
     public static boolean equals(String str1, String str2) {
         return str1 != null && str1.equals(str2);
     }
+
+    public static String getDisplayName(String name, String nickname){
+        String displayName = nickname;
+        if (Utils.isBlank(displayName)) {
+            displayName = name;
+        }
+
+        return Utils.isBlank(displayName) ? "" : displayName;
+
+    }
 }

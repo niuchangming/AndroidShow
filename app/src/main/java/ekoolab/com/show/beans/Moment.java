@@ -18,13 +18,13 @@ public class Moment {
     public String permission;
     public int likeCount;
     public boolean isMyLike;
-    public User creator;
+    public Friend creator;
     public List<Photo> photoArray;
     public List<CommentsBean> comments;
 
     public static class CommentsBean {
         public String body;
-        public User creator;
+        public Friend creator;
         public long postTime;
         public String replyTo;
         public String replyToName;

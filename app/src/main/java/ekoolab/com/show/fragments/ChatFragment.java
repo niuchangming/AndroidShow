@@ -1,7 +1,5 @@
-package ekoolab.com.show.fragments.subhomes;
+package ekoolab.com.show.fragments;
 
-import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,48 +19,38 @@ import java.util.HashMap;
 import java.util.List;
 
 import ekoolab.com.show.R;
-import ekoolab.com.show.activities.BaseActivity;
-import ekoolab.com.show.activities.LivePlayerActivity;
 import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
-import ekoolab.com.show.beans.Live;
-import ekoolab.com.show.beans.Moment;
-import ekoolab.com.show.fragments.BaseFragment;
+import ekoolab.com.show.beans.Friend;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.DisplayUtils;
 import ekoolab.com.show.utils.ImageLoader;
 import ekoolab.com.show.utils.ListUtils;
+import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.utils.ViewHolder;
 import ekoolab.com.show.views.itemdecoration.LinearItemDecoration;
 
-public class LiveFragment extends BaseFragment implements OnRefreshLoadMoreListener, BaseQuickAdapter.OnItemClickListener, View.OnClickListener {
+public class ChatFragment extends BaseFragment implements OnRefreshLoadMoreListener, BaseQuickAdapter.OnItemClickListener{
     private EmptyView emptyView;
     private RecyclerView recyclerView;
     private SmartRefreshLayout refreshLayout;
-    private BaseQuickAdapter<Live, BaseViewHolder> adapter;
+    private BaseQuickAdapter<Friend, BaseViewHolder> adapter;
+    private List<Friend> friends = new ArrayList<>();
+
     private int pageIndex;
     private long curRequestTime;
-    private List<Live> lives = new ArrayList<>();
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-    }
 
     @Override
     protected int getLayoutId() {
-        return R.layout.fragment_live;
+        return R.layout.fragment_chat;
     }
 
     @Override
     protected void initViews(ViewHolder holder, View root) {
         emptyView = holder.get(R.id.empty_view);
-        emptyView.setOnClickListener(this);
-
-        recyclerView = holder.get(R.id.recycler_view);
+        recyclerView=  holder.get(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         recyclerView.addItemDecoration(new LinearItemDecoration(mContext,
                 1, R.color.gray_very_light, DisplayUtils.dip2px(15)));
@@ -78,27 +66,24 @@ public class LiveFragment extends BaseFragment implements OnRefreshLoadMoreListe
     @Override
     protected void initData() {
         super.initData();
-
-        getLiveData(true);
+        getFriendData(true);
     }
 
     private void bindAdapter(RecyclerView recyclerView) {
-        this.adapter = new BaseQuickAdapter<Live, BaseViewHolder>(R.layout.item_live_list, lives) {
+        this.adapter = new BaseQuickAdapter<Friend, BaseViewHolder>(R.layout.item_chat_list, friends) {
             @Override
-            protected void convert(BaseViewHolder helper, Live item) {
-                ImageLoader.displayImage(item.coverImage.medium, helper.getView(R.id.cover_iv));
-                helper.setText(R.id.live_type_tv, getContext().getString(R.string.live));
-                helper.setImageResource(R.id.live_type_iv, R.mipmap.camera_red);
-                helper.setText(R.id.name_tv, item.nickname);
-//                helper.setText(R.id.audience_amount_tv, item.audienceCount.length + "");
+            protected void convert(BaseViewHolder helper, Friend item) {
+                ImageLoader.displayImageAsCircle(item.avatar.small, helper.getView(R.id.avatar_iv));
+                helper.setText(R.id.name_tv, Utils.getDisplayName(item.name, item.nickName));
             }
         };
+
         this.adapter.setHasStableIds(false);
         this.adapter.setOnItemClickListener(this);
         recyclerView.setAdapter(adapter);
     }
 
-    private void getLiveData(boolean isInitial) {
+    private void getFriendData(boolean isInitial){
         if (isInitial) {
             curRequestTime = System.currentTimeMillis();
             pageIndex = 0;
@@ -111,26 +96,26 @@ public class LiveFragment extends BaseFragment implements OnRefreshLoadMoreListe
         map.put("pageSize", Constants.PAGE_SIZE + "");
         map.put("pageIndex", pageIndex + "");
         map.put("token", AuthUtils.getInstance(getContext()).getApiToken());
-        ApiServer.basePostRequest(this, Constants.LIVE_LIST, map,
-                new TypeToken<ResponseData<List<Live>>>() {
+        ApiServer.basePostRequest(this, Constants.My_FOllOWING, map,
+                new TypeToken<ResponseData<List<Friend>>>() {
                 })
-                .subscribe(new NetworkSubscriber<List<Live>>() {
+                .subscribe(new NetworkSubscriber<List<Friend>>() {
                     @Override
-                    protected void onSuccess(List<Live> liveList) {
-                        Logger.i("Live Data List: " + liveList.size());
-                        if (ListUtils.isNotEmpty(liveList)) {
+                    protected void onSuccess(List<Friend> userList) {
+                        Logger.i("User Data List: " + userList.size());
+                        if (ListUtils.isNotEmpty(userList)) {
                             if (isInitial) {
-                                lives.clear();
+                                friends.clear();
                             }
-                            lives.addAll(liveList);
+                            friends.addAll(userList);
                             if (isInitial) {
                                 adapter.notifyDataSetChanged();
                             } else {
-                                adapter.notifyItemRangeInserted(lives.size() - liveList.size(),
-                                        liveList.size());
+                                adapter.notifyItemRangeInserted(friends.size() - userList.size(),
+                                        userList.size());
                             }
                             emptyView.showContent();
-                            if (liveList.size() < Constants.PAGE_SIZE) {
+                            if (userList.size() < Constants.PAGE_SIZE) {
                                 refreshLayout.setEnableLoadMore(false);
                             } else {
                                 pageIndex++;
@@ -155,30 +140,17 @@ public class LiveFragment extends BaseFragment implements OnRefreshLoadMoreListe
     }
 
     @Override
+    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+
+    }
+
+    @Override
     public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-        getLiveData(false);
+
     }
 
     @Override
     public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-        getLiveData(true);
-    }
 
-    @Override
-    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-        Live live = this.lives.get(position);
-        Intent intent = new Intent(getActivity(), LivePlayerActivity.class);
-        intent.putExtra(LivePlayerActivity.LIVE_DATA, live);
-        intent.putExtra(BaseActivity.IS_FULL_SCREEN, true);
-        startActivity(intent);
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.empty_button:
-                getLiveData(lives.size() == 0);
-                break;
-        }
     }
 }

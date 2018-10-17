@@ -34,7 +34,7 @@
         android:src="@drawable/tab_icon_camera"/>
 
     <ekoolab.com.show.views.TabButton
-        android:id="@+id/tab_item_emart"
+        android:id="@+id/tab_item_chat"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
