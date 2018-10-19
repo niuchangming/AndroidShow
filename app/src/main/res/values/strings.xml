@@ -14,6 +14,7 @@
     <string name="video">Video</string>
     <string name="live">Live</string>
     <string name="start">Start</string>
+    <string name="logout">Logout</string>
     <string name="login">Login</string>
     <string name="mobile_number_prompt">Mobile Number:</string>
     <string name="plus_65">+65</string>
@@ -37,6 +38,7 @@
     <string name="whatsup">Whats up</string>
     <string name="region">Region</string>
     <string name="edit_cover">Edit Cover</string>
+    <string name="edit">Edit</string>
     <string name="save">Save</string>
     <string name="post">Post</string>
     <string name="nameinput">Enter your name</string>
