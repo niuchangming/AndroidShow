@@ -89,6 +89,7 @@
         <activity android:name=".activities.RegionActivity" />
         <activity android:name=".activities.PersonActivity" />
         <activity android:name=".activities.VideoPlayerActivity" />
+        <activity android:name=".activities.FollowerActivity" />
         <activity
             android:name=".activities.PostVideoActivity"
             android:screenOrientation="portrait"
