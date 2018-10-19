@@ -92,7 +92,6 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
                     @Override
                     protected void onSuccess(List<Video> videoList) {
                         try {
-                            System.out.println("===videoList==="+videoList.size()+";pageIndex==="+pageIndex);
                             if (ListUtils.isNotEmpty(videoList)) {
                                 if (flag == 2) {
                                     videos.addAll(videoList);

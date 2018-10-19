@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.luck.picture.lib.tools.Constant;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DataBaseManager extends SQLiteOpenHelper {
@@ -44,7 +46,10 @@ public class DataBaseManager extends SQLiteOpenHelper {
             + Constants.FriendTableColumns.nickname + " varchar(50), "
             + Constants.FriendTableColumns.channelUrl + " varchar, "
             + Constants.FriendTableColumns.countryCode + " varchar(5), "
-            + Constants.FriendTableColumns.mobile + " varchar(20) UNIQUE ON CONFLICT REPLACE);";
+            + Constants.FriendTableColumns.mobile + " varchar(20) UNIQUE ON CONFLICT REPLACE, "
+            + Constants.FriendTableColumns.isAppUser + " boolean, "
+            + Constants.FriendTableColumns.isMyFollowing + " boolean, "
+            + Constants.FriendTableColumns.isMyFollower + " boolean); ";
 
 
     String photoSql = "create table if not exists " + Constants.PHOTO_TB + " ("

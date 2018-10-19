@@ -26,7 +26,7 @@ public abstract class NetworkSubscriber<T> implements Subscriber<ResponseData<T>
     public static final int NO_NETWORK = -1000;
     public static final int STATUS_SUCCESS = 1;
     public static final int STATUS_FAILURE = -1;
-    public static final int ERROR_MSG_MAX_LENGTH = 20;
+    public static final int ERROR_MSG_MAX_LENGTH = 50;
 
 
     @Override

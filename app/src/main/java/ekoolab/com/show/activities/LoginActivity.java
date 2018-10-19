@@ -5,6 +5,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -153,6 +154,19 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private void mobileLogin() {
         final String mobile = mobileEt.getText().toString().trim();
         final String password = passwordEt.getText().toString().trim();
+
+        if (Utils.isBlank(mobile)) {
+            mobileEt.setHint(R.string.mobile_hint);
+            mobileEt.setHintTextColor(ContextCompat.getColor(this, R.color.colorRed));
+            return;
+        }
+
+        if(Utils.isBlank(password)){
+            passwordEt.setHint(R.string.password_hint);
+            passwordEt.setHintTextColor(ContextCompat.getColor(this, R.color.colorRed));
+            return;
+        }
+
         beforeLogin(false);
         HashMap<String, String> map = new HashMap<>(4);
         map.put("countryCode", "65");
@@ -165,6 +179,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     protected void onSuccess(LoginData loginData) {
                         afterLogin(false);
                         AuthUtils.getInstance(getApplicationContext()).saveLoginInfo(loginData);
+                        broadcastLoggedIn();
                         LoginActivity.this.finish();
                     }
 
@@ -192,6 +207,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     @Override
                     protected void onSuccess(LoginData loginData) {
                         afterLogin(true);
+                        broadcastLoggedIn();
                         AuthUtils.getInstance(getApplicationContext()).saveLoginInfo(loginData);
                         LoginActivity.this.finish();
                     }
@@ -229,19 +245,26 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void didRegistered(AuthInfo authInfo) {
+    public void didRegistered(LoginData loginData) {
         VerifyDialog verifyDialog = new VerifyDialog(this);
-        verifyDialog.setAuthInfo(authInfo);
+        verifyDialog.setLoginData(loginData);
         verifyDialog.backgroundColor(this.getResources().getColor(R.color.colorPink));
         verifyDialog.show();
     }
 
     @Override
-    public void did2FAVerify(AuthInfo authInfo) {
-        if (authInfo != null) {
-            AuthUtils.getInstance(this).saveAuthInfo(authInfo);
+    public void did2FAVerify(LoginData loginData) {
+        if (loginData != null) {
+            AuthUtils.getInstance(this).saveLoginInfo(loginData);
+            broadcastLoggedIn();
         }
         finish();
+    }
+
+    public void broadcastLoggedIn(){
+        Intent msgIntent = new Intent();
+        msgIntent.setAction(AuthUtils.LOGGED_IN);
+        this.sendBroadcast(msgIntent);
     }
 
     @Override

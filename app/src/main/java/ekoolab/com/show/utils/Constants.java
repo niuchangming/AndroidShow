@@ -6,6 +6,8 @@ import java.io.File;
 
 public class Constants {
     public static final int PAGE_SIZE = 20;
+    public static final String SBD_APP_ID = "9FFC187F-1F31-46B3-A77D-BB96008A8EED";
+    public static final String SBD_TOKEN = "ea52b46dfb6f05f404fc15735557b321c85efd6d";
 
     public static final String HOST = "http://api.ccmsshow.com:8081/api/";
     public static final String LOGIN = HOST + "user/login";
@@ -23,6 +25,7 @@ public class Constants {
     public static final String My_FOllOWER =  HOST + "follows/followerlist";
     public static final String My_FOllOWING =  HOST + "follows/followinglist";
     public static final String IS_FOLLOWED = HOST + "follows/isfollow";
+    public static final String FRIENDS = HOST + "user/getfriends";
     public static final String UPLOAD_CONTACT_BOOK = HOST + "user/addressbook";
     public static final String COMMENT = HOST + "comments/comment";
     public static final String COMMENTDEL = HOST + "comments/delete";

@@ -108,7 +108,6 @@ public class LiveFragment extends BaseFragment implements OnRefreshLoadMoreListe
         HashMap<String, String> map = new HashMap<>();
         map.put("timestamp", curRequestTime + "");
         map.put("pageSize", Constants.PAGE_SIZE + "");
-        map.put("pageSize", Constants.PAGE_SIZE + "");
         map.put("pageIndex", pageIndex + "");
         map.put("token", AuthUtils.getInstance(getContext()).getApiToken());
         ApiServer.basePostRequest(this, Constants.LIVE_LIST, map,

@@ -17,6 +17,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
+import com.luck.picture.lib.tools.Constant;
 import com.orhanobut.logger.Logger;
 import com.rx2androidnetworking.Rx2AndroidNetworking;
 import com.uber.autodispose.AutoDispose;
@@ -108,9 +109,14 @@ public class FriendService extends Service {
                     continue;
                 }
 
+                String defaultCountryCode = "SG";
+                if (phone.trim().length() > 10) {
+                    defaultCountryCode = "CN";
+                }
+
                 Phonenumber.PhoneNumber phoneNumber = null;
                 try {
-                    phoneNumber = PhoneNumberUtil.getInstance().parse(phone, "SG");
+                    phoneNumber = PhoneNumberUtil.getInstance().parse(Utils.formatMobile(phone, defaultCountryCode), defaultCountryCode);
                 }catch (NumberParseException e){
                     e.printStackTrace();
                 }
@@ -133,12 +139,18 @@ public class FriendService extends Service {
     }
 
     public void uploadContactToServer(List<Friend> friends){
-//        Gson gson = new Gson();
-//        String contactsJsonStr = gson.toJson(friends);
-//        String finalJsonStr = "{\"contacts\":" + contactsJsonStr + "}";
+
+        List<Map<String, String>> friendData = new ArrayList<>();
+        for(Friend friend : friends){
+            Map<String, String> friendMap = new HashMap<String, String>();
+            friendMap.put("name", Utils.getDisplayName(friend.name, friend.nickName));
+            friendMap.put("countryCode", friend.countryCode);
+            friendMap.put("mobile", friend.mobile);
+            friendData.add(friendMap);
+        }
 
         HashMap<String, Object> map = new HashMap<>();
-        map.put("contacts", friends);
+        map.put("contacts", friendData);
         map.put("token", AuthUtils.getInstance(getBaseContext()).getApiToken());
         map.put("userCode", AuthUtils.getInstance(getBaseContext()).getUserCode());
 
@@ -147,8 +159,10 @@ public class FriendService extends Service {
                 })
                 .subscribe(new NetworkSubscriber<List<Friend>>() {
                     @Override
-                    protected void onSuccess(List<Friend> momentList) {
+                    protected void onSuccess(List<Friend> friends) {
+                        Logger.i("----------> " + friends.size());
 
+                        getContactFromServer();
                     }
 
                     @Override
@@ -161,8 +175,40 @@ public class FriendService extends Service {
     }
 
     private void getContactFromServer() {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("token", AuthUtils.getInstance(this).getApiToken());
+        ApiServer.basePostRequestNoDisposable(Constants.FRIENDS, map,
+                new TypeToken<ResponseData<List<Friend>>>(){
+                })
+                .subscribe(new NetworkSubscriber<List<Friend>>(){
 
+                    @Override
+                    protected void onSuccess(List<Friend> friends) {
+
+                        for (Friend friend : friends) {
+                            friend.isAppUser = true;
+                        }
+
+                        Friend.batchSave(FriendService.this, friends);
+
+                        Intent intent = new Intent();
+                        intent.setAction(FriendService.CONTACT_UPLOADED);
+                        FriendService.this.sendBroadcast(intent);
+                    }
+
+                });
     }
 
-
 }
+
+
+
+
+
+
+
+
+
+
+
+

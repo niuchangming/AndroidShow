@@ -12,8 +12,8 @@ import android.widget.ImageButton;
 
 import java.util.List;
 
+import ekoolab.com.show.activities.BaseActivity;
 import ekoolab.com.show.views.BorderShape;
-import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.R;
 import ekoolab.com.show.views.TabButton;
 import ekoolab.com.show.utils.ViewHolder;
@@ -63,7 +63,7 @@ public class TabFragment extends BaseFragment implements View.OnClickListener {
 
         tabHome.init(R.drawable.tab_icon_home, getContext().getResources().getString(R.string.home), HomeFragment.class);
         tabZSC.init(R.drawable.tab_icon_zsc, getContext().getResources().getString(R.string.zsc), HomeFragment.class);
-        tabChat.init(R.drawable.tab_icon_chat, getContext().getResources().getString(R.string.chat), ChatFragment.class);
+        tabChat.init(R.drawable.tab_icon_chat, getContext().getResources().getString(R.string.chat), ChatListFragment.class);
         tabProfile.init(R.drawable.tab_icon_profile, getContext().getResources().getString(R.string.profile), ProfileFragment.class);
 
         clearOldFragment();
@@ -109,6 +109,12 @@ public class TabFragment extends BaseFragment implements View.OnClickListener {
     }
 
     private void doSelect(TabButton newNavButton) {
+        if (newNavButton == tabChat || newNavButton == tabProfile) {
+            if (!((BaseActivity)getActivity()).authorized(true)) {
+                return;
+            }
+        }
+
         TabButton oldNavButton = null;
         if (mCurrentNavButton != null) {
             oldNavButton = mCurrentNavButton;
@@ -148,6 +154,17 @@ public class TabFragment extends BaseFragment implements View.OnClickListener {
         if (listener != null) {
             listener.onReselect(navigationButton);
         }
+    }
+
+    public Fragment getFragment(Class<?> clz){
+        if (clz.isInstance(ChatListFragment.class)) {
+            return this.tabChat.getFragment();
+        } else if (clz.isInstance(HomeFragment.class)) {
+            return this.tabHome.getFragment();
+        } else if (clz.isInstance(ProfileFragment.class)) {
+            return this.tabProfile.getFragment();
+        }
+        return null;
     }
 
     public interface OnTabBarSelectedListener {

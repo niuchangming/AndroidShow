@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <ekoolab.com.show.views.FakeActionBar
         android:id="@+id/fake_navigation_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/navigation_bar_height"
@@ -22,7 +22,7 @@
             android:textColor="@color/colorBlack"
             android:textSize="@dimen/text_size_16sp" />
 
-    </RelativeLayout>
+    </ekoolab.com.show.views.FakeActionBar>
 
     <com.santalu.emptyview.EmptyView
         android:id="@+id/empty_view"

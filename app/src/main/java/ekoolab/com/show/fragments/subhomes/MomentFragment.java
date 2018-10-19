@@ -146,7 +146,7 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
         recyclerView = holder.get(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         recyclerView.addItemDecoration(new LinearItemDecoration(mContext,
-                1, R.color.gray_very_light, DisplayUtils.dip2px(15)));
+                1, R.color.gray_very_light, 0));
         refreshLayout = holder.get(R.id.refreshLayout);
         initRefreshLayout();
         initAdapter();
@@ -450,7 +450,6 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
                 .subscribe(new NetworkSubscriber<List<Moment>>() {
                     @Override
                     protected void onSuccess(List<Moment> momentList) {
-                        System.out.println("===momentList==="+momentList.size()+";pageIndex==="+pageIndex);
                         if (ListUtils.isNotEmpty(momentList)) {
                             if (isRefresh) {
                                 moments.clear();

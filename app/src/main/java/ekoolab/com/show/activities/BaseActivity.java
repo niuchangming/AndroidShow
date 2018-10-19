@@ -98,12 +98,14 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected Boolean authorized(){
+    public Boolean authorized(boolean showLogin){
         AuthUtils.AuthType authType = AuthUtils.getInstance(this).loginState();
         String apiToken = AuthUtils.getInstance(this).getApiToken();
         if (authType != LOGGED || Utils.isBlank(apiToken)) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
+            if (showLogin){
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
+            }
             return false;
         }
         return true;

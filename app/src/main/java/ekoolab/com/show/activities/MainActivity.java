@@ -1,22 +1,17 @@
 package ekoolab.com.show.activities;
 
 import android.Manifest;
-import android.animation.ValueAnimator;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -32,8 +27,6 @@ import com.luck.picture.lib.entity.LocalMedia;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -43,12 +36,12 @@ import ekoolab.com.show.R;
 import ekoolab.com.show.Services.FriendService;
 import ekoolab.com.show.dialogs.DialogViewHolder;
 import ekoolab.com.show.dialogs.XXDialog;
+import ekoolab.com.show.fragments.ChatListFragment;
 import ekoolab.com.show.fragments.TabFragment;
 import ekoolab.com.show.fragments.subhomes.MomentFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.DisplayUtils;
-import ekoolab.com.show.utils.EventBusMsg;
 import ekoolab.com.show.utils.ImageSeclctUtils;
 import ekoolab.com.show.utils.ListUtils;
 import ekoolab.com.show.utils.LocalBinder;
@@ -85,7 +78,12 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(AuthUtils.LOGGED_IN)) {
-                afterLoggedIn();
+
+            }else if (intent.getAction().equals(FriendService.CONTACT_UPLOADED)) {
+                ChatListFragment chatFragment = (ChatListFragment) tabFragment.getFragment(ChatListFragment.class);
+                if (chatFragment != null) {
+                    chatFragment.friendSyncCompleted();
+                }
             }
         }
     };
@@ -119,12 +117,16 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
         super.onResume();
         IntentFilter filter = new IntentFilter();
         filter.addAction(AuthUtils.LOGGED_IN);
+        filter.addAction(FriendService.CONTACT_UPLOADED);
         this.registerReceiver(broadcastReceiver, filter);
+
+        if (authorized(false)) {
+            startFriendService();
+        }
     }
 
-
-    private void afterLoggedIn(){
-        rxPermissions.request(Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    private void startFriendService(){
+        rxPermissions.request(Manifest.permission.READ_CONTACTS)
                 .subscribe(granted -> {
                     if (!granted) {
                         ToastUtils.showToast(getString(R.string.permission_contact));
@@ -141,7 +143,7 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
 
     @Override
     public void onCenterCameraClick() {
-        if (!authorized()){ return; }
+        if (!authorized(true)){ return; }
 
         if (xxDialog == null) {
             xxDialog = new XXDialog(this, R.layout.dialog_choose_content) {

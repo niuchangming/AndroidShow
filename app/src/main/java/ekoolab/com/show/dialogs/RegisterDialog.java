@@ -1,6 +1,7 @@
 package ekoolab.com.show.dialogs;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -31,6 +32,7 @@ import ekoolab.com.show.beans.Moment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.ListUtils;
+import ekoolab.com.show.utils.Utils;
 
 public class RegisterDialog extends SimpleDialog implements View.OnClickListener{
     private final String TAG = "RegisterDialog";;
@@ -49,6 +51,11 @@ public class RegisterDialog extends SimpleDialog implements View.OnClickListener
     public RegisterDialog(Context context, int style) {
         super(context, style);
         contentView(R.layout.dialog_register);
+
+        if(RegisterListener.class.isAssignableFrom(context.getClass())){
+            listener = (RegisterListener)context;
+        }
+
         initViews();
     }
 
@@ -83,9 +90,21 @@ public class RegisterDialog extends SimpleDialog implements View.OnClickListener
         final String mobile = mobileEt.getText().toString().trim();
         final String password = passwordEt.getText().toString().trim();
 
+        if (Utils.isBlank(mobile)) {
+            mobileEt.setHint(R.string.mobile_hint);
+            mobileEt.setHintTextColor(ContextCompat.getColor(getContext(), R.color.colorRed));
+            return;
+        }
+
+        if(Utils.isBlank(password)){
+            passwordEt.setHint(R.string.password_hint);
+            passwordEt.setHintTextColor(ContextCompat.getColor(getContext(), R.color.colorRed));
+            return;
+        }
+
         beforeCall();
 
-        HashMap<String, Object> map = new HashMap<>(3);
+        HashMap<String, Object> map = new HashMap<>();
         map.put("countryCode", "65");
         map.put("mobile", mobile);
         map.put("password", password);
@@ -95,8 +114,13 @@ public class RegisterDialog extends SimpleDialog implements View.OnClickListener
         }).subscribe(new NetworkSubscriber<LoginData>() {
             @Override
             protected void onSuccess(LoginData loginData) {
-                Logger.i("Login data: " + loginData);
+                loginData.mobile = mobile;
+                loginData.countryCode = 65;
+                if (listener != null){
+                    listener.didRegistered(loginData);
+                }
                 afterCall();
+                cancel();
             }
 
             @Override
@@ -105,50 +129,8 @@ public class RegisterDialog extends SimpleDialog implements View.OnClickListener
                 return super.dealHttpException(code, errorMsg, e);
             }
 
-            @Override
-            public void onError(Throwable e) {
-                super.onError(e);
-                afterCall();
-                Logger.i("Register Error: " + e.getLocalizedMessage());
-            }
         });
 
-//        AndroidNetworking.post(Constants.SIGNUP)
-//                .addBodyParameter("countryCode", "65")
-//                .addBodyParameter("c", mobile)
-//                .addBodyParameter("password", password)
-//                .addBodyParameter("type", "mobile")
-//                .setPriority(Priority.MEDIUM)
-//                .build()
-//                .getAsJSONObject(new JSONObjectRequestListener() {
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//                        try {
-//                            int errorCode = response.getInt("errorCode");
-//                            String message = response.getString("message");
-//                            if (errorCode == 1) {;
-//                                AuthInfo authInfo = new AuthInfo(response);
-//                                authInfo.setMobile(mobile);
-//                                authInfo.setDialNo("65");
-//                                if(listener != null) {
-//                                    listener.didRegistered(authInfo);
-//                                }
-//
-//                                cancel();
-//                            } else {
-//                                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
-//                            }
-//                        }catch (JSONException e){
-//                            Log.e(TAG, e.getLocalizedMessage());
-//                        }
-//                        afterCall();
-//                    }
-//                    @Override
-//                    public void onError(ANError error) {
-//                        Log.e(TAG, error.getLocalizedMessage());
-//                        afterCall();
-//                    }
-//                });
     }
 
     private void beforeCall(){
@@ -162,6 +144,6 @@ public class RegisterDialog extends SimpleDialog implements View.OnClickListener
     }
 
     public interface RegisterListener{
-        void didRegistered(AuthInfo authInfo);
+        void didRegistered(LoginData loginData);
     }
 }

@@ -1,14 +1,22 @@
 package ekoolab.com.show.fragments;
 
+import android.content.Intent;
+import android.graphics.RectF;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.icu.text.RelativeDateTimeFormatter;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.reflect.TypeToken;
-import com.orhanobut.logger.Logger;
+import com.luck.picture.lib.tools.Constant;
 import com.santalu.emptyview.EmptyView;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -19,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import ekoolab.com.show.R;
+import ekoolab.com.show.activities.ChatActivity;
 import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
@@ -30,9 +39,10 @@ import ekoolab.com.show.utils.ImageLoader;
 import ekoolab.com.show.utils.ListUtils;
 import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.utils.ViewHolder;
+import ekoolab.com.show.views.BorderShape;
 import ekoolab.com.show.views.itemdecoration.LinearItemDecoration;
 
-public class ChatFragment extends BaseFragment implements OnRefreshLoadMoreListener, BaseQuickAdapter.OnItemClickListener{
+public class ChatListFragment extends BaseFragment implements OnRefreshLoadMoreListener, BaseQuickAdapter.OnItemClickListener{
     private EmptyView emptyView;
     private RecyclerView recyclerView;
     private SmartRefreshLayout refreshLayout;
@@ -41,10 +51,11 @@ public class ChatFragment extends BaseFragment implements OnRefreshLoadMoreListe
 
     private int pageIndex;
     private long curRequestTime;
+    private boolean isLocalData;
 
     @Override
     protected int getLayoutId() {
-        return R.layout.fragment_chat;
+        return R.layout.fragment_chat_list;
     }
 
     @Override
@@ -53,7 +64,7 @@ public class ChatFragment extends BaseFragment implements OnRefreshLoadMoreListe
         recyclerView=  holder.get(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         recyclerView.addItemDecoration(new LinearItemDecoration(mContext,
-                1, R.color.gray_very_light, DisplayUtils.dip2px(15)));
+                1, R.color.gray_very_light, 0));
 
         refreshLayout = holder.get(R.id.refresh_layout);
         refreshLayout.setEnableAutoLoadMore(true);
@@ -66,7 +77,19 @@ public class ChatFragment extends BaseFragment implements OnRefreshLoadMoreListe
     @Override
     protected void initData() {
         super.initData();
-        getFriendData(true);
+        loadFriendData();
+    }
+
+    private void loadFriendData(){
+        isLocalData = true;
+        friends.addAll(getFriendsFromLocal());
+
+        if(friends.size() == 0){
+            isLocalData = false;
+            getFriendDataFromServer(true);
+        }else{
+            adapter.notifyDataSetChanged();
+        }
     }
 
     private void bindAdapter(RecyclerView recyclerView) {
@@ -83,7 +106,7 @@ public class ChatFragment extends BaseFragment implements OnRefreshLoadMoreListe
         recyclerView.setAdapter(adapter);
     }
 
-    private void getFriendData(boolean isInitial){
+    private void getFriendDataFromServer(boolean isInitial){
         if (isInitial) {
             curRequestTime = System.currentTimeMillis();
             pageIndex = 0;
@@ -91,35 +114,42 @@ public class ChatFragment extends BaseFragment implements OnRefreshLoadMoreListe
         }
         emptyView.showLoading();
         HashMap<String, String> map = new HashMap<>();
-        map.put("timestamp", curRequestTime + "");
-        map.put("pageSize", Constants.PAGE_SIZE + "");
-        map.put("pageSize", Constants.PAGE_SIZE + "");
-        map.put("pageIndex", pageIndex + "");
         map.put("token", AuthUtils.getInstance(getContext()).getApiToken());
-        ApiServer.basePostRequest(this, Constants.My_FOllOWING, map,
+        map.put("pageIndex", pageIndex+"");
+        map.put("pageSize", Constants.PAGE_SIZE+"");
+        map.put("timestamp", curRequestTime + "");
+        ApiServer.basePostRequest(this, Constants.My_FOllOWER, map,
                 new TypeToken<ResponseData<List<Friend>>>() {
                 })
                 .subscribe(new NetworkSubscriber<List<Friend>>() {
                     @Override
-                    protected void onSuccess(List<Friend> userList) {
-                        Logger.i("User Data List: " + userList.size());
-                        if (ListUtils.isNotEmpty(userList)) {
+                    protected void onSuccess(List<Friend> friendList) {
+                        if (ListUtils.isNotEmpty(friendList)) {
                             if (isInitial) {
                                 friends.clear();
                             }
-                            friends.addAll(userList);
+
+                            for (Friend friend : friendList) {
+                                friend.isAppUser = true;
+                            }
+
+                            friends.addAll(friendList);
+
                             if (isInitial) {
                                 adapter.notifyDataSetChanged();
                             } else {
-                                adapter.notifyItemRangeInserted(friends.size() - userList.size(),
-                                        userList.size());
+                                adapter.notifyItemRangeInserted(friends.size() - friendList.size(),
+                                        friendList.size());
                             }
+
                             emptyView.showContent();
-                            if (userList.size() < Constants.PAGE_SIZE) {
+
+                            if (friendList.size() < Constants.PAGE_SIZE) {
                                 refreshLayout.setEnableLoadMore(false);
                             } else {
                                 pageIndex++;
                             }
+                            Friend.batchSave(getContext(), friendList);
                         } else{
                             emptyView.showEmpty();
                         }
@@ -141,16 +171,38 @@ public class ChatFragment extends BaseFragment implements OnRefreshLoadMoreListe
 
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-
+        Friend friend = friends.get(position);
+        Intent intent = new Intent(getActivity(), ChatActivity.class);
+        intent.putExtra(ChatActivity.FRIEND_DATA, friend);
+        startActivity(intent);
     }
 
     @Override
     public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-
+        if (!isLocalData) {
+            getFriendDataFromServer(false);
+        }
     }
 
     @Override
     public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+        friends.clear();
+        loadFriendData();
+    }
 
+    public void friendSyncCompleted(){
+        List<Friend> newFriends = getFriendsFromLocal();
+        if(newFriends.size() > 0){
+            friends.clear();
+            friends.addAll(newFriends);
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    public List<Friend> getFriendsFromLocal(){
+        List<Friend> allFriends = Friend.getAllFriends(getActivity(), Constants.FriendTableColumns.userId + " IS NOT NULL AND "
+                + Constants.FriendTableColumns.isAppUser + " =? ", new String[]{"1"});
+
+        return allFriends;
     }
 }

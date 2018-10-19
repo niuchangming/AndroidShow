@@ -77,9 +77,34 @@
     <string name="send">Send</string>
     <string name="follow">Follow</string>
     <string name="un_follow">Unfollow</string>
-
     <string name="my_friend">Friends</string>
 
+    <!-- Chat -->
+    <string name="video_call">Video Call</string>
+    <string name="voice_call">Voice Call</string>
+
+    <!-- Permission -->
     <string name="permission_storage">Please open storage permission for better experience</string>
     <string name="permission_contact">Chat and Call your friends with Show</string>
 </resources>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

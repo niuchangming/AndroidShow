@@ -16,6 +16,7 @@ import java.util.List;
 
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.DataBaseManager;
+import ekoolab.com.show.utils.Utils;
 
 public class Friend implements Parcelable {
     public String name;
@@ -45,12 +46,15 @@ public class Friend implements Parcelable {
                 this.avatar.userId = this.userCode;
                 this.avatar.save(context);
             }
-            values.put(Constants.FriendTableColumns.isMyFollowing, this.isMyFollowing);
-            values.put(Constants.FriendTableColumns.isMyFollower, this.isMyFollower);
-            values.put(Constants.FriendTableColumns.isAppUser, this.isAppUser);
+            values.put(Constants.FriendTableColumns.isMyFollowing, this.isMyFollowing ? 1 : 0);
+            values.put(Constants.FriendTableColumns.isMyFollower, this.isMyFollower ? 1 : 0);
+            values.put(Constants.FriendTableColumns.isAppUser, this.isAppUser ? 1 : 0);
 
             try{
-                db.insert(Constants.FRIEND_TB, null, values);
+                int id = (int) db.insertWithOnConflict(Constants.FRIEND_TB, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+                if (id == -1) {
+                    db.update(Constants.FRIEND_TB, values, Constants.FriendTableColumns.mobile + "=?", new String[]{this.mobile + ""});
+                }
             }catch(SQLiteException e){
                 e.printStackTrace();
             }finally {
@@ -97,7 +101,7 @@ public class Friend implements Parcelable {
 
     }
 
-    public static List<Friend> getAllUsers(Context context, String selection, String[] args){
+    public static List<Friend> getAllFriends(Context context, String selection, String[] args){
         SQLiteDatabase db = DataBaseManager.getInstance(context).openDatabase();
         List<Friend> friends = new ArrayList<>();
         Cursor cursor = null;
@@ -113,10 +117,14 @@ public class Friend implements Parcelable {
                 friend.mobile = cursor.getString(cursor.getColumnIndexOrThrow(Constants.FriendTableColumns.mobile));
                 friend.countryCode = cursor.getString(cursor.getColumnIndexOrThrow(Constants.FriendTableColumns.countryCode));
                 friend.channelUrl = cursor.getString(cursor.getColumnIndexOrThrow(Constants.FriendTableColumns.channelUrl));
-                friend.avatar = Photo.getPhotoByUserId(db, friend.userCode);
-                friend.isMyFollowing = cursor.getInt(cursor.getColumnIndexOrThrow(Constants.FriendTableColumns.isMyFollowing)) > 0;
-                friend.isMyFollower = cursor.getInt(cursor.getColumnIndexOrThrow(Constants.FriendTableColumns.isMyFollower)) > 0;
-                friend.isAppUser = cursor.getInt(cursor.getColumnIndexOrThrow(Constants.FriendTableColumns.isAppUser)) > 0;
+
+                if(!Utils.isBlank(friend.userCode)){
+                    friend.avatar = Photo.getPhotoByUserId(db, friend.userCode);
+                }
+
+                friend.isMyFollowing = cursor.getInt(cursor.getColumnIndexOrThrow(Constants.FriendTableColumns.isMyFollowing)) == 1;
+                friend.isMyFollower = cursor.getInt(cursor.getColumnIndexOrThrow(Constants.FriendTableColumns.isMyFollower)) == 1;
+                friend.isAppUser = cursor.getInt(cursor.getColumnIndexOrThrow(Constants.FriendTableColumns.isAppUser)) == 1;
 
                 friends.add(friend);
                 cursor.moveToNext();

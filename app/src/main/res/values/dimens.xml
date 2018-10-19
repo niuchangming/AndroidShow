@@ -84,4 +84,7 @@
     <dimen name="button_height_40dp">40dp</dimen>
 
     <dimen name="moment_gift_tips_width">180dp</dimen>
+    <dimen name="corner_radius_small">4dp</dimen>
+    <dimen name="corner_radius_medium">6dp</dimen>
+    <dimen name="corner_radius_largin">8dp</dimen>
 </resources>

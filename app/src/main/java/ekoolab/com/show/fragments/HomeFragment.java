@@ -39,9 +39,6 @@ import ekoolab.com.show.views.BorderShape;
 import static ekoolab.com.show.utils.AuthUtils.AuthType.LOGGED;
 
 public class HomeFragment extends BaseFragment implements View.OnClickListener{
-
-    private BaseActivity activity;
-    private RelativeLayout indicatorContainer;
     private TabLayout indicatorTabLayout;
     private ViewPager viewPager;
     private HomeAdapter pagerAdapter;
@@ -52,7 +49,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener{
 
     @Override
     public void onAttach(Context context) {
-        activity = (BaseActivity) context;
         super.onAttach(context);
     }
 
@@ -103,16 +99,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener{
         pagerAdapter =  new HomeAdapter(getFragmentManager(), fragments);
         viewPager.setOffscreenPageLimit(3);
         viewPager.setAdapter(pagerAdapter);
-
-        ShapeDrawable lineDrawable = new ShapeDrawable(new BorderShape(new RectF(0, 0, 0, 1)));
-        lineDrawable.getPaint().setColor(getResources().getColor(R.color.extraGray));
-        LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{
-                new ColorDrawable(getResources().getColor(R.color.colorWhite)),
-                lineDrawable
-        });
-
-        indicatorContainer = holder.get(R.id.indicator_tab_container);
-        indicatorContainer.setBackground(layerDrawable);
 
         indicatorTabLayout = holder.get(R.id.indicator_tab);
         indicatorTabLayout.setupWithViewPager(viewPager);

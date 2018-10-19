@@ -31,7 +31,7 @@ public class VideoPlayerActivity extends BaseActivity {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_video_palyer;
+        return R.layout.activity_video_player;
     }
 
     @Override

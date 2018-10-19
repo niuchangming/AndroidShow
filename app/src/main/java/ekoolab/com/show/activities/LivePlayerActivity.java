@@ -2,18 +2,26 @@ package ekoolab.com.show.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.androidnetworking.model.Progress;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.FutureTarget;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
@@ -31,24 +39,36 @@ import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Util;
 import com.google.gson.reflect.TypeToken;
 import com.juziwl.ijkplayerlib.media.IjkVideoView;
+import com.luck.picture.lib.utils.ThreadExecutorManager;
 import com.orhanobut.logger.Logger;
 import com.rey.material.widget.ProgressView;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import ekoolab.com.show.R;
+import ekoolab.com.show.adapters.DialogGiftPagerAdapter;
 import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
+import ekoolab.com.show.beans.Gift;
 import ekoolab.com.show.beans.Live;
 import ekoolab.com.show.beans.LoginData;
+import ekoolab.com.show.dialogs.DialogViewHolder;
+import ekoolab.com.show.dialogs.XXDialog;
+import ekoolab.com.show.fragments.subhomes.MomentFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.DisplayUtils;
 import ekoolab.com.show.utils.ImageLoader;
+import ekoolab.com.show.utils.ListUtils;
+import ekoolab.com.show.utils.ToastUtils;
 import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.views.BubbleView;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
@@ -73,6 +93,8 @@ public class LivePlayerActivity extends BaseActivity implements View.OnClickList
     private ImageButton giftBtn;
     private ImageButton shareBtn;
     private ProgressView followStatePv;
+
+    private List<Gift> gifts = new ArrayList<>();
 
     long mLastTime = 0;
     long mCurTime = 0;
@@ -99,36 +121,37 @@ public class LivePlayerActivity extends BaseActivity implements View.OnClickList
     protected void initData() {
         super.initData();
 
-        live = getIntent().getParcelableExtra(LIVE_DATA);
+//        live = getIntent().getParcelableExtra(LIVE_DATA);
+        getGifts();
     }
 
     @Override
     protected void initViews() {
         super.initViews();
 
-        maskImageView = findViewById(R.id.mask_iv);
-        ImageLoader.displayImage(live.coverImage.medium, maskImageView, 25);
-
-        likeBtn = findViewById(R.id.like_float_btn);
-        likeBtn.setOnClickListener(this);
-
-        avatarIv = findViewById(R.id.avatar_iv);
-        ImageLoader.displayImageAsCircle(live.avatar.small, avatarIv);
-
-        nameTv = findViewById(R.id.name_tv);
-        nameTv.setText(Utils.getDisplayName(live.author, live.nickname));
-
-        audienceTv = findViewById(R.id.audience_amount_tv);
-        audienceTv.setText(live.audienceCount.size()+"");
-
-        followBtn = findViewById(R.id.follow_btn);
-        followBtn.setOnClickListener(this);
-
-        dismissBtn = findViewById(R.id.dismiss_btn);
-        dismissBtn.setOnClickListener(this);
-
-        commentBtn = findViewById(R.id.comment_btn);
-        commentBtn.setOnClickListener(this);
+//        maskImageView = findViewById(R.id.mask_iv);
+//        ImageLoader.displayImage(live.coverImage.medium, maskImageView, 25);
+//
+//        likeBtn = findViewById(R.id.like_float_btn);
+//        likeBtn.setOnClickListener(this);
+//
+//        avatarIv = findViewById(R.id.avatar_iv);
+//        ImageLoader.displayImageAsCircle(live.avatar.small, avatarIv);
+//
+//        nameTv = findViewById(R.id.name_tv);
+//        nameTv.setText(Utils.getDisplayName(live.author, live.nickname));
+//
+//        audienceTv = findViewById(R.id.audience_amount_tv);
+//        audienceTv.setText(live.audienceCount.size()+"");
+//
+//        followBtn = findViewById(R.id.follow_btn);
+//        followBtn.setOnClickListener(this);
+//
+//        dismissBtn = findViewById(R.id.dismiss_btn);
+//        dismissBtn.setOnClickListener(this);
+//
+//        commentBtn = findViewById(R.id.comment_btn);
+//        commentBtn.setOnClickListener(this);
 
         giftBtn = findViewById(R.id.gift_btn);
         giftBtn.setOnClickListener(this);
@@ -148,7 +171,7 @@ public class LivePlayerActivity extends BaseActivity implements View.OnClickList
     public void onStart() {
         super.onStart();
         if (Util.SDK_INT > 23) {
-            initPlayer();
+//            initPlayer();
         }
     }
 
@@ -156,10 +179,10 @@ public class LivePlayerActivity extends BaseActivity implements View.OnClickList
     public void onResume() {
         super.onResume();
         if ((Util.SDK_INT <= 23 || player == null)) {
-            initPlayer();
+//            initPlayer();
         }
 
-        isFollowed();
+//        isFollowed();
     }
 
     private void initPlayer(){
@@ -214,6 +237,27 @@ public class LivePlayerActivity extends BaseActivity implements View.OnClickList
                 });
     }
 
+    private void getGifts() {
+        ApiServer.basePostRequest(this, Constants.GIFTLIST, null,
+                new TypeToken<ResponseData<List<Gift>>>() {
+                })
+                .subscribe(new NetworkSubscriber<List<Gift>>() {
+                    @Override
+                    protected void onSuccess(List<Gift> giftList) {
+                        if (ListUtils.isNotEmpty(giftList)) {
+                            gifts.clear();
+                            gifts.addAll(giftList);
+                            for (Gift gift : gifts) {
+                                ThreadExecutorManager.getInstance().runInThreadPool(() -> {
+                                    FutureTarget<File> target = Glide.with(LivePlayerActivity.this)
+                                            .download(gift.animImage).submit();
+                                });
+                            }
+                        }
+                    }
+                });
+    }
+
     private void beforeGetFollowState() {
         followStatePv.start();
         followBtn.setEnabled(false);
@@ -248,6 +292,9 @@ public class LivePlayerActivity extends BaseActivity implements View.OnClickList
                 break;
             case R.id.share_btn:
                 break;
+            case R.id.gift_btn:
+                showGiftDialog();
+                break;
             case R.id.comment_btn:
                 break;
             case R.id.dismiss_btn:
@@ -269,7 +316,6 @@ public class LivePlayerActivity extends BaseActivity implements View.OnClickList
                 .subscribe(new NetworkSubscriber<String>() {
                     @Override
                     protected void onSuccess(String s) {
-                        Logger.i("----------> " + s);
                         afterGetFollowState();
                     }
 
@@ -296,6 +342,57 @@ public class LivePlayerActivity extends BaseActivity implements View.OnClickList
         delayTimer = new Timer();
         delayTimer.schedule(timeTask, DELAY);
     }
+
+    private void showGiftDialog() {
+        if (!ListUtils.isNotEmpty(gifts)) {
+            ToastUtils.showToast("gift is loading");
+            return;
+        }
+        XXDialog xxDialog = new XXDialog(this, R.layout.dialog_moment_gift, true) {
+            @Override
+            public void convert(DialogViewHolder holder) {
+                ViewPager viewPager = holder.getView(R.id.viewpager);
+                viewPager.getLayoutParams().height = ((int) (DisplayUtils.getScreenWidth() / 4 * 1.2)) * 2;
+                DialogGiftPagerAdapter adapter = new DialogGiftPagerAdapter(getBaseContext(), gifts);
+                viewPager.setAdapter(adapter);
+                LinearLayout llIndicator = holder.getView(R.id.ll_indicator);
+                int size = DisplayUtils.dip2px(6);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(size, size);
+                params.setMargins(size, size, size, size);
+                llIndicator.setTag(0);
+                for (int i = 0, len = adapter.getCount(); i < len; i++) {
+                    View view = new View(getBaseContext());
+                    llIndicator.addView(view, params);
+                    if (i == 0) {
+                        view.setBackgroundResource(R.drawable.bg_indicator_white);
+                    } else {
+                        view.setBackgroundResource(R.drawable.bg_indicator_grey);
+                    }
+                }
+                viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+                    @Override
+                    public void onPageSelected(int position) {
+                        int prePos = (int) llIndicator.getTag();
+                        llIndicator.getChildAt(prePos).setBackgroundResource(R.drawable.bg_indicator_grey);
+                        llIndicator.getChildAt(position).setBackgroundResource(R.drawable.bg_indicator_white);
+                        llIndicator.setTag(position);
+                    }
+                });
+                holder.setOnClick(R.id.tv_send, view -> {
+                    int curGiftPos = adapter.getCurGiftPos();
+                    if (curGiftPos == -1) {
+                        return;
+                    }
+//                    Gift gift = gifts.get(curGiftPos);
+//                    playGifImage(gift.animImage);
+//                    generateGiftTips(gift);
+//                    sendGift(gift);
+                });
+            }
+        };
+        xxDialog.fullWidth().fromBottom().showDialog();
+    }
+
 
     private void addLiveLick() {
         //send request

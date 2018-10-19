@@ -89,4 +89,14 @@ public class Utils {
         return Utils.isBlank(displayName) ? "" : displayName;
 
     }
+
+    public static String formatMobile(String mobile, String region){
+        if (equals(region, "CN") && mobile.length() > 11){
+            mobile = mobile.substring(mobile.length() - 11);
+        } else if(equals(region, "SG") && mobile.length() > 8){
+            mobile = mobile.substring(mobile.length() - 8);
+        }
+
+        return mobile;
+    }
 }

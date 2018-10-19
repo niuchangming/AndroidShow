@@ -56,29 +56,6 @@ public class AuthUtils {
         return sp.getString(Constants.Auth.USERNAME, "");
     }
 
-    public void saveAuthInfo(AuthInfo info) {
-        SharedPreferences.Editor spEditor = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE).edit();
-        spEditor.putBoolean(Constants.Auth.LOGGED_IN, true);
-        spEditor.putString(Constants.Auth.API_TOKEN, info.getApiToken());
-        spEditor.putString(Constants.Auth.USER_CODE, info.getUserCode());
-        spEditor.putString(Constants.Auth.USERNAME, info.getName());
-        spEditor.putInt(Constants.Auth.ROLE, info.getRole());
-        spEditor.putString(Constants.Auth.LOGIN_TYPE, info.getAccountType());
-
-        if (info.getAccountType().equalsIgnoreCase("facebook")) {
-            spEditor.putString(Constants.Auth.FB_ACCESS_TOKEN, info.getFbAccessToken());
-            spEditor.putString(Constants.Auth.FB_USER_ID, info.getFbUserId());
-        } else if (info.getAccountType().equalsIgnoreCase("wechat")) {
-            spEditor.putString(Constants.Auth.WX_ACCESS_TOKEN, info.getWxAccessToken());
-            spEditor.putString(Constants.Auth.WX_UNION_ID, info.getWxUnionId());
-        } else {
-            spEditor.putString(Constants.Auth.MOBILE, info.getMobile());
-            spEditor.putString(Constants.Auth.DIAL_NO, info.getDialNo());
-        }
-
-        spEditor.apply();
-    }
-
     public void saveLoginInfo(LoginData data) {
         SharedPreferences.Editor spEditor = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE).edit();
         spEditor.putBoolean(Constants.Auth.LOGGED_IN, true);
