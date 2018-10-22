@@ -23,6 +23,7 @@ import java.util.List;
 import ekoolab.com.show.R;
 import ekoolab.com.show.adapters.ProfileAdapter;
 import ekoolab.com.show.fragments.BaseFragment;
+import ekoolab.com.show.fragments.DatePickerFragment;
 import ekoolab.com.show.fragments.submyvideos.MyCollectsFragment;
 import ekoolab.com.show.fragments.submyvideos.MyVideoFragment;
 import ekoolab.com.show.fragments.submyvideos.MymomentsFragment;
@@ -190,9 +191,13 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                 intent = new Intent(this, GenderActivity.class);
                 this.startActivity(intent);
                 break;
+//            case R.id.birthday_rl:
+//                intent = new Intent(getApplicationContext(), BirthdayActivity.class);
+//                this.startActivity(intent);
+//                break;
             case R.id.birthday_rl:
-                intent = new Intent(this, BirthdayActivity.class);
-                this.startActivity(intent);
+                DatePickerFragment datePickerFragment = new DatePickerFragment();
+                datePickerFragment.show(getFragmentManager(), "datepicker");
                 break;
             case R.id.whatsup_rl:
                 intent = new Intent(this, WhatsupActivity.class);
@@ -207,9 +212,11 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                 this.startActivity(intent);
                 break;
             case R.id.btn_login:
-                finish();
+                onBackPressed();
+                break;
             case R.id.title_rl:
-                finish();
+                onBackPressed();
+                break;
         }
     }
 //

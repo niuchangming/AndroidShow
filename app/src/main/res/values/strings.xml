@@ -77,4 +77,7 @@
     <string name="login_first">Please login first</string>
     <string name="recharge">充值</string>
     <string name="send">发送</string>
+    <string name="country_china">China</string>
+    <string name="country_singapore">Singapore</string>
+    <string name="country_malaysia">Malaysia</string>
 </resources>

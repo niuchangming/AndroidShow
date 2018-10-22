@@ -1,5 +1,7 @@
 package ekoolab.com.show.activities;
 
+import android.content.Intent;
+import android.view.View;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -9,7 +11,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import ekoolab.com.show.R;
 import ekoolab.com.show.utils.EventBusMsg;
 
-public class NicknameActivity extends BaseActivity {
+public class NicknameActivity extends BaseActivity implements View.OnClickListener {
 
 
     private TextView tv_name,tv_cancel,tv_save;
@@ -23,6 +25,7 @@ public class NicknameActivity extends BaseActivity {
         super.initViews();
         tv_name = findViewById(R.id.tv_name);
         tv_cancel = findViewById(R.id.tv_cancel);
+        tv_cancel.setOnClickListener(this);
         tv_save = findViewById(R.id.tv_save);
         tv_name.setText(getResources().getString(R.string.nickname));
     }
@@ -52,5 +55,15 @@ public class NicknameActivity extends BaseActivity {
     protected void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onClick(View view){
+        Intent intent;
+        switch (view.getId()){
+            case R.id.tv_cancel:
+                onBackPressed();
+                break;
+        }
     }
 }

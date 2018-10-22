@@ -57,7 +57,8 @@ public class FollowingsActivity extends BaseActivity implements View.OnClickList
         Intent intent;
         switch(view.getId()){
             case R.id.back_ll:
-                finish();
+                onBackPressed();
+                break;
         }
     }
 

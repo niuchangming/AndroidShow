@@ -2,21 +2,27 @@ package ekoolab.com.show.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.google.gson.reflect.TypeToken;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import ekoolab.com.show.R;
@@ -32,11 +38,21 @@ import ekoolab.com.show.activities.PersonActivity;
 import ekoolab.com.show.activities.RegionActivity;
 import ekoolab.com.show.activities.WhatsupActivity;
 import ekoolab.com.show.adapters.ProfileAdapter;
+import ekoolab.com.show.api.ApiServer;
+import ekoolab.com.show.api.NetworkSubscriber;
+import ekoolab.com.show.api.ResponseData;
+import ekoolab.com.show.beans.LoginData;
+import ekoolab.com.show.beans.Photo;
+import ekoolab.com.show.beans.UserInfo;
 import ekoolab.com.show.fragments.submyvideos.MyCollectsFragment;
 import ekoolab.com.show.fragments.submyvideos.MyVideoFragment;
 import ekoolab.com.show.fragments.submyvideos.MymomentsFragment;
+import ekoolab.com.show.utils.AuthUtils;
+import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.EventBusMsg;
 import ekoolab.com.show.utils.ViewHolder;
+
+import static ekoolab.com.show.utils.AuthUtils.AuthType.LOGGED;
 
 public class ProfileFragment extends BaseFragment implements View.OnClickListener{
 //public class ProfileFragment extends BaseFragment{
@@ -54,7 +70,15 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
     private List<BaseFragment> fragments;
     private Button btn_edit;
     private LinearLayout edit_ll, followers_ll, followings_ll;
+    private Context context;
 
+    //UserInfo
+    private int countryCode,roleType, followers, following;
+    private String mobile, name, nickName, userCode, region, whatsup, category, description;
+    private List<String> hobby;
+    public ImageView avatar, coverImage;
+    private Long birthday;
+    private UserInfo userInfo;
 //    @Override
 //    public void onAttach(Context context) {
 //        activity = (BaseActivity) context;
@@ -181,6 +205,12 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
     }
 
     @Override
+    public void onResume(){
+        super.onResume();
+        getUserInfo();
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
@@ -189,6 +219,11 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
     @Override
     public void initData(){
         super.initData();
+        System.out.println("Checking status");
+        if(AuthUtils.getInstance(getContext()).loginState() == LOGGED){
+            System.out.println("User Logged");
+            getUserInfo();;
+        }
     }
 
     @Override
@@ -201,6 +236,8 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         followers_ll.setOnClickListener(this);
         followings_ll = holder.get(R.id.followings_ll);
         followings_ll.setOnClickListener(this);
+        tv_name = holder.get(R.id.tv_name);
+        avatar = holder.get(R.id.avatar);
 
         indicatorTabLayout = holder.get(R.id.indicator_tab);
         viewPager = holder.get(R.id.viewpager);
@@ -250,6 +287,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         switch(view.getId()){
             case R.id.edit_ll:
                 intent = new Intent(getContext(), PersonActivity.class);
+                intent.putExtra(userInfo);
                 getContext().startActivity(intent);
                 break;
             case R.id.btn_edit:
@@ -265,5 +303,69 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
                 getContext().startActivity(intent);
                 break;
         }
+    }
+
+    private void getUserInfo(){
+        String apiToken = AuthUtils.getInstance(getContext()).getApiToken();
+        HashMap<String, String> map = new HashMap<>(1);
+        map.put("token", apiToken);
+        System.out.println("start getting info");
+        System.out.println("start getting info");
+        System.out.println("start getting info");
+        System.out.println("start getting info");
+        System.out.println("start getting info");
+        System.out.println("start getting info");
+        System.out.println("start getting info");
+        System.out.println("start getting info");
+        ApiServer.basePostRequest(this, Constants.GET_USERPROFILE, map, new TypeToken<ResponseData<UserInfo>>(){})
+                .subscribe(new NetworkSubscriber<UserInfo>() {
+                    @Override
+                    protected void onSuccess(UserInfo userInfo) {
+                        System.out.println("Enter onSuccess function");
+                        saveUserInfo(userInfo);
+                    }
+
+//                    @Override
+//                    protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
+//                        return super.dealHttpException(code, errorMsg, e);
+//                    }
+                });
+    }
+
+    public void saveUserInfo(UserInfo userInfo) {
+//        SharedPreferences.Editor spEditor = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE).edit();
+//        spEditor.putString(Constants.Auth.NICKNAME, userInfo.nickName);
+//        spEditor.putLong(Constants.Auth.BIRTHDAY, userInfo.birthday);
+//        spEditor.putInt(Constants.Auth.FOLLOWERS, userInfo.followers);
+//        spEditor.putInt(Constants.Auth.FOLLOWING, userInfo.following);
+//        spEditor.putString(Constants.Auth.REGION, userInfo.region);
+//        spEditor.putString(Constants.Auth.WHATSUP, userInfo.whatsup);
+//        spEditor.putString(Constants.Auth.CATEGORY, userInfo.category);
+//        spEditor.putString(Constants.Auth.DESCRIPTION, userInfo.description);
+//        if (userInfo.avatar != null) {
+//            spEditor.putString(Constants.Auth.AVATAR_MEDIUM, userInfo.avatar.medium);
+//            spEditor.putString(Constants.Auth.AVATAR_ORIGIN, userInfo.avatar.origin);
+//            spEditor.putString(Constants.Auth.AVATAR_SMALL, userInfo.avatar.small);
+//        }
+//        spEditor.apply();
+        System.out.println("Loading User Info");
+        nickName = userInfo.nickName;
+        name = userInfo.name;
+        countryCode = userInfo.countryCode;
+        roleType = userInfo.roleType;
+        birthday = userInfo.birthday;
+        followers = userInfo.followers;
+        following = userInfo.following;
+        region = userInfo.region;
+        whatsup = userInfo.whatsup;
+        category = userInfo.category;
+        description = userInfo.description;
+        Glide.with(this).load(userInfo.avatar.small).into(avatar);
+        tv_name.setText(userInfo.name);
+    }
+
+    private void loadUserInfo(){
+        SharedPreferences sp = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+
     }
 }

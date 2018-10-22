@@ -70,5 +70,15 @@ public class Constants {
         public static final String WX_TOKEN_EXPIRED = "wx_expired";
         public static final String WX_ACCESS_TOKEN = "wx_access_token";
         public static final String WX_UNION_ID = "wx_union_id";
+
+        //new for profile
+        public static final String NICKNAME = "nickname";
+        public static final String BIRTHDAY = "birthday";
+        public static final String FOLLOWERS = "followers";
+        public static final String FOLLOWING = "following";
+        public static final String REGION = "region";
+        public static final String WHATSUP = "whatsup";
+        public static final String CATEGORY = "category";
+        public static final String DESCRIPTION = "description";
     }
 }

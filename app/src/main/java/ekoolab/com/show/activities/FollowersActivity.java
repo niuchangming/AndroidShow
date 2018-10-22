@@ -57,7 +57,8 @@ public class FollowersActivity extends BaseActivity implements View.OnClickListe
         Intent intent;
         switch(view.getId()){
             case R.id.back_ll:
-                finish();
+                onBackPressed();
+                break;
         }
     }
 
