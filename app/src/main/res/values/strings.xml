@@ -47,7 +47,7 @@
     <string name="female">Female</string>
     <string name="whatsupinput">Say something about your mood?</string>
     <string name="followers">Followers</string>
-    <string name="followings">Followings</string>
+    <string name="following">Following</string>
     <string name="coins">Coins</string>
     <string name="try_again">Try Again later!</string>
     <string name="empty">Content not found!</string>

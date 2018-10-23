@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -21,6 +23,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +32,7 @@ import ekoolab.com.show.R;
 import ekoolab.com.show.activities.BaseActivity;
 import ekoolab.com.show.activities.BirthdayActivity;
 import ekoolab.com.show.activities.FollowersActivity;
-import ekoolab.com.show.activities.FollowingsActivity;
+import ekoolab.com.show.activities.FollowingActivity;
 import ekoolab.com.show.activities.GenderActivity;
 import ekoolab.com.show.activities.LoginActivity;
 import ekoolab.com.show.activities.NameActivity;
@@ -51,10 +54,12 @@ import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.EventBusMsg;
 import ekoolab.com.show.utils.ViewHolder;
+import ekoolab.com.show.utils.TimeUtils;
 
+import static com.facebook.FacebookSdk.getApplicationContext;
 import static ekoolab.com.show.utils.AuthUtils.AuthType.LOGGED;
 
-public class ProfileFragment extends BaseFragment implements View.OnClickListener{
+public class ProfileFragment extends BaseFragment implements View.OnClickListener {
 //public class ProfileFragment extends BaseFragment{
 
     private BaseActivity activity;
@@ -63,13 +68,13 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 
     // NEW
 
-    private TextView tv_name,tv_cancel,tv_save;
+    private TextView tv_name,tv_cancel,tv_save,tv_birthday,tv_followers,tv_following,tv_coins,tv_gender,tv_region;
     private TabLayout indicatorTabLayout;
     private ViewPager viewPager;
     private ProfileAdapter pagerAdapter;
     private List<BaseFragment> fragments;
     private Button btn_edit;
-    private LinearLayout edit_ll, followers_ll, followings_ll;
+    private LinearLayout edit_ll, followers_ll, following_ll;
     private Context context;
 
     //UserInfo
@@ -202,13 +207,18 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
+        System.out.println("Fragment OnStart");
+        if(AuthUtils.getInstance(getContext()).loginState() == LOGGED){
+            System.out.println("User Logged");
+            getUserInfo();;
+        }
+//        getUserInfo();
     }
 
-    @Override
-    public void onResume(){
-        super.onResume();
-        getUserInfo();
-    }
+//    @Override
+//    public void onResume(){
+//        super.onResume();
+//    }
 
     @Override
     public void onStop() {
@@ -219,11 +229,6 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
     @Override
     public void initData(){
         super.initData();
-        System.out.println("Checking status");
-        if(AuthUtils.getInstance(getContext()).loginState() == LOGGED){
-            System.out.println("User Logged");
-            getUserInfo();;
-        }
     }
 
     @Override
@@ -234,13 +239,21 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         edit_ll.setOnClickListener(this);
         followers_ll = holder.get(R.id.followers_ll);
         followers_ll.setOnClickListener(this);
-        followings_ll = holder.get(R.id.followings_ll);
-        followings_ll.setOnClickListener(this);
-        tv_name = holder.get(R.id.tv_name);
-        avatar = holder.get(R.id.avatar);
+        following_ll = holder.get(R.id.following_ll);
+        following_ll.setOnClickListener(this);
 
         indicatorTabLayout = holder.get(R.id.indicator_tab);
         viewPager = holder.get(R.id.viewpager);
+
+        //User Info
+        tv_name = holder.get(R.id.tv_name);
+        tv_followers = holder.get(R.id.tv_followers);
+        tv_following = holder.get(R.id.tv_following);
+        tv_coins = holder.get(R.id.tv_coins);
+        tv_gender = holder.get(R.id.tv_gender);
+        tv_birthday = holder.get(R.id.tv_birthday);
+        tv_region = holder.get(R.id.tv_region);
+        avatar = holder.get(R.id.avatar);
 
         fragments = new ArrayList<>();
         fragments.add(new MyVideoFragment());
@@ -287,19 +300,20 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         switch(view.getId()){
             case R.id.edit_ll:
                 intent = new Intent(getContext(), PersonActivity.class);
-                intent.putExtra(userInfo);
+//                intent.putExtra("userInfo",userInfo);
                 getContext().startActivity(intent);
                 break;
             case R.id.btn_edit:
                 intent = new Intent(getContext(), PersonActivity.class);
+//                intent.putExtra("userInfo",userInfo);
                 getContext().startActivity(intent);
                 break;
             case R.id.followers_ll:
                 intent = new Intent(getContext(), FollowersActivity.class);
                 getContext().startActivity(intent);
                 break;
-            case R.id.followings_ll:
-                intent = new Intent(getContext(), FollowingsActivity.class);
+            case R.id.following_ll:
+                intent = new Intent(getContext(), FollowingActivity.class);
                 getContext().startActivity(intent);
                 break;
         }
@@ -309,13 +323,6 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         String apiToken = AuthUtils.getInstance(getContext()).getApiToken();
         HashMap<String, String> map = new HashMap<>(1);
         map.put("token", apiToken);
-        System.out.println("start getting info");
-        System.out.println("start getting info");
-        System.out.println("start getting info");
-        System.out.println("start getting info");
-        System.out.println("start getting info");
-        System.out.println("start getting info");
-        System.out.println("start getting info");
         System.out.println("start getting info");
         ApiServer.basePostRequest(this, Constants.GET_USERPROFILE, map, new TypeToken<ResponseData<UserInfo>>(){})
                 .subscribe(new NetworkSubscriber<UserInfo>() {
@@ -333,7 +340,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
     }
 
     public void saveUserInfo(UserInfo userInfo) {
-//        SharedPreferences.Editor spEditor = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE).edit();
+//        SharedPreferences sp = context.getSharedPreferences(context.getPackageCodePath(), Context.MODE_PRIVATE);
 //        spEditor.putString(Constants.Auth.NICKNAME, userInfo.nickName);
 //        spEditor.putLong(Constants.Auth.BIRTHDAY, userInfo.birthday);
 //        spEditor.putInt(Constants.Auth.FOLLOWERS, userInfo.followers);
@@ -349,19 +356,30 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 //        }
 //        spEditor.apply();
         System.out.println("Loading User Info");
-        nickName = userInfo.nickName;
-        name = userInfo.name;
-        countryCode = userInfo.countryCode;
-        roleType = userInfo.roleType;
-        birthday = userInfo.birthday;
-        followers = userInfo.followers;
-        following = userInfo.following;
-        region = userInfo.region;
-        whatsup = userInfo.whatsup;
-        category = userInfo.category;
-        description = userInfo.description;
-        Glide.with(this).load(userInfo.avatar.small).into(avatar);
-        tv_name.setText(userInfo.name);
+//        nickName = userInfo.nickName;
+//        name = userInfo.name;
+//        countryCode = userInfo.countryCode;
+//        roleType = userInfo.roleType;
+//        birthday = userInfo.birthday;
+//        followers = userInfo.followers;
+//        following = userInfo.following;
+//        region = userInfo.region;
+//        whatsup = userInfo.whatsup;
+//        category = userInfo.category;
+//        description = userInfo.description;
+//        String avatarSmall = sp.getString(Constants.Auth.AVATAR_SMALL, "");
+        String avatarSmall = AuthUtils.getInstance(getApplicationContext()).getAvator(2);
+        System.out.println("Image loading path" + avatarSmall);
+        this.userInfo = userInfo;
+        tv_name.setText(userInfo.nickName);
+        System.out.println("Number of followers: " + userInfo.followers);
+        tv_followers.setText(Integer.toString(userInfo.followers));
+        tv_following.setText(Integer.toString(userInfo.following));
+        String gender = (userInfo.gender == 0)? "Male":"Female";
+        tv_gender.setText(gender);
+        tv_birthday.setText(TimeUtils.getDateByTimeStamp(userInfo.birthday, "yy-MM-dd"));
+        Glide.with(this).load(avatarSmall).into(avatar);
+        tv_region.setText(userInfo.region);
     }
 
     private void loadUserInfo(){

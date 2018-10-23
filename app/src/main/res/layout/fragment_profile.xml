@@ -90,15 +90,16 @@
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/followings_ll">
+                    android:id="@+id/following_ll">
+
                     <TextView
-                        android:id="@+id/tv_followings"
-                        android:layout_marginTop="8dp"
-                        android:text="0"
+                        android:id="@+id/tv_following"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="0" />
                     <TextView
-                        android:text="@string/followings"
+                        android:text="@string/following"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
@@ -172,10 +173,11 @@
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content">
+
                 <TextView
-                    android:text="@string/gender"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:text="@string/gender" />
                 <TextView
                     android:id="@+id/tv_gender"
                     android:layout_marginTop="8dp"
@@ -190,10 +192,11 @@
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content">
+
                 <TextView
-                    android:text="@string/birthday"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:text="@string/birthday" />
                 <TextView
                     android:id="@+id/tv_birthday"
                     android:layout_marginTop="8dp"

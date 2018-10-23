@@ -13,12 +13,12 @@ import org.greenrobot.eventbus.ThreadMode;
 import ekoolab.com.show.R;
 import ekoolab.com.show.utils.EventBusMsg;
 
-public class FollowingsActivity extends BaseActivity implements View.OnClickListener{
+public class FollowingActivity extends BaseActivity implements View.OnClickListener{
     private LinearLayout back_ll;
 
     @Override
     protected int getLayoutId(){
-        return R.layout.activity_followings;
+        return R.layout.activity_following;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

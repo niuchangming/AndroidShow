@@ -22,6 +22,7 @@ import java.util.List;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.adapters.ProfileAdapter;
+import ekoolab.com.show.beans.UserInfo;
 import ekoolab.com.show.fragments.BaseFragment;
 import ekoolab.com.show.fragments.DatePickerFragment;
 import ekoolab.com.show.fragments.submyvideos.MyCollectsFragment;
@@ -129,6 +130,7 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void onStart() {
+        System.out.println("personactivity onstart");
         super.onStart();
         EventBus.getDefault().register(this);
     }
@@ -163,8 +165,14 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
         title_rl.setOnClickListener(this);
         btn_editCover = findViewById(R.id.btn_edit_cover);
         btn_editCover.setOnClickListener(this);
-        btn_logout = findViewById(R.id.btn_login);
+        btn_logout = findViewById(R.id.btn_logout);
         btn_logout.setOnClickListener(this);
+        tv_name = findViewById(R.id.tv_name);
+        tv_nickname = findViewById(R.id.tv_nickname);
+        tv_gender = findViewById(R.id.tv_gender);
+        tv_birthday = findViewById(R.id.tv_birthday);
+        tv_whatsup = findViewById(R.id.tv_whatsup);
+        tv_region = findViewById(R.id.tv_region);
 //        tv_name = findViewById(R.id.tv_name);
 //        tv_nickname = findViewById(R.id.tv_nickname);
 //        tv_gender = findViewById(R.id.tv_gender);
@@ -211,7 +219,7 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                 intent = new Intent(this, ChooseCoverActivity.class);
                 this.startActivity(intent);
                 break;
-            case R.id.btn_login:
+            case R.id.btn_logout:
                 onBackPressed();
                 break;
             case R.id.title_rl:

@@ -90,7 +90,7 @@
         <activity android:name=".activities.PersonActivity" />
         <activity android:name=".activities.VideoPlayerActivity" />
         <activity android:name=".activities.FollowersActivity" />
-        <activity android:name=".activities.FollowingsActivity" />
+        <activity android:name=".activities.FollowingActivity" />
         <activity
             android:name=".activities.PostVideoActivity"
             android:screenOrientation="portrait"
