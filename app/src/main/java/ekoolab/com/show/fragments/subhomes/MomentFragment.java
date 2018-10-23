@@ -595,8 +595,8 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
         TextView tvGiftName = view.findViewById(R.id.tv_gift_name);
         TextView tvGiftNameFlag = view.findViewById(R.id.tv_gift_name_flag);
         flGiftNum = view.findViewById(R.id.fl_gift_num);
-        Glide.with(this).load(curUserSmallAvator).into(ivHeader);
-        Glide.with(this).load(gift.image).into(ivGiftImage);
+        ImageLoader.displayImageAsCircle(curUserSmallAvator, ivHeader);
+        ImageLoader.displayImageAsCircle(gift.image, ivGiftImage);
         String giftName = String.format("送 %s", gift.name);
         tvGiftName.setText(giftName);
         tvGiftNameFlag.setText(giftName);

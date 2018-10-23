@@ -13,7 +13,7 @@
         android:layout_centerVertical="true"
         android:background="@drawable/bg_moment_gift_tips">
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <ImageView
             android:id="@+id/iv_header"
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -44,7 +44,7 @@
             app:strokeWidth="0.9dp"
             tools:text="送溜溜球" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <ImageView
             android:id="@+id/iv_gift_image"
             android:layout_width="30dp"
             android:layout_height="30dp"
