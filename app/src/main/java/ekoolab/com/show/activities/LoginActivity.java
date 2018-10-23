@@ -47,6 +47,7 @@ import ekoolab.com.show.utils.Utils;
 public class LoginActivity extends BaseActivity implements View.OnClickListener,
         RegisterDialog.RegisterListener, VerifyDialog.VerifyListener {
     private final static String TAG = "LoginActivity";
+    public static final String LOGIN_DATA = "login_data";
     private VideoView videoView;
     private String videoPath;
     private EditText mobileEt;
@@ -179,7 +180,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     protected void onSuccess(LoginData loginData) {
                         afterLogin(false);
                         AuthUtils.getInstance(getApplicationContext()).saveLoginInfo(loginData);
-                        broadcastLoggedIn();
+                        broadcastLoggedIn(loginData);
                         LoginActivity.this.finish();
                     }
 
@@ -207,8 +208,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     @Override
                     protected void onSuccess(LoginData loginData) {
                         afterLogin(true);
-                        broadcastLoggedIn();
                         AuthUtils.getInstance(getApplicationContext()).saveLoginInfo(loginData);
+                        broadcastLoggedIn(loginData);
                         LoginActivity.this.finish();
                     }
 
@@ -256,14 +257,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     public void did2FAVerify(LoginData loginData) {
         if (loginData != null) {
             AuthUtils.getInstance(this).saveLoginInfo(loginData);
-            broadcastLoggedIn();
+            broadcastLoggedIn(loginData);
         }
         finish();
     }
 
-    public void broadcastLoggedIn(){
+    public void broadcastLoggedIn(LoginData loginData){
         Intent msgIntent = new Intent();
         msgIntent.setAction(AuthUtils.LOGGED_IN);
+        msgIntent.putExtra(LOGIN_DATA, loginData);
         this.sendBroadcast(msgIntent);
     }
 

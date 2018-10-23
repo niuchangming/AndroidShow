@@ -76,6 +76,7 @@
     <dimen name="point_radius">4dp</dimen>
     <dimen name="item_spacing_2dp">2dp</dimen>
     <dimen name="item_spacing_4dp">4dp</dimen>
+    <dimen name="item_spacing_6dp">6dp</dimen>
     <dimen name="item_spacing_8dp">8dp</dimen>
     <dimen name="item_spacing_10dp">10dp</dimen>
     <dimen name="item_spacing_15dp">15dp</dimen>
@@ -86,5 +87,5 @@
     <dimen name="moment_gift_tips_width">180dp</dimen>
     <dimen name="corner_radius_small">4dp</dimen>
     <dimen name="corner_radius_medium">6dp</dimen>
-    <dimen name="corner_radius_largin">8dp</dimen>
+    <dimen name="corner_radius_large">8dp</dimen>
 </resources>

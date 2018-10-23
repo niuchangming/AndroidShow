@@ -27,7 +27,7 @@
         android:hint="@string/post_video_content_hint"
         android:padding="10dp"
         android:textColor="@color/black"
-        android:textColorHint="@color/gray"
+        android:textColorHint="@color/colorGray"
         app:layout_constraintTop_toBottomOf="@id/space" />
 
     <View

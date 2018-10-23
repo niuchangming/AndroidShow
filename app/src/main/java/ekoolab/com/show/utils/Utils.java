@@ -1,6 +1,7 @@
 package ekoolab.com.show.utils;
 
 import android.content.Context;
+import android.provider.Settings;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -9,7 +10,9 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.text.ParseException;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
+import java.util.UUID;
 
 public class Utils {
 
@@ -20,6 +23,24 @@ public class Utils {
             return true;
 
         return str.trim().isEmpty();
+    }
+
+    public static boolean isNotEmpty(Collection<?> collection) {
+        return collection != null && !collection.isEmpty();
+    }
+
+
+    public static String generateUniqueCode(Context context){
+        String code = "";
+        String uuid = UUID.randomUUID().toString();
+        String[] strBlk = uuid.split("-");
+        if(strBlk.length == 5) {
+            code = strBlk[strBlk.length-1];
+        }else{
+            code = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        }
+
+        return code;
     }
 
     public static Date getDateByMillis(long millis) throws ParseException {

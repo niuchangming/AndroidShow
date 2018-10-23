@@ -56,11 +56,7 @@ public class Constants {
         public static final String USERNAME = "user_name";
         public static final String NICKNAME = "nickname";
         public static final String ROLE = "role";
-
-        public static final String FB_ACCESS_TOKEN = "fb_access_token";
-        public static final String FB_USER_ID = "fb_user_id";
-        public static final String WX_ACCESS_TOKEN = "wx_access_token";
-        public static final String WX_UNION_ID = "wx_union_id";
+        public static final String TEMP_USER_ID = "temp_user_id";
     }
 
 
@@ -84,6 +80,21 @@ public class Constants {
         public final static String smallUrl = "small_url";
         public final static String mediumUrl = "medium_url";
         public final static String originUrl = "origin_url";
+    }
+
+    public static final String CHAT_MESSAGE_TB = "chat_message";
+    public static final class ChatMessageTableColumns{
+        public final static String message = "message";
+        public final static String channelUrl = "channel_url";
+        public final static String senderId = "sender_id";
+        public final static String senderName = "sender_name";
+        public final static String senderProfileUrl = "send_profile_url";
+        public final static String createAt = "create_at";
+        public final static String updateAt = "update_at";
+        public final static String messageId = "message_id";
+        public final static String requestId = "request_id";
+        public final static String messageType = "message_type";
+        public final static String sendState = "send_state";
     }
 
 }

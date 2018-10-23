@@ -25,7 +25,7 @@ public class FakeActionBar extends RelativeLayout{
 
     private void initViews(){
         ShapeDrawable lineDrawable = new ShapeDrawable(new BorderShape(new RectF(0, 0, 0, 1)));
-        lineDrawable.getPaint().setColor(getResources().getColor(R.color.extraGray));
+        lineDrawable.getPaint().setColor(getResources().getColor(R.color.colorLightGray));
         LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{
                 new ColorDrawable(getResources().getColor(R.color.colorWhite)),
                 lineDrawable

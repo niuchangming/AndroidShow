@@ -153,6 +153,7 @@ public class FriendService extends Service {
         map.put("contacts", friendData);
         map.put("token", AuthUtils.getInstance(getBaseContext()).getApiToken());
         map.put("userCode", AuthUtils.getInstance(getBaseContext()).getUserCode());
+        map.put("test", "true");
 
         ApiServer.basePostRequestNoDisposable(Constants.UPLOAD_CONTACT_BOOK, map,
                 new TypeToken<ResponseData<List<Friend>>>() {
@@ -160,8 +161,6 @@ public class FriendService extends Service {
                 .subscribe(new NetworkSubscriber<List<Friend>>() {
                     @Override
                     protected void onSuccess(List<Friend> friends) {
-                        Logger.i("----------> " + friends.size());
-
                         getContactFromServer();
                     }
 

@@ -2,24 +2,18 @@ package ekoolab.com.show.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.Animation;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.androidnetworking.model.Progress;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
 import com.google.android.exoplayer2.C;
@@ -28,27 +22,19 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Util;
 import com.google.gson.reflect.TypeToken;
-import com.juziwl.ijkplayerlib.media.IjkVideoView;
 import com.luck.picture.lib.utils.ThreadExecutorManager;
-import com.orhanobut.logger.Logger;
 import com.rey.material.widget.ProgressView;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -59,20 +45,14 @@ import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
 import ekoolab.com.show.beans.Gift;
 import ekoolab.com.show.beans.Live;
-import ekoolab.com.show.beans.LoginData;
 import ekoolab.com.show.dialogs.DialogViewHolder;
 import ekoolab.com.show.dialogs.XXDialog;
-import ekoolab.com.show.fragments.subhomes.MomentFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.DisplayUtils;
-import ekoolab.com.show.utils.ImageLoader;
-import ekoolab.com.show.utils.ListUtils;
 import ekoolab.com.show.utils.ToastUtils;
 import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.views.BubbleView;
-import tv.danmaku.ijk.media.player.IMediaPlayer;
-import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 public class LivePlayerActivity extends BaseActivity implements View.OnClickListener, Player.EventListener {
     public static final String LIVE_DATA = "live_data";
@@ -244,7 +224,7 @@ public class LivePlayerActivity extends BaseActivity implements View.OnClickList
                 .subscribe(new NetworkSubscriber<List<Gift>>() {
                     @Override
                     protected void onSuccess(List<Gift> giftList) {
-                        if (ListUtils.isNotEmpty(giftList)) {
+                        if (Utils.isNotEmpty(giftList)) {
                             gifts.clear();
                             gifts.addAll(giftList);
                             for (Gift gift : gifts) {
@@ -344,7 +324,7 @@ public class LivePlayerActivity extends BaseActivity implements View.OnClickList
     }
 
     private void showGiftDialog() {
-        if (!ListUtils.isNotEmpty(gifts)) {
+        if (!Utils.isNotEmpty(gifts)) {
             ToastUtils.showToast("gift is loading");
             return;
         }

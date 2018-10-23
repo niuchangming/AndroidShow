@@ -41,35 +41,52 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
     String friendSql = "create table if not exists " + Constants.FRIEND_TB + " ("
             + "_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
-            + Constants.FriendTableColumns.userId + " varchar UNIQUE ON CONFLICT REPLACE, "
-            + Constants.FriendTableColumns.name + " varchar(50), "
-            + Constants.FriendTableColumns.nickname + " varchar(50), "
-            + Constants.FriendTableColumns.channelUrl + " varchar, "
-            + Constants.FriendTableColumns.countryCode + " varchar(5), "
-            + Constants.FriendTableColumns.mobile + " varchar(20) UNIQUE ON CONFLICT REPLACE, "
-            + Constants.FriendTableColumns.isAppUser + " boolean, "
-            + Constants.FriendTableColumns.isMyFollowing + " boolean, "
-            + Constants.FriendTableColumns.isMyFollower + " boolean); ";
+            + Constants.FriendTableColumns.userId + " VARCHAR, "
+            + Constants.FriendTableColumns.name + " VARCHAR(50), "
+            + Constants.FriendTableColumns.nickname + " VARCHAR(50), "
+            + Constants.FriendTableColumns.channelUrl + " TEXT, "
+            + Constants.FriendTableColumns.countryCode + " VARCHAR(5), "
+            + Constants.FriendTableColumns.mobile + " VARCHAR(20), "
+            + Constants.FriendTableColumns.isAppUser + " BOOLEAN, "
+            + Constants.FriendTableColumns.isMyFollowing + " BOOLEAN, "
+            + Constants.FriendTableColumns.isMyFollower + " BOOLEAN, "
+            + "UNIQUE(" + Constants.FriendTableColumns.mobile + "," + Constants.FriendTableColumns.userId + ") ON CONFLICT REPLACE);";
 
 
     String photoSql = "create table if not exists " + Constants.PHOTO_TB + " ("
             + "_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
-            + Constants.PhotoTableColumns.userId + " varchar UNIQUE ON CONFLICT REPLACE, "
-            + Constants.PhotoTableColumns.messageId + " varchar UNIQUE ON CONFLICT REPLACE, "
-            + Constants.PhotoTableColumns.smallUrl + " varchar, "
-            + Constants.PhotoTableColumns.originUrl + " varchar, "
-            + Constants.PhotoTableColumns.mediumUrl + " varchar);";
+            + Constants.PhotoTableColumns.userId + " VARCHAR UNIQUE ON CONFLICT REPLACE, "
+            + Constants.PhotoTableColumns.messageId + " VARCHAR UNIQUE ON CONFLICT REPLACE, "
+            + Constants.PhotoTableColumns.smallUrl + " VARCHAR, "
+            + Constants.PhotoTableColumns.originUrl + " VARCHAR, "
+            + Constants.PhotoTableColumns.mediumUrl + " VARCHAR);";
+
+    String chatMessageSql = "create table if not exists " + Constants.CHAT_MESSAGE_TB + " ("+
+            "_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+            Constants.ChatMessageTableColumns.messageId + " INTEGER, "
+            + Constants.ChatMessageTableColumns.senderId + " VARCHAR, "
+            + Constants.ChatMessageTableColumns.senderName+ " VARCHAR, "
+            + Constants.ChatMessageTableColumns.senderProfileUrl+ " TEXT, "
+            + Constants.ChatMessageTableColumns.message + " TEXT, "
+            + Constants.ChatMessageTableColumns.channelUrl + " TEXT, "
+            + Constants.ChatMessageTableColumns.createAt + " INTEGER, "
+            + Constants.ChatMessageTableColumns.updateAt + " INTEGER, "
+            + Constants.ChatMessageTableColumns.requestId + " VARCHAR, "
+            + Constants.ChatMessageTableColumns.messageType + " INTEGER NOT NULL default 0, "
+            + Constants.ChatMessageTableColumns.sendState + " INTEGER NOT NULL default 0, "
+            + "UNIQUE(" + Constants.ChatMessageTableColumns.messageId + "," + Constants.ChatMessageTableColumns.requestId + ") ON CONFLICT REPLACE);";
 
     @Override
     public synchronized void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(friendSql);
         sqLiteDatabase.execSQL(photoSql);
-
+        sqLiteDatabase.execSQL(chatMessageSql);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + Constants.FRIEND_TB);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + Constants.PHOTO_TB);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + Constants.CHAT_MESSAGE_TB);
     }
 }

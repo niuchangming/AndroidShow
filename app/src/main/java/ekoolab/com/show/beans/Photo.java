@@ -62,7 +62,10 @@ public class Photo implements Parcelable {
         values.put(Constants.PhotoTableColumns.originUrl, this.origin);
 
         synchronized (context) {
-            db.insert(Constants.PHOTO_TB, null, values);
+            long id = db.insertWithOnConflict(Constants.PHOTO_TB, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+            if (id == -1) {
+                db.update(Constants.PHOTO_TB, values, Constants.PhotoTableColumns.userId + "=?", new String[]{this.userId});
+            }
         }
 
         if (db != null){
@@ -70,7 +73,8 @@ public class Photo implements Parcelable {
         }
     }
 
-    public static Photo getPhotoByUserId(SQLiteDatabase db, String userId){
+    public static Photo getPhotoByUserId(Context context, String userId){
+        SQLiteDatabase db = DataBaseManager.getInstance(context).openDatabase();
         Cursor cursor = db.query(Constants.PHOTO_TB, null, Constants.PhotoTableColumns.userId+"=?", new String[]{userId}, null, null, null);
         cursor.moveToFirst();
         Photo photo = null;
@@ -81,6 +85,11 @@ public class Photo implements Parcelable {
             photo.medium = cursor.getString(cursor.getColumnIndexOrThrow(Constants.PhotoTableColumns.mediumUrl));
             photo.origin = cursor.getString(cursor.getColumnIndexOrThrow(Constants.PhotoTableColumns.originUrl));
         }
+
+        if (db != null){
+            DataBaseManager.getInstance(context).closeDatabase();
+        }
+
         return photo;
     }
 }

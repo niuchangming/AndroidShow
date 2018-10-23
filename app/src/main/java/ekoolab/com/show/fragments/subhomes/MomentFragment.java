@@ -65,8 +65,7 @@ import ekoolab.com.show.fragments.BaseFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.DisplayUtils;
-import ekoolab.com.show.utils.ImageLoader;
-import ekoolab.com.show.utils.ListUtils;
+import ekoolab.com.show.utils.ImageLoader;;
 import ekoolab.com.show.utils.RxUtils;
 import ekoolab.com.show.utils.TimeUtils;
 import ekoolab.com.show.utils.ToastUtils;
@@ -146,7 +145,7 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
         recyclerView = holder.get(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         recyclerView.addItemDecoration(new LinearItemDecoration(mContext,
-                1, R.color.gray_very_light, 0));
+                1, R.color.colorLightGray, 0));
         refreshLayout = holder.get(R.id.refreshLayout);
         initRefreshLayout();
         initAdapter();
@@ -179,7 +178,7 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
                 helper.setText(R.id.tv_time, TimeUtils.formatTime(item.uploadTime));
                 helper.setGone(R.id.tv_content, !TextUtils.isEmpty(item.body));
                 helper.setText(R.id.tv_content, item.body);
-                helper.setGone(R.id.nine_grid_layout, ListUtils.isNotEmpty(item.photoArray));
+                helper.setGone(R.id.nine_grid_layout, Utils.isNotEmpty(item.photoArray));
                 NewNineGridlayout newNineGridlayout = helper.getView(R.id.nine_grid_layout);
                 newNineGridlayout.showPic(nineTotalWidth, item.photoArray,
                         position -> WatchImageActivity.navToWatchImage(mContext, item.photoArray, position),
@@ -202,7 +201,7 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
                     curMoment = item;
                     showGiftDialog();
                 });
-                boolean notEmpty = ListUtils.isNotEmpty(item.comments);
+                boolean notEmpty = Utils.isNotEmpty(item.comments);
                 helper.setGone(R.id.nest_full_listview, notEmpty);
                 if (notEmpty) {
                     NestFullListView listView = helper.getView(R.id.nest_full_listview);
@@ -240,7 +239,7 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
     }
 
     private void showGiftDialog() {
-        if (!ListUtils.isNotEmpty(gifts)) {
+        if (!Utils.isNotEmpty(gifts)) {
             ToastUtils.showToast("gift is loading");
             return;
         }
@@ -370,7 +369,7 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
                     }
                     if (curCommentBean != null) {
                         int index;
-                        if (ListUtils.isNotEmpty(curCommentBean.comments)) {
+                        if (Utils.isNotEmpty(curCommentBean.comments)) {
                             Moment.CommentsBean lastBean = curCommentBean.comments.get(curCommentBean.comments.size() - 1);
                             index = curMoment.comments.indexOf(lastBean);
                         } else {
@@ -450,7 +449,7 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
                 .subscribe(new NetworkSubscriber<List<Moment>>() {
                     @Override
                     protected void onSuccess(List<Moment> momentList) {
-                        if (ListUtils.isNotEmpty(momentList)) {
+                        if (Utils.isNotEmpty(momentList)) {
                             if (isRefresh) {
                                 moments.clear();
                             }
@@ -494,7 +493,7 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
      */
     private void convertData(List<Moment> momentList) {
         for (Moment moment : momentList) {
-            if (!ListUtils.isNotEmpty(moment.comments)) {
+            if (!Utils.isNotEmpty(moment.comments)) {
                 continue;
             }
             //一条图文的评论
@@ -510,7 +509,7 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
 
     private void addToNewComments(List<Moment.CommentsBean> newComments,
                                   List<Moment.CommentsBean> comments) {
-        if (ListUtils.isNotEmpty(comments)) {
+        if (Utils.isNotEmpty(comments)) {
             for (Moment.CommentsBean beans : comments) {
                 beans.ishasParentComment = true;
                 newComments.add(beans);
@@ -526,7 +525,7 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
                 .subscribe(new NetworkSubscriber<List<Gift>>() {
                     @Override
                     protected void onSuccess(List<Gift> giftList) {
-                        if (ListUtils.isNotEmpty(giftList)) {
+                        if (Utils.isNotEmpty(giftList)) {
                             gifts.clear();
                             gifts.addAll(giftList);
                             for (Gift gift : gifts) {
@@ -635,7 +634,7 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                if (ListUtils.isNotEmpty(integers)) {
+                if (Utils.isNotEmpty(integers)) {
                     textViewScaleAnim(gift, view, flGiftNum);
                 } else {
                     mHandler.sendMessageDelayed(mHandler.obtainMessage(gifts.indexOf(gift), gift.giftid), TIPS_LIVE_TIME);

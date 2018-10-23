@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteException;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.luck.picture.lib.tools.Constant;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
@@ -41,7 +42,9 @@ public class Friend implements Parcelable {
             values.put(Constants.FriendTableColumns.userId, this.userCode);
             values.put(Constants.FriendTableColumns.mobile, this.mobile);
             values.put(Constants.FriendTableColumns.countryCode, this.countryCode);
-            values.put(Constants.FriendTableColumns.channelUrl, this.channelUrl);
+            if (!Utils.isBlank(this.channelUrl)) {
+                values.put(Constants.FriendTableColumns.channelUrl, this.channelUrl);
+            }
             if(this.avatar != null){
                 this.avatar.userId = this.userCode;
                 this.avatar.save(context);
@@ -51,9 +54,10 @@ public class Friend implements Parcelable {
             values.put(Constants.FriendTableColumns.isAppUser, this.isAppUser ? 1 : 0);
 
             try{
-                int id = (int) db.insertWithOnConflict(Constants.FRIEND_TB, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+                long id = db.insertWithOnConflict(Constants.FRIEND_TB, null, values, SQLiteDatabase.CONFLICT_IGNORE);
                 if (id == -1) {
-                    db.update(Constants.FRIEND_TB, values, Constants.FriendTableColumns.mobile + "=?", new String[]{this.mobile + ""});
+                    db.update(Constants.FRIEND_TB, values,
+                            Constants.FriendTableColumns.userId + "=?", new String[]{this.userCode});
                 }
             }catch(SQLiteException e){
                 e.printStackTrace();
@@ -77,7 +81,9 @@ public class Friend implements Parcelable {
                 values.put(Constants.FriendTableColumns.userId, friend.userCode);
                 values.put(Constants.FriendTableColumns.mobile, friend.mobile);
                 values.put(Constants.FriendTableColumns.countryCode, friend.countryCode);
-                values.put(Constants.FriendTableColumns.channelUrl, friend.channelUrl);
+                if (!Utils.isBlank(friend.channelUrl)) {
+                    values.put(Constants.FriendTableColumns.channelUrl, friend.channelUrl);
+                }
                 if(friend.avatar != null){
                     friend.avatar.userId = friend.userCode;
                     friend.avatar.save(context);
@@ -86,9 +92,11 @@ public class Friend implements Parcelable {
                 values.put(Constants.FriendTableColumns.isMyFollower, friend.isMyFollower);
                 values.put(Constants.FriendTableColumns.isAppUser, friend.isAppUser);
 
-                int id = (int) db.insertWithOnConflict(Constants.FRIEND_TB, null, values, SQLiteDatabase.CONFLICT_IGNORE);
-                if (id == -1) {
-                    db.update(Constants.FRIEND_TB, values, Constants.FriendTableColumns.mobile + "=?", new String[]{friend.mobile + ""});
+                long id = db.insertWithOnConflict(Constants.FRIEND_TB, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+                if(id == -1){
+                    db.update(Constants.FRIEND_TB, values,
+                            Constants.FriendTableColumns.userId + "=? or " + Constants.FriendTableColumns.mobile + "=?",
+                            new String[]{friend.userCode, friend.mobile});
                 }
             }
         } catch(SQLException e) {
@@ -119,7 +127,7 @@ public class Friend implements Parcelable {
                 friend.channelUrl = cursor.getString(cursor.getColumnIndexOrThrow(Constants.FriendTableColumns.channelUrl));
 
                 if(!Utils.isBlank(friend.userCode)){
-                    friend.avatar = Photo.getPhotoByUserId(db, friend.userCode);
+                    friend.avatar = Photo.getPhotoByUserId(context, friend.userCode);
                 }
 
                 friend.isMyFollowing = cursor.getInt(cursor.getColumnIndexOrThrow(Constants.FriendTableColumns.isMyFollowing)) == 1;

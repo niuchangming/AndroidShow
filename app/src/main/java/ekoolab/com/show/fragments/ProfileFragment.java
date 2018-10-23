@@ -6,10 +6,6 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import ekoolab.com.show.R;
 import ekoolab.com.show.activities.BaseActivity;
 import ekoolab.com.show.activities.BirthdayActivity;
@@ -20,7 +16,6 @@ import ekoolab.com.show.activities.NicknameActivity;
 import ekoolab.com.show.activities.PersonActivity;
 import ekoolab.com.show.activities.RegionActivity;
 import ekoolab.com.show.activities.WhatsupActivity;
-import ekoolab.com.show.utils.EventBusMsg;
 import ekoolab.com.show.utils.ViewHolder;
 
 public class ProfileFragment extends BaseFragment implements View.OnClickListener{
@@ -40,25 +35,6 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         return R.layout.fragment_profile;
     }
 
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onResultEvent(EventBusMsg eventBusMsg) {
-        if (eventBusMsg.getFlag() == 0 || eventBusMsg.getFlag() == 1) {
-
-        }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
 
     @Override
     protected void initViews(ViewHolder holder, View root) {

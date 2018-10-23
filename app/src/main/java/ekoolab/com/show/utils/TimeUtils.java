@@ -33,13 +33,6 @@ public class TimeUtils {
         }
     };
 
-    public static ThreadLocal<SimpleDateFormat> YYYYDOTMMDOTDD = new ThreadLocal<SimpleDateFormat>() {
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyyy.MM.dd", Locale.getDefault());
-        }
-    };
-
     /**
      * 线程安全的时间格式化:YYYYmmDDHHMM
      */
@@ -61,74 +54,36 @@ public class TimeUtils {
     };
 
     /**
-     * 线程安全的时间格式化:yyyy-MM-dd HH:mm:ss
-     */
-    public static ThreadLocal<SimpleDateFormat> MMDDHHMMXIE = new ThreadLocal<SimpleDateFormat>() {
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("MM/dd HH:mm", Locale.getDefault());
-        }
-    };
-
-    /**
-     * yyyy-MM-dd
-     */
-    public static ThreadLocal<SimpleDateFormat> YYYYMMDD = new ThreadLocal<SimpleDateFormat>() {
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        }
-    };
-    /**
-     * yyyy-MM-dd
-     */
-    public static ThreadLocal<SimpleDateFormat> YYYYMM = new ThreadLocal<SimpleDateFormat>() {
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyyy-MM", Locale.getDefault());
-        }
-    };
-
-    /**
      * MM月dd日 HH:mm
      */
     public static ThreadLocal<SimpleDateFormat> MMDDHHMM = new ThreadLocal<SimpleDateFormat>() {
         @Override
         protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("MM月dd日 HH:mm", Locale.getDefault());
+            return new SimpleDateFormat("MMMM-d HH:mm", Locale.getDefault());
+        }
+    };
+
+
+
+    /**
+     * yyyy年MM月dd日 HH:mm
+     */
+    public static ThreadLocal<SimpleDateFormat> YYYYMMDDHHMM = new ThreadLocal<SimpleDateFormat>() {
+        @Override
+        protected SimpleDateFormat initialValue() {
+            return new SimpleDateFormat("yyyy-MMMM-d HH:mm", Locale.getDefault());
         }
     };
 
     /**
-     * MM-dd HH:mm
+     * yyyy-MMMM-d
      */
-    public static ThreadLocal<SimpleDateFormat> MM_DDHHMM = new ThreadLocal<SimpleDateFormat>() {
+    public static ThreadLocal<SimpleDateFormat> YYYYMMDD = new ThreadLocal<SimpleDateFormat>() {
         @Override
         protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("MM-dd HH:mm", Locale.getDefault());
+            return new SimpleDateFormat("yyyy-MMMM-d", Locale.getDefault());
         }
     };
-
-    /**
-     * MM月dd日
-     */
-    public static ThreadLocal<SimpleDateFormat> MMYDDR = new ThreadLocal<SimpleDateFormat>() {
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("MM月dd日", Locale.getDefault());
-        }
-    };
-
-    /**
-     * MM/dd
-     */
-    public static ThreadLocal<SimpleDateFormat> MMYXIEDDR = new ThreadLocal<SimpleDateFormat>() {
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("MM/dd", Locale.getDefault());
-        }
-    };
-
 
     /**
      * HH:mm
@@ -141,94 +96,12 @@ public class TimeUtils {
     };
 
     /**
-     * HH:mm:ss
+     * MMMM dd
      */
-    public static ThreadLocal<SimpleDateFormat> HHMMSS = new ThreadLocal<SimpleDateFormat>() {
+    public static ThreadLocal<SimpleDateFormat> MMMM_dd = new ThreadLocal<SimpleDateFormat>() {
         @Override
         protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-        }
-    };
-
-    /**
-     * yyyyMMddHHmmssSSS
-     */
-    public static ThreadLocal<SimpleDateFormat> YYYYMMDDHHMMSS_SSS = new ThreadLocal<SimpleDateFormat>() {
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyyyMMddHHmmssSSS", Locale.getDefault());
-        }
-    };
-
-
-    /**
-     * yyyyMMddHHmmss
-     */
-    public static ThreadLocal<SimpleDateFormat> YYYYMMDDHHMMSS_NUMBER = new ThreadLocal<SimpleDateFormat>() {
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
-        }
-    };
-
-
-    /**
-     * yyyy年MM月dd日 HH:mm
-     */
-    public static ThreadLocal<SimpleDateFormat> YYYYMMDDHHMM = new ThreadLocal<SimpleDateFormat>() {
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyyy年MM月dd日 HH:mm", Locale.getDefault());
-        }
-    };
-
-    /**
-     * "yyyy年MM月dd日
-     */
-    public static ThreadLocal<SimpleDateFormat> YYYYMMDD_CH = new ThreadLocal<SimpleDateFormat>() {
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyyy年MM月dd日", Locale.getDefault());
-        }
-    };
-
-    /**
-     * MM-dd
-     */
-    public static ThreadLocal<SimpleDateFormat> MMDD = new ThreadLocal<SimpleDateFormat>() {
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("MM-dd", Locale.getDefault());
-        }
-    };
-
-    /**
-     * MM-dd 10.1  10.2
-     */
-    public static ThreadLocal<SimpleDateFormat> MMDOTDD = new ThreadLocal<SimpleDateFormat>() {
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("MM.dd", Locale.getDefault());
-        }
-    };
-
-    /**
-     * MM/dd
-     */
-    public static ThreadLocal<SimpleDateFormat> MM_DD = new ThreadLocal<SimpleDateFormat>() {
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("MM/dd", Locale.getDefault());
-        }
-    };
-
-    /**
-     * yyyy-MM-dd HH:mm:ss:SSS
-     */
-    public static ThreadLocal<SimpleDateFormat> YYYYMMDDHHMMSSSSS = new ThreadLocal<SimpleDateFormat>() {
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS", Locale.getDefault());
+            return new SimpleDateFormat("MMMM dd", Locale.getDefault());
         }
     };
 
@@ -237,14 +110,6 @@ public class TimeUtils {
      */
     public static String getCurrentTime() {
         return YYYYMMDDHHMMSS.get().format(new Date());
-    }
-
-
-    /**
-     * @return yyyy-MM-dd HH:mm:ss
-     */
-    public static String getCurrentTimeNUMBER() {
-        return YYYYMMDDHHMMSS_NUMBER.get().format(new Date());
     }
 
 
@@ -262,13 +127,6 @@ public class TimeUtils {
     public static String getFormatTime(Date date, String format) {
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         return sdf.format(date);
-    }
-
-    /**
-     * @return yyyyMMddHHmmssSSS
-     */
-    public static String getCurrentTimeForFileName() {
-        return YYYYMMDDHHMMSS_SSS.get().format(new Date());
     }
 
     /**
@@ -290,7 +148,7 @@ public class TimeUtils {
                 && (Math.abs(needFormatTime.get(Calendar.MONTH) - currentTime.get(Calendar.MONTH)) == NUMBER_1);
         // 1年以上，显示xxxx年xx月xx日 HH：MM
         if (currentTime.get(Calendar.YEAR) != needFormatTime.get(Calendar.YEAR)) {
-            return YYYYMMDD_CH.get().format(needFormatTime.getTime());
+            return YYYYMMDD.get().format(needFormatTime.getTime());
         }
         // 一个月以上，显示：xx月xx日 HH：MM
         if ((currentTime.get(Calendar.MONTH) != needFormatTime.get(Calendar.MONTH)) && !flag) {
@@ -320,6 +178,11 @@ public class TimeUtils {
         return "just now";
     }
 
+    public static boolean isSameDate(long millisFirst, long millisSecond) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
+        return dateFormat.format(millisFirst).equals(dateFormat.format(millisSecond));
+    }
+
     /**
      * 把一种格式的时间转化成另一种格式
      *
@@ -338,68 +201,21 @@ public class TimeUtils {
         return date;
     }
 
-    /**
-     * 5分钟内不显示时刻<br/>
-     * 24小时内： xx小时:xx分钟<br/>
-     * 超过24小时~本年内:  xx月xx日  xx小时:xx分钟<br/>
-     * 超过本年：xx年xx月xx日  xx小时:xx分钟<br/>
-     *
-     * @param time 时间戳
-     * @return
-     */
-    public static String formatMsgTime(long time) {
-        if (time == 0) {
-            return "";
-        }
-        Calendar currentTime = Calendar.getInstance();
-        Calendar needFormatTime = Calendar.getInstance();
-        needFormatTime.setTimeInMillis(time);
-
-        if (currentTime.get(Calendar.YEAR) != needFormatTime.get(Calendar.YEAR)) {
-            return YYYYMMDDHHMM.get().format(needFormatTime.getTime());
-        }
-        if (currentTime.get(Calendar.MONTH) != needFormatTime.get(Calendar.MONTH) ||
-                currentTime.get(Calendar.DAY_OF_MONTH) != needFormatTime.get(Calendar.DAY_OF_MONTH)) {
-            return MMDDHHMM.get().format(needFormatTime.getTime());
-        }
-//        if (currentTime.get(Calendar.YEAR) != needFormatTime.get(Calendar.YEAR)
-//                || currentTime.get(Calendar.MONTH) != needFormatTime.get(Calendar.MONTH)) {
-//            return MMDDHHMM.get().format(needFormatTime.getTime());
-//        }
-//        int deltaDay = currentTime.get(Calendar.DAY_OF_MONTH) - currentTime.get(Calendar.DAY_OF_MONTH);
-//        if (deltaDay >= NUMBER_2) {
-//            return MMDDHHMM.get().format(needFormatTime.getTime());
-//        }
-//        if (deltaDay == 1) {
-//            return "昨天 " + HHMM.get().format(needFormatTime.getTime());
-//        }
-        return HHMM.get().format(needFormatTime.getTime());
-    }
-
-    public static String getMsgCurrentTime() {
-        Date nowTime = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-        return dateFormat.format(nowTime);
-    }
-
-
-    public static String getTime(String formate, long time) {
-        // 可以方便地修改日期格式
-        SimpleDateFormat dateFormat = new SimpleDateFormat(formate);
-        return dateFormat.format(time);
+    public static String getTimeByTimestamp(long time) {
+        return HHMM.get().format(time);
     }
 
     /**
      * 2017-12-29 20:18:26从这个格式的时间里获取月份
      */
-    public static int getTimeofMonth(String time) {
+    public static int getTimeOfMonth(String time) {
         if (Utils.isBlank(time) || time.length() < 7) {
             return 0;
         }
         return Integer.parseInt(time.substring(5, 7));
     }
 
-    public static int getTimeofYear(String time) {
+    public static int getTimeOfYear(String time) {
         if (Utils.isBlank(time) || time.length() < 4) {
             return 0;
         }
@@ -499,12 +315,12 @@ public class TimeUtils {
         try {
             Date startDate = startTimeFormat.get().parse(startTime);
             Date endDate = endTimeFormat.get().parse(endTime);
-            long timeResutl = endDate.getTime() - startDate.getTime();
+            long timeResult = endDate.getTime() - startDate.getTime();
 
-            long day = timeResutl / (24 * 60 * 60 * 1000);
-            long hour = (timeResutl / (60 * 60 * 1000) - day * 24);
-            long min = ((timeResutl / (60 * 1000)) - day * 24 * 60 - hour * 60);
-            long s = (timeResutl / 1000 - day * 24 * 60 * 60 - hour * 60 * 60 - min * 60);
+            long day = timeResult / (24 * 60 * 60 * 1000);
+            long hour = (timeResult / (60 * 60 * 1000) - day * 24);
+            long min = ((timeResult / (60 * 1000)) - day * 24 * 60 - hour * 60);
+            long s = (timeResult / 1000 - day * 24 * 60 * 60 - hour * 60 * 60 - min * 60);
 
             java.util.Calendar calendar = java.util.Calendar.getInstance();
             try {
@@ -515,8 +331,8 @@ public class TimeUtils {
             calendar.add(Calendar.HOUR_OF_DAY, (int) hour);
             calendar.add(Calendar.MINUTE, (int) min);
             calendar.add(Calendar.SECOND, (int) s);
-            String rusultTime = resultTime.get().format(calendar.getTime());
-            return rusultTime;
+            String result = resultTime.get().format(calendar.getTime());
+            return result;
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -553,9 +369,8 @@ public class TimeUtils {
     /**
      * 将 时间戳  转换  为日期格式
      */
-    public static String getDateByTimeStamp(long time, String format) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
-        return dateFormat.format(time);
+    public static String getDateStringByTimeStamp(long time) {
+        return MMMM_dd.get().format(time);
     }
 
 
@@ -565,7 +380,7 @@ public class TimeUtils {
      * @param time
      * @return
      */
-    public static int getTimeofDay(String time) {
+    public static int getTimeOfDay(String time) {
 
         SimpleDateFormat sdf = YYYYMMDDHHMMSS.get();
         Calendar cal = Calendar.getInstance();
@@ -824,7 +639,7 @@ public class TimeUtils {
      * @param time
      * @return
      */
-    public static boolean isAferCurrentTime(String time) {
+    public static boolean isAfterCurrentTime(String time) {
         Date date = null;
         Date currentDate = new Date();
         SimpleDateFormat format = YYYYmmDDHHMM.get();

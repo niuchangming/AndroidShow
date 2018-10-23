@@ -80,7 +80,7 @@ dependencies {
     implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-14'
 
     implementation 'com.google.android.exoplayer:exoplayer:2.9.0'
-    compile 'com.googlecode.libphonenumber:libphonenumber:8.9.15'
+    implementation 'com.googlecode.libphonenumber:libphonenumber:8.9.15'
 
     implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.76'
 }

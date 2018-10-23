@@ -2,6 +2,7 @@ package ekoolab.com.show.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.provider.Settings;
 
 import com.luck.picture.lib.tools.Constant;
 
@@ -54,6 +55,20 @@ public class AuthUtils {
     public String getName() {
         SharedPreferences sp = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
         return sp.getString(Constants.Auth.USERNAME, "");
+    }
+
+    public String getTempUserId(){
+        SharedPreferences sp = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+        String tempUserId = sp.getString(Constants.Auth.TEMP_USER_ID, "");
+
+        if (Utils.isBlank(tempUserId)) {
+            tempUserId = Utils.generateUniqueCode(context);
+
+            SharedPreferences.Editor spEditor = sp.edit();
+            spEditor.putString(Constants.Auth.TEMP_USER_ID, tempUserId);
+        }
+
+        return tempUserId;
     }
 
     public void saveLoginInfo(LoginData data) {

@@ -23,7 +23,7 @@ import ekoolab.com.show.fragments.BaseFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.JsonParser.JSONParser.ParserListener;
-import ekoolab.com.show.utils.ListUtils;
+import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.utils.ViewHolder;
 import ekoolab.com.show.views.itemdecoration.GridSpacingItemDecoration;
 import me.shihao.library.XRecyclerView;
@@ -92,7 +92,7 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
                     @Override
                     protected void onSuccess(List<Video> videoList) {
                         try {
-                            if (ListUtils.isNotEmpty(videoList)) {
+                            if (Utils.isNotEmpty(videoList)) {
                                 if (flag == 2) {
                                     videos.addAll(videoList);
                                     adapter.notifyItemRangeChanged(videos.size() - videoList.size(), videos.size());

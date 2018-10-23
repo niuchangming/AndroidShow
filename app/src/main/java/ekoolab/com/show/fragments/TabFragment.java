@@ -54,7 +54,7 @@ public class TabFragment extends BaseFragment implements View.OnClickListener {
         holder.setOnClickListener(this, R.id.tab_item_camera);
 
         ShapeDrawable lineDrawable = new ShapeDrawable(new BorderShape(new RectF(0, 1, 0, 0)));
-        lineDrawable.getPaint().setColor(getResources().getColor(R.color.extraGray));
+        lineDrawable.getPaint().setColor(getResources().getColor(R.color.colorLightGray));
         LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{
                 new ColorDrawable(getResources().getColor(R.color.colorWhite)),
                 lineDrawable
@@ -172,4 +172,9 @@ public class TabFragment extends BaseFragment implements View.OnClickListener {
 
         void onCenterCameraClick();
     }
+
+    public TabButton getTabChat() {
+        return tabChat;
+    }
+
 }

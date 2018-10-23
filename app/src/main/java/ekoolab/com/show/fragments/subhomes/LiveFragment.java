@@ -27,13 +27,12 @@ import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
 import ekoolab.com.show.beans.Live;
-import ekoolab.com.show.beans.Moment;
 import ekoolab.com.show.fragments.BaseFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.DisplayUtils;
 import ekoolab.com.show.utils.ImageLoader;
-import ekoolab.com.show.utils.ListUtils;
+import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.utils.ViewHolder;
 import ekoolab.com.show.views.itemdecoration.LinearItemDecoration;
 
@@ -65,7 +64,7 @@ public class LiveFragment extends BaseFragment implements OnRefreshLoadMoreListe
         recyclerView = holder.get(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         recyclerView.addItemDecoration(new LinearItemDecoration(mContext,
-                1, R.color.gray_very_light, DisplayUtils.dip2px(15)));
+                1, R.color.colorLightGray, DisplayUtils.dip2px(15)));
 
         refreshLayout = holder.get(R.id.refresh_layout);
         refreshLayout.setEnableAutoLoadMore(true);
@@ -117,7 +116,7 @@ public class LiveFragment extends BaseFragment implements OnRefreshLoadMoreListe
                     @Override
                     protected void onSuccess(List<Live> liveList) {
                         Logger.i("Live Data List: " + liveList.size());
-                        if (ListUtils.isNotEmpty(liveList)) {
+                        if (Utils.isNotEmpty(liveList)) {
                             if (isInitial) {
                                 lives.clear();
                             }

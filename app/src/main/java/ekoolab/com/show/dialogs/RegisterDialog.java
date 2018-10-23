@@ -2,25 +2,14 @@ package ekoolab.com.show.dialogs;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
-import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.common.Priority;
-import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.google.gson.reflect.TypeToken;
-import com.luck.picture.lib.tools.Constant;
-import com.orhanobut.logger.Logger;
 import com.rey.material.app.SimpleDialog;
 import com.rey.material.widget.ProgressView;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.List;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.api.ApiServer;
@@ -31,7 +20,6 @@ import ekoolab.com.show.beans.LoginData;
 import ekoolab.com.show.beans.Moment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
-import ekoolab.com.show.utils.ListUtils;
 import ekoolab.com.show.utils.Utils;
 
 public class RegisterDialog extends SimpleDialog implements View.OnClickListener{
