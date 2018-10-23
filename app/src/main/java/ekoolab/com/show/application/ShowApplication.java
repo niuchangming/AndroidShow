@@ -23,11 +23,9 @@ import com.scwang.smartrefresh.layout.api.RefreshHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.sendbird.android.SendBird;
-import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.net.Proxy;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -86,9 +84,6 @@ public class ShowApplication extends Application implements Thread.UncaughtExcep
         String packageName = context.getPackageName();
         String processName = getProcessName(android.os.Process.myPid());
         if (processName == null || processName.equals(packageName)) {
-            CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(context);
-            strategy.setUploadProcess(true);
-            CrashReport.initCrashReport(context, "b1505dbce5", BuildConfig.DEBUG, strategy);
             Logger.init("AndroidShow")
                     .methodCount(1)
                     .hideThreadInfo()
