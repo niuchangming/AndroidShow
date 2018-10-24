@@ -10,8 +10,10 @@ public class Constants {
     public static final String SIGNUP = HOST + "user/signup";
     public static final String VERIFY_2FA = HOST + "user/2fa";
     public static final String GET_USERPROFILE = HOST + "user/getUserprofile";
+    public static final String UPDATE_USERPROFILE = HOST + "user/updateUserprofile";
 
     public static final String VIDEO_LIST = HOST + "video/listall";
+    public static final String MY_VIDEO_LIST = HOST + "video/list";
     public static final String FAVOURITE = HOST + "favourites/favourite";
     public static final String FAVOURITECANEL = HOST + "favourites/cancel";
     public static final String UPLOAD_VIDEO = HOST + "video/upload";
@@ -27,6 +29,7 @@ public class Constants {
     public static final String COMMENTLIST = HOST + "comments/listall";
 
     public static final String MOMENTLIST = HOST + "moment/listall";
+    public static final String MYMOMENTLIST = HOST + "moment/list";
     public static final String MOMENT_SENDGIFT = HOST + "moment/sendgift";
 
     public static final String GIFTLIST = HOST + "gift/getGifts";

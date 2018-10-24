@@ -32,6 +32,7 @@ public class AuthUtils {
         SharedPreferences sp = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
         boolean isLogged = sp.getBoolean(Constants.Auth.LOGGED_IN, false);
         String loggedType = sp.getString(Constants.Auth.LOGIN_TYPE, "mobile");
+        System.out.println("see Login state and type, LOGGED_IN: " + isLogged + ", loggedType: " + loggedType);
 
         AuthType type = AuthType.UN_AUTH;
         if (loggedType == "facebook") {
@@ -124,6 +125,15 @@ public class AuthUtils {
             spEditor.putString(Constants.Auth.AVATAR_SMALL, data.avatar.small);
         }
         spEditor.apply();
+    }
+
+    public void logout() {
+        SharedPreferences.Editor spEditor = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE).edit();
+        SharedPreferences sp = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+        spEditor.putBoolean(Constants.Auth.LOGGED_IN, false);
+        spEditor.apply();
+        boolean isLogged = sp.getBoolean(Constants.Auth.LOGGED_IN, false);
+        System.out.println("after logout function, LOGGED_IN: " + isLogged);
     }
 
     public enum AuthType {

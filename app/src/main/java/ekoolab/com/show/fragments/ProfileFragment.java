@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.design.widget.TabLayout;
@@ -207,10 +208,10 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
-        System.out.println("Fragment OnStart");
         if(AuthUtils.getInstance(getContext()).loginState() == LOGGED){
-            System.out.println("User Logged");
             getUserInfo();;
+        } else {
+            resetView();
         }
 //        getUserInfo();
     }
@@ -299,20 +300,32 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         Intent intent;
         switch(view.getId()){
             case R.id.edit_ll:
-                intent = new Intent(getContext(), PersonActivity.class);
-//                intent.putExtra("userInfo",userInfo);
-                getContext().startActivity(intent);
+//                edit_ll.setClickable(false);
+                if(AuthUtils.getInstance(getContext()).loginState() == LOGGED){
+                    intent = new Intent(getContext(), PersonActivity.class);
+                    intent.putExtra("userInfo",userInfo);
+                    getContext().startActivity(intent);
+                } else {
+                    login();
+                }
                 break;
             case R.id.btn_edit:
-                intent = new Intent(getContext(), PersonActivity.class);
-//                intent.putExtra("userInfo",userInfo);
-                getContext().startActivity(intent);
+//                btn_edit.setClickable(false);
+                if(AuthUtils.getInstance(getContext()).loginState() == LOGGED){
+                    intent = new Intent(getContext(), PersonActivity.class);
+                    intent.putExtra("userInfo",userInfo);
+                    getContext().startActivity(intent);
+                } else {
+                    login();
+                }
                 break;
             case R.id.followers_ll:
+                followers_ll.setClickable(false);
                 intent = new Intent(getContext(), FollowersActivity.class);
                 getContext().startActivity(intent);
                 break;
             case R.id.following_ll:
+                following_ll.setClickable(false);
                 intent = new Intent(getContext(), FollowingActivity.class);
                 getContext().startActivity(intent);
                 break;
@@ -323,19 +336,18 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         String apiToken = AuthUtils.getInstance(getContext()).getApiToken();
         HashMap<String, String> map = new HashMap<>(1);
         map.put("token", apiToken);
-        System.out.println("start getting info");
         ApiServer.basePostRequest(this, Constants.GET_USERPROFILE, map, new TypeToken<ResponseData<UserInfo>>(){})
                 .subscribe(new NetworkSubscriber<UserInfo>() {
                     @Override
                     protected void onSuccess(UserInfo userInfo) {
-                        System.out.println("Enter onSuccess function");
                         saveUserInfo(userInfo);
                     }
 
-//                    @Override
-//                    protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
-//                        return super.dealHttpException(code, errorMsg, e);
-//                    }
+                    @Override
+                    protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
+                        AuthUtils.getInstance(getApplicationContext()).logout();
+                        return super.dealHttpException(code, errorMsg, e);
+                    }
                 });
     }
 
@@ -355,35 +367,42 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 //            spEditor.putString(Constants.Auth.AVATAR_SMALL, userInfo.avatar.small);
 //        }
 //        spEditor.apply();
-        System.out.println("Loading User Info");
-//        nickName = userInfo.nickName;
-//        name = userInfo.name;
-//        countryCode = userInfo.countryCode;
-//        roleType = userInfo.roleType;
-//        birthday = userInfo.birthday;
-//        followers = userInfo.followers;
-//        following = userInfo.following;
-//        region = userInfo.region;
-//        whatsup = userInfo.whatsup;
-//        category = userInfo.category;
-//        description = userInfo.description;
+
 //        String avatarSmall = sp.getString(Constants.Auth.AVATAR_SMALL, "");
-        String avatarSmall = AuthUtils.getInstance(getApplicationContext()).getAvator(2);
-        System.out.println("Image loading path" + avatarSmall);
         this.userInfo = userInfo;
-        tv_name.setText(userInfo.nickName);
-        System.out.println("Number of followers: " + userInfo.followers);
+        tv_name.setText(userInfo.nickname);
         tv_followers.setText(Integer.toString(userInfo.followers));
         tv_following.setText(Integer.toString(userInfo.following));
         String gender = (userInfo.gender == 0)? "Male":"Female";
         tv_gender.setText(gender);
         tv_birthday.setText(TimeUtils.getDateByTimeStamp(userInfo.birthday, "yy-MM-dd"));
-        Glide.with(this).load(avatarSmall).into(avatar);
         tv_region.setText(userInfo.region);
+        String avatarSmall = AuthUtils.getInstance(getApplicationContext()).getAvator(2);
+        Glide.with(this).load(avatarSmall).into(avatar);
     }
 
     private void loadUserInfo(){
         SharedPreferences sp = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
 
+    }
+
+    private void login(){
+        Intent intent = new Intent(getContext(), LoginActivity.class);
+        getContext().startActivity(intent);
+    }
+
+    private void resetView(){
+        //User Info
+        String emptyInfo = "--";
+        tv_name.setText("User information");
+        tv_followers.setText(emptyInfo);
+        tv_following.setText(emptyInfo);
+        tv_coins.setText(emptyInfo);
+        tv_gender.setText(emptyInfo);
+        tv_birthday.setText(emptyInfo);
+        tv_region.setText(emptyInfo);
+        Uri uri = Uri.parse("android.resource://AndroidShow/" + R.mipmap.default_avatar);
+        Glide.with(this).load(uri).into(avatar);
+        System.out.println("display reset.");
     }
 }

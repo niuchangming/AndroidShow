@@ -3,18 +3,24 @@ package ekoolab.com.show.fragments;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.DatePicker;
+
+import com.google.gson.reflect.TypeToken;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.Calendar;
 
-import ekoolab.com.show.R;
-import ekoolab.com.show.utils.ViewHolder;
+import ekoolab.com.show.utils.EventBusMsg;
 
 public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener  {
 
+    private Context context;
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current time as the default values for the picker
@@ -29,6 +35,7 @@ public class DatePickerFragment extends DialogFragment
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        // Do something with the time chosen by the user
+        String date = Integer.toString(year) + "-" + Integer.toString(month + 1) + "-" + Integer.toString(day);
+        EventBus.getDefault().post(new EventBusMsg(date));
     }
 }
