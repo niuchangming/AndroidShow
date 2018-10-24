@@ -22,11 +22,10 @@ import com.scwang.smartrefresh.layout.api.RefreshFooter;
 import com.scwang.smartrefresh.layout.api.RefreshHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
-import com.tencent.bugly.crashreport.CrashReport;
+import com.sendbird.android.SendBird;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.net.Proxy;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -85,9 +84,6 @@ public class ShowApplication extends Application implements Thread.UncaughtExcep
         String packageName = context.getPackageName();
         String processName = getProcessName(android.os.Process.myPid());
         if (processName == null || processName.equals(packageName)) {
-            CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(context);
-            strategy.setUploadProcess(true);
-            CrashReport.initCrashReport(context, "b1505dbce5", BuildConfig.DEBUG, strategy);
             Logger.init("AndroidShow")
                     .methodCount(1)
                     .hideThreadInfo()
@@ -101,10 +97,12 @@ public class ShowApplication extends Application implements Thread.UncaughtExcep
             FileUtils.createOrExistsDir(Constants.IMAGE_CACHE_PATH);
             FileUtils.createOrExistsFile(TEMP_FILE);
             // 在使用 SDK 各组间之前初始化 context 信息，传入 ApplicationContext
-            SDKInitializer.initialize(this);
+//            SDKInitializer.initialize(this);
             //自4.3.0起，百度地图SDK所有接口均支持百度坐标和国测局坐标，用此方法设置您使用的坐标类型.
             //包括BD09LL和GCJ02两种坐标，默认是BD09LL坐标。
             SDKInitializer.setCoordType(CoordType.BD09LL);
+
+            SendBird.init(Constants.SBD_APP_ID, context);
         }
     }
 

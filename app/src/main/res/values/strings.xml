@@ -7,14 +7,13 @@
     <string name="home">Home</string>
     <string name="zsc">ZSC</string>
     <string name="create">Create</string>
-    <string name="emart">e-Mart</string>
+    <string name="chat">Chat</string>
     <string name="profile">Profile</string>
     <string name="tip_double_click_exit">Press again to exit!</string>
     <string name="moment">Moment</string>
     <string name="video">Video</string>
     <string name="live">Live</string>
     <string name="start">Start</string>
-    <string name="logout">Logout</string>
     <string name="login">Login</string>
     <string name="mobile_number_prompt">Mobile Number:</string>
     <string name="plus_65">+65</string>
@@ -38,7 +37,6 @@
     <string name="whatsup">Whats up</string>
     <string name="region">Region</string>
     <string name="edit_cover">Edit Cover</string>
-    <string name="edit">Edit</string>
     <string name="save">Save</string>
     <string name="post">Post</string>
     <string name="nameinput">Enter your name</string>
@@ -47,7 +45,7 @@
     <string name="female">Female</string>
     <string name="whatsupinput">Say something about your mood?</string>
     <string name="followers">Followers</string>
-    <string name="following">Following</string>
+    <string name="followings">Followings</string>
     <string name="coins">Coins</string>
     <string name="try_again">Try Again later!</string>
     <string name="empty">Content not found!</string>
@@ -75,9 +73,39 @@
     <string name="moment_reply1"><Data><![CDATA[<font color="#03ABE3">%1$s</font>：%2$s]]></Data></string>
     <string name="moment_reply2"><Data><![CDATA[<font color="#03ABE3">%1$s</font>回复<font color="#03ABE3">%2$s</font>：%3$s]]></Data></string>
     <string name="login_first">Please login first</string>
-    <string name="recharge">充值</string>
-    <string name="send">发送</string>
-    <string name="country_china">China</string>
-    <string name="country_singapore">Singapore</string>
-    <string name="country_malaysia">Malaysia</string>
+    <string name="recharge">Topup</string>
+    <string name="send">Send</string>
+    <string name="follow">Follow</string>
+    <string name="un_follow">Unfollow</string>
+    <string name="my_friend">Friends</string>
+
+    <!-- Chat -->
+    <string name="video_call">Video Call</string>
+    <string name="voice_call">Voice Call</string>
+    <string name="message_empty">Message cannot be empty.</string>
+
+    <!-- Permission -->
+    <string name="permission_storage">Please open storage permission for better experience</string>
+    <string name="permission_contact">Chat and Call your friends with Show</string>
 </resources>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

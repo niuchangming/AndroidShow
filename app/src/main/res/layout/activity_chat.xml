@@ -1,0 +1,96 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/message_rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/fake_navigation_bar"
+        android:layout_above="@id/editor_bar"
+        android:scrollbars="none"/>
+
+    <ekoolab.com.show.views.FakeActionBar
+        android:id="@+id/fake_navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/navigation_bar_height"
+        android:background="@color/colorWhite">
+
+        <TextView
+            android:id="@+id/name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/layout_margin_16dp"
+            android:layout_centerInParent="true"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/text_size_16sp" />
+
+    </ekoolab.com.show.views.FakeActionBar>
+
+    <RelativeLayout
+        android:id="@+id/editor_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:paddingTop="@dimen/layout_margin_8dp"
+        android:paddingBottom="@dimen/layout_margin_8dp"
+        android:background="@color/colorLightGray">
+
+        <ImageButton
+            android:id="@+id/voice_btn"
+            android:layout_width="@dimen/icon_size_32dp"
+            android:layout_height="@dimen/icon_size_32dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:padding="4dp"
+            android:src="@drawable/selector_voice_btn"
+            android:scaleType="centerInside"
+            android:background="@android:color/transparent"/>
+
+        <ImageButton
+            android:id="@+id/more_btn"
+            android:layout_width="@dimen/icon_size_32dp"
+            android:layout_height="@dimen/icon_size_32dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:padding="4dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/selector_more_btn"
+            android:background="@android:color/transparent" />
+
+
+        <EditText
+            android:id="@+id/message_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/voice_btn"
+            android:layout_toLeftOf="@id/more_btn"
+            android:layout_marginRight="@dimen/layout_margin_8dp"
+            android:layout_marginLeft="@dimen/layout_margin_8dp"
+            android:imeOptions="actionSend"
+            android:inputType="text"
+            android:gravity="top"
+            android:layout_centerVertical="true"
+            android:paddingLeft="@dimen/item_spacing_8dp"
+            android:paddingRight="@dimen/item_spacing_8dp"
+            android:paddingTop="@dimen/item_spacing_4dp"
+            android:paddingBottom="@dimen/item_spacing_4dp"
+            android:scrollHorizontally="false"
+            android:background="@drawable/white_round_corner_bg"/>
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/more_action_rv"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorLightGray"/>
+
+</RelativeLayout>

@@ -278,7 +278,6 @@ public class CameraInterface implements Camera.PreviewCallback {
     public void onPreviewFrame(byte[] data, Camera camera) {
         frameData = data;
         if (isRecorder) {
-            System.out.println("onPreviewFrame");
             String path = String.format(Locale.getDefault(),"%sframe_%d.jpeg", saveImagePath,
                     System.currentTimeMillis());
             framePaths.add(path);

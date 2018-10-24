@@ -5,6 +5,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -46,6 +47,7 @@ import ekoolab.com.show.utils.Utils;
 public class LoginActivity extends BaseActivity implements View.OnClickListener,
         RegisterDialog.RegisterListener, VerifyDialog.VerifyListener {
     private final static String TAG = "LoginActivity";
+    public static final String LOGIN_DATA = "login_data";
     private VideoView videoView;
     private String videoPath;
     private EditText mobileEt;
@@ -153,6 +155,19 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private void mobileLogin() {
         final String mobile = mobileEt.getText().toString().trim();
         final String password = passwordEt.getText().toString().trim();
+
+        if (Utils.isBlank(mobile)) {
+            mobileEt.setHint(R.string.mobile_hint);
+            mobileEt.setHintTextColor(ContextCompat.getColor(this, R.color.colorRed));
+            return;
+        }
+
+        if(Utils.isBlank(password)){
+            passwordEt.setHint(R.string.password_hint);
+            passwordEt.setHintTextColor(ContextCompat.getColor(this, R.color.colorRed));
+            return;
+        }
+
         beforeLogin(false);
         HashMap<String, String> map = new HashMap<>(4);
         map.put("countryCode", "65");
@@ -163,14 +178,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 .subscribe(new NetworkSubscriber<LoginData>() {
                     @Override
                     protected void onSuccess(LoginData loginData) {
-                        afterLogin(true);
-                        AuthUtils.getInstance(getApplicationContext()).saveMobileLoginInfo(loginData);
+                        afterLogin(false);
+                        AuthUtils.getInstance(getApplicationContext()).saveLoginInfo(loginData);
+                        broadcastLoggedIn(loginData);
                         LoginActivity.this.finish();
                     }
 
                     @Override
                     protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
-                        afterLogin(true);
+                        afterLogin(false);
                         return super.dealHttpException(code, errorMsg, e);
                     }
                 });
@@ -178,51 +194,29 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     private void facebookLogin() {
         fbLoginManager.logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile"));
-
     }
 
     private void afterFacebookLogin(final LoginResult loginResult) {
-
         beforeLogin(true);
-        AndroidNetworking.post(Constants.LOGIN)
-                .addBodyParameter("countryCode", "65")
-                .addBodyParameter("fb_token", loginResult.getAccessToken().getToken())
-                .addBodyParameter("expired", loginResult.getAccessToken().getExpires().getTime() + "")
-                .addBodyParameter("fb_id", loginResult.getAccessToken().getUserId())
-                .setPriority(Priority.MEDIUM)
-                .build()
-                .getAsJSONObject(new JSONObjectRequestListener() {
+        HashMap<String, String> map = new HashMap<>(4);
+        map.put("type", "facebook");
+        map.put("fb_token", loginResult.getAccessToken().getToken());
+        map.put("expired", loginResult.getAccessToken().getExpires().getTime() + "");
+        map.put("fb_id", loginResult.getAccessToken().getUserId());
+        ApiServer.basePostRequest(this, Constants.LOGIN, map, new TypeToken<ResponseData<LoginData>>(){})
+                .subscribe(new NetworkSubscriber<LoginData>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-
-                        try {
-                            int errorCode = response.getInt("errorCode");
-                            String message = response.getString("message");
-                            if (errorCode == 1) {
-                                JSONObject data = response.getJSONObject("data");
-                                AuthInfo authInfo = new AuthInfo(data);
-                                authInfo.setFbAccessToken(loginResult.getAccessToken().getToken());
-                                //authInfo.fbAccessToken = loginResult.getAccessToken().getToken();
-                                authInfo.setFbExpiredDate(loginResult.getAccessToken().getExpires());
-                                //authInfo.fbExpiredDate = loginResult.getAccessToken().getExpires();
-                                authInfo.setFbUserId(loginResult.getAccessToken().getUserId());
-                                //authInfo.fbUserId = loginResult.getAccessToken().getUserId();
-                                AuthUtils.getInstance(LoginActivity.this).saveAuthInfo(authInfo);
-                                LoginActivity.this.finish();
-                            } else {
-                                toastLong(message);
-                            }
-                        } catch (JSONException e) {
-                            Log.e(TAG, e.getLocalizedMessage());
-                        }
-
+                    protected void onSuccess(LoginData loginData) {
                         afterLogin(true);
+                        AuthUtils.getInstance(getApplicationContext()).saveLoginInfo(loginData);
+                        broadcastLoggedIn(loginData);
+                        LoginActivity.this.finish();
                     }
 
                     @Override
-                    public void onError(ANError error) {
-                        Log.e(TAG, error.getLocalizedMessage());
+                    protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
                         afterLogin(true);
+                        return super.dealHttpException(code, errorMsg, e);
                     }
                 });
     }
@@ -252,19 +246,27 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void didRegistered(AuthInfo authInfo) {
+    public void didRegistered(LoginData loginData) {
         VerifyDialog verifyDialog = new VerifyDialog(this);
-        verifyDialog.setAuthInfo(authInfo);
+        verifyDialog.setLoginData(loginData);
         verifyDialog.backgroundColor(this.getResources().getColor(R.color.colorPink));
         verifyDialog.show();
     }
 
     @Override
-    public void did2FAVerify(AuthInfo authInfo) {
-        if (authInfo != null) {
-            AuthUtils.getInstance(this).saveAuthInfo(authInfo);
+    public void did2FAVerify(LoginData loginData) {
+        if (loginData != null) {
+            AuthUtils.getInstance(this).saveLoginInfo(loginData);
+            broadcastLoggedIn(loginData);
         }
         finish();
+    }
+
+    public void broadcastLoggedIn(LoginData loginData){
+        Intent msgIntent = new Intent();
+        msgIntent.setAction(AuthUtils.LOGGED_IN);
+        msgIntent.putExtra(LOGIN_DATA, loginData);
+        this.sendBroadcast(msgIntent);
     }
 
     @Override

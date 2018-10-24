@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ekoolab.com.show.views.FakeActionBar
+        android:id="@+id/fake_navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/navigation_bar_height"
+        android:background="@color/colorWhite">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/layout_margin_16dp"
+            android:layout_centerInParent="true"
+            android:text="@string/my_friend"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/text_size_16sp" />
+
+    </ekoolab.com.show.views.FakeActionBar>
+
+    <com.santalu.emptyview.EmptyView
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:ev_empty_button="@string/try_again"
+        app:ev_empty_buttonTextColor="@color/colorPrimaryDark"
+        app:ev_empty_drawable="@drawable/ic_sentiment_dissatisfied"
+        app:ev_empty_drawableTint="@color/colorPrimary"
+        app:ev_empty_text="@string/empty"
+        app:ev_error_backgroundColor="@color/colorRed"
+        app:ev_error_button="@string/try_again"
+        app:ev_error_buttonTextColor="@color/white"
+        app:ev_error_drawable="@drawable/ic_sentiment_very_dissatisfied"
+        app:ev_error_drawableTint="@color/white"
+        app:ev_error_text="@string/error_unknown"
+        app:ev_error_textColor="@color/white"
+        app:ev_error_title="@string/error_unknown_title"
+        app:ev_error_titleTextColor="@color/white"
+        app:ev_gravity="center"
+        app:ev_loading_drawable="@drawable/ic_sentiment_satisfied"
+        app:ev_loading_drawableTint="@color/colorPrimary"
+        app:ev_loading_title="@string/loading"
+        app:ev_loading_type="circular"
+        app:ev_transition="auto">
+
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            android:id="@+id/refresh_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="never" />
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+
+    </com.santalu.emptyview.EmptyView>
+
+
+</LinearLayout>

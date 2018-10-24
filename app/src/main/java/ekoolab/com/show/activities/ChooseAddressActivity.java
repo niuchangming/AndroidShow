@@ -143,7 +143,7 @@ public class ChooseAddressActivity extends BaseActivity implements View.OnClickL
         recycler = findViewById(R.id.recycler);
         recycler.setLayoutManager(new LinearLayoutManager(this));
         recycler.addItemDecoration(new LinearItemDecoration(this, 1,
-                R.color.gray_very_light, DisplayUtils.dip2px(15)));
+                R.color.colorLightGray, 0));
         recycler.setAdapter(adapter = new BaseQuickAdapter<PoiResultData, BaseViewHolder>(R.layout.layout_poiresult_item, resultDataList) {
             @Override
             protected void convert(BaseViewHolder helper, PoiResultData item) {

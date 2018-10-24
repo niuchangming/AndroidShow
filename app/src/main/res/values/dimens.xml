@@ -7,16 +7,19 @@
 
     <dimen name="toolbar_padding_top">0dp</dimen>
     <dimen name="toolbar_height">48dp</dimen>
+    <dimen name="navigation_bar_height">48dp</dimen>
 
     <dimen name="layout_margin_4dp">4dp</dimen>
     <dimen name="layout_margin_2dp">2dp</dimen>
     <dimen name="layout_margin_5dp">5dp</dimen>
     <dimen name="layout_margin_8dp">8dp</dimen>
     <dimen name="layout_margin_16dp">16dp</dimen>
+    <dimen name="layout_margin_20dp">20dp</dimen>
     <dimen name="layout_margin_22dp">22dp</dimen>
     <dimen name="layout_margin_24dp">24dp</dimen>
     <dimen name="layout_margin_28dp">28dp</dimen>
     <dimen name="layout_margin_32dp">32dp</dimen>
+    <dimen name="layout_margin_45dp">45dp</dimen>
     <dimen name="layout_margin_64dp">64dp</dimen>
     <dimen name="layout_margin_70dp">70dp</dimen>
     <dimen name="layout_padding_1dp">1dp</dimen>
@@ -45,6 +48,9 @@
     <dimen name="text_size_40sp">40sp</dimen>
     <dimen name="text_size_6sp">6sp</dimen>
 
+    <!-- 默认item宽度 -->
+    <dimen name="item_width_100dp">100dp</dimen>
+
     <!-- 默认item高度 -->
     <dimen name="default_item_height">56dp</dimen>
     <dimen name="item_height_20dp">20dp</dimen>
@@ -68,12 +74,18 @@
     <dimen name="point_size">8dp</dimen>
     <dimen name="point_margin">4dp</dimen>
     <dimen name="point_radius">4dp</dimen>
+    <dimen name="item_spacing_2dp">2dp</dimen>
     <dimen name="item_spacing_4dp">4dp</dimen>
+    <dimen name="item_spacing_6dp">6dp</dimen>
     <dimen name="item_spacing_8dp">8dp</dimen>
+    <dimen name="item_spacing_10dp">10dp</dimen>
     <dimen name="item_spacing_15dp">15dp</dimen>
     <dimen name="item_spacing_20dp">20dp</dimen>
     <!-- Button高度 -->
     <dimen name="button_height_40dp">40dp</dimen>
 
     <dimen name="moment_gift_tips_width">180dp</dimen>
+    <dimen name="corner_radius_small">4dp</dimen>
+    <dimen name="corner_radius_medium">6dp</dimen>
+    <dimen name="corner_radius_large">8dp</dimen>
 </resources>

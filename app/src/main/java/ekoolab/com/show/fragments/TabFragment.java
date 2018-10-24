@@ -12,8 +12,8 @@ import android.widget.ImageButton;
 
 import java.util.List;
 
+import ekoolab.com.show.activities.BaseActivity;
 import ekoolab.com.show.views.BorderShape;
-import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.R;
 import ekoolab.com.show.views.TabButton;
 import ekoolab.com.show.utils.ViewHolder;
@@ -21,7 +21,7 @@ import ekoolab.com.show.utils.ViewHolder;
 public class TabFragment extends BaseFragment implements View.OnClickListener {
     private TabButton tabHome;
     private TabButton tabZSC;
-    private TabButton tabEmart;
+    private TabButton tabChat;
     private TabButton tabProfile;
     private ImageButton cameraBtn;
 
@@ -43,34 +43,28 @@ public class TabFragment extends BaseFragment implements View.OnClickListener {
     protected void initViews(ViewHolder holder, View root) {
         tabHome = holder.get(R.id.tab_item_home);
         tabZSC = holder.get(R.id.tab_item_zsc);
-        tabEmart = holder.get(R.id.tab_item_emart);
+        tabChat = holder.get(R.id.tab_item_chat);
         tabProfile = holder.get(R.id.tab_item_profile);
         cameraBtn = holder.get(R.id.tab_item_camera);
 
         holder.setOnClickListener(this, R.id.tab_item_home);
         holder.setOnClickListener(this, R.id.tab_item_zsc);
-        holder.setOnClickListener(this, R.id.tab_item_emart);
+        holder.setOnClickListener(this, R.id.tab_item_chat);
         holder.setOnClickListener(this, R.id.tab_item_profile);
         holder.setOnClickListener(this, R.id.tab_item_camera);
 
         ShapeDrawable lineDrawable = new ShapeDrawable(new BorderShape(new RectF(0, 1, 0, 0)));
-        lineDrawable.getPaint().setColor(getResources().getColor(R.color.extraGray));
+        lineDrawable.getPaint().setColor(getResources().getColor(R.color.colorLightGray));
         LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{
                 new ColorDrawable(getResources().getColor(R.color.colorWhite)),
                 lineDrawable
         });
         root.setBackground(layerDrawable);
 
-        if (Constants.tabBarTitles.length < 4) {
-            return;
-        }
-        tabHome.init(R.drawable.tab_icon_home, Constants.tabBarTitles[0], HomeFragment.class);
-
-        tabZSC.init(R.drawable.tab_icon_zsc, Constants.tabBarTitles[1], HomeFragment.class);
-
-        tabEmart.init(R.drawable.tab_icon_emart, Constants.tabBarTitles[2], HomeFragment.class);
-
-        tabProfile.init(R.drawable.tab_icon_profile, Constants.tabBarTitles[3], ProfileFragment.class);
+        tabHome.init(R.drawable.tab_icon_home, getContext().getResources().getString(R.string.home), HomeFragment.class);
+        tabZSC.init(R.drawable.tab_icon_zsc, getContext().getResources().getString(R.string.zsc), HomeFragment.class);
+        tabChat.init(R.drawable.tab_icon_chat, getContext().getResources().getString(R.string.chat), ChatListFragment.class);
+        tabProfile.init(R.drawable.tab_icon_profile, getContext().getResources().getString(R.string.profile), ProfileFragment.class);
 
         clearOldFragment();
         doSelect(tabHome);
@@ -115,6 +109,12 @@ public class TabFragment extends BaseFragment implements View.OnClickListener {
     }
 
     private void doSelect(TabButton newNavButton) {
+        if (newNavButton == tabChat || newNavButton == tabProfile) {
+            if (!((BaseActivity)getActivity()).authorized(true)) {
+                return;
+            }
+        }
+
         TabButton oldNavButton = null;
         if (mCurrentNavButton != null) {
             oldNavButton = mCurrentNavButton;
@@ -156,9 +156,25 @@ public class TabFragment extends BaseFragment implements View.OnClickListener {
         }
     }
 
+    public Fragment getFragment(Class<?> clz){
+        if (clz.isInstance(ChatListFragment.class)) {
+            return this.tabChat.getFragment();
+        } else if (clz.isInstance(HomeFragment.class)) {
+            return this.tabHome.getFragment();
+        } else if (clz.isInstance(ProfileFragment.class)) {
+            return this.tabProfile.getFragment();
+        }
+        return null;
+    }
+
     public interface OnTabBarSelectedListener {
         void onReselect(TabButton navigationButton);
 
         void onCenterCameraClick();
     }
+
+    public TabButton getTabChat() {
+        return tabChat;
+    }
+
 }

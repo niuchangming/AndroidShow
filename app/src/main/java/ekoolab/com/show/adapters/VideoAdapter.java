@@ -14,6 +14,7 @@ import java.util.List;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.beans.Video;
+import ekoolab.com.show.utils.ImageLoader;
 
 public class VideoAdapter extends RecyclerView.Adapter <VideoAdapter.VideoHolder> {
     private Activity activity;
@@ -71,7 +72,7 @@ public class VideoAdapter extends RecyclerView.Adapter <VideoAdapter.VideoHolder
         public void bind(final Video video, final OnItemClickListener listener) {
             nameTv.setText(video.creator.name);
             locationTv.setText("大连");
-            Glide.with(activity).load(video.creator.avatar.small).into(avatarIv);
+            ImageLoader.displayImageAsCircle(video.creator.avatar.small, avatarIv);
             if (video.preview != null) {
                 Glide.with(activity).load(video.preview.origin).into(coverIv);
             }

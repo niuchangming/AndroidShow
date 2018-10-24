@@ -1,5 +1,7 @@
 package ekoolab.com.show.api;
 
+import android.content.Context;
+
 import com.androidnetworking.common.Priority;
 import com.google.gson.reflect.TypeToken;
 import com.rx2androidnetworking.Rx2AndroidNetworking;
@@ -37,9 +39,8 @@ public class ApiServer {
                 .as(activity.autoDisposable());
     }
 
-    public static <T> Flowable<T> basePostRequestNoDisposable(BaseActivity activity,
-                                                              String url,
-                                                              HashMap<String, String> map,
+    public static <T> Flowable<T> basePostRequestNoDisposable(String url,
+                                                              HashMap<String, Object> map,
                                                               TypeToken<T> typeToken) {
         return Rx2AndroidNetworking
                 .post(url)
@@ -62,19 +63,6 @@ public class ApiServer {
                 .getParseFlowable(typeToken)
                 .compose(RxUtils.rxSchedulerHelper())
                 .as(fragment.autoDisposable());
-    }
-
-    public static <T> Flowable<T> basePostRequestNoDisposable(BaseFragment fragment,
-                                                              String url,
-                                                              HashMap<String, String> map,
-                                                              TypeToken<T> typeToken) {
-        return Rx2AndroidNetworking
-                .post(url)
-                .addBodyParameter(map)
-                .setPriority(Priority.MEDIUM)
-                .build()
-                .getParseFlowable(typeToken)
-                .compose(RxUtils.rxSchedulerHelper());
     }
 
     public static <T> FlowableSubscribeProxy<T> baseUploadRequest(BaseActivity activity,

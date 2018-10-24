@@ -25,6 +25,7 @@ import ekoolab.com.show.api.ResponseData;
 import ekoolab.com.show.beans.Video;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
+import ekoolab.com.show.utils.ImageLoader;
 import ekoolab.com.show.views.FixedTextureVideoView;
 import ekoolab.com.show.views.FullScreenVideoView;
 
@@ -118,7 +119,7 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
             } else {
                 tv_follow.setText("关注");
             }
-            Glide.with(activity).load(video.creator.avatar.small).into(avatar_iv);
+            ImageLoader.displayImageAsCircle(video.creator.avatar.small, avatar_iv);
             ll_zan.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

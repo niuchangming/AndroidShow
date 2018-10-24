@@ -2,6 +2,7 @@ package ekoolab.com.show.dialogs;
 
 import android.content.Context;
 import android.os.CountDownTimer;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -11,13 +12,24 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import com.google.gson.reflect.TypeToken;
+import com.orhanobut.logger.Logger;
 import com.rey.material.app.SimpleDialog;
 import com.rey.material.widget.ProgressView;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+
 import ekoolab.com.show.R;
+import ekoolab.com.show.api.ApiServer;
+import ekoolab.com.show.api.NetworkSubscriber;
+import ekoolab.com.show.api.ResponseData;
 import ekoolab.com.show.beans.AuthInfo;
+import ekoolab.com.show.beans.LoginData;
 import ekoolab.com.show.utils.Constants;
+import ekoolab.com.show.utils.JsonParser.JSONParser;
+import ekoolab.com.show.utils.Utils;
 
 public class VerifyDialog extends SimpleDialog implements View.OnClickListener{
     private final String TAG = "VerifyDialog";
@@ -25,7 +37,7 @@ public class VerifyDialog extends SimpleDialog implements View.OnClickListener{
     private Button cancelBtn;
     private Button verifyBtn;
     private ProgressView loadingBar;
-    private AuthInfo authInfo;
+    private LoginData loginData;
     private CountDownTimer timer;
     private VerifyListener listener;
 
@@ -36,11 +48,16 @@ public class VerifyDialog extends SimpleDialog implements View.OnClickListener{
     public VerifyDialog(Context context, int style) {
         super(context, style);
         contentView(R.layout.dialog_verify2fa);
+
+        if(VerifyListener.class.isAssignableFrom(context.getClass())){
+            listener = (VerifyListener)context;
+        }
+
         initViews();
     }
 
-    public void setAuthInfo(AuthInfo authInfo) {
-        this.authInfo = authInfo;
+    public void setLoginData(LoginData loginData) {
+        this.loginData = loginData;
     }
 
     @Override
@@ -97,48 +114,35 @@ public class VerifyDialog extends SimpleDialog implements View.OnClickListener{
     private void verify(){
         final String code = codeEt.getText().toString().trim();
 
+        if (Utils.isBlank(code)) {
+            codeEt.setHint(R.string.mobile_hint);
+            codeEt.setHintTextColor(ContextCompat.getColor(getContext(), R.color.colorRed));
+            return;
+        }
+
         beforeCall();
-        AndroidNetworking.post(Constants.VERIFY_2FA)
-                .addBodyParameter("verifyCode", code)
-                .addBodyParameter("token", authInfo.getApiToken())
-               // .addBodyParameter("token", authInfo.apiToken)
-                .setPriority(Priority.MEDIUM)
-                .build()
-                .getAsJSONObject(new JSONObjectRequestListener() {
-                    @Override
-                    public void onResponse(JSONObject response) {
 
-                        try {
-                            int errorCode = response.getInt("errorCode");
-                            String message = response.getString("message");
-                            if (errorCode == 1) {
-                                JSONObject data = response.getJSONObject("data");
-                                AuthInfo info = new AuthInfo(data);
-//                                authInfo.userCode = info.userCode;
-//                                authInfo.apiToken = info.apiToken;
-                                //authInfo.accountType = "mobile";
-                                authInfo.setAccountType("mobile");
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("verifyCode", code);
+        map.put("token", loginData.token);
 
-                                if(listener != null){
-                                    listener.did2FAVerify(info);
-                                }
+        ApiServer.basePostRequestNoDisposable(Constants.VERIFY_2FA, map, new TypeToken<ResponseData<LoginData>>() {
+        }).subscribe(new NetworkSubscriber<LoginData>() {
+            @Override
+            protected void onSuccess(LoginData loginData) {
+                if (listener != null){
+                    listener.did2FAVerify(loginData);
+                }
+                afterCall();
+                cancel();
+            }
 
-                                cancel();
-                            } else {
-                                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
-                            }
-                        }catch (JSONException e){
-                            Log.e(TAG, e.getLocalizedMessage());
-                        }
-
-                        afterCall();
-                    }
-                    @Override
-                    public void onError(ANError error) {
-                        Log.e(TAG, error.getLocalizedMessage());
-                        afterCall();
-                    }
-                });
+            @Override
+            protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
+                afterCall();
+                return super.dealHttpException(code, errorMsg, e);
+            }
+        });
 
     }
 
@@ -166,6 +170,6 @@ public class VerifyDialog extends SimpleDialog implements View.OnClickListener{
     }
 
     public interface VerifyListener{
-        void did2FAVerify(AuthInfo authInfo);
+        void did2FAVerify(LoginData loginData);
     }
 }

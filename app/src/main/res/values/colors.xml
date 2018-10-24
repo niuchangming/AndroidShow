@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">@color/colorWhite</color>
-    <color name="colorPrimaryDark">@color/extraGray</color>
+    <color name="colorPrimaryDark">@color/colorLightGray</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorWhite">#FFFFFF</color>
-    <color name="extraGray">#F0F0F0</color>
-    <color name="gray">#C3C3C3</color>
+    <color name="colorSuperLightGray">#F0F0F0</color>
+    <color name="colorLightGray">#DDDDDD</color>
+    <color name="colorGray">#C3C3C3</color>
     <color name="colorBlack">#333333</color>
+    <color name="colorBlackTransparent">#B3080808</color>
+    <color name="colorSilver">#EEF1F6</color>
     <color name="colorOrange">#FC5C1B</color>
     <color name="colorGreen">#6bc92c</color>
     <color name="colorPink">#EC4A86</color>
     <color name="colorDarkPink">#CC1B5D</color>
     <color name="colorRed">#D50065</color>
-
     <color name="lock_bg">#cc000000</color>
+    <color name="colorPurple">#774df2</color>
 
 
 
@@ -57,7 +60,6 @@
     <drawable name="catalogue_selected">#ebebeb</drawable>
     <drawable name="catalogue_unselected">#ffffffff</drawable>
     <drawable name="catalogue_view_selected">#ff221e</drawable>
-    <color name="gray_very_light">#DDDDDD</color>
     <color name="darkRed">#D92E30</color>
     <color name="black">#080808</color>
     <color name="titleGreen">#4DCD70</color>
@@ -65,6 +67,31 @@
     <color name="asiapay">#4D1F80</color>
     <color name="divider_color">#ebebeb</color>
     <color name="color_03ABE3">#03ABE3</color>
-
     <color name="orange">#ff7800</color>
 </resources>
+
+
+
+
+
+<!--100% — FF-->
+<!--95% — F2-->
+<!--90% — E6-->
+<!--85% — D9-->
+<!--80% — CC-->
+<!--75% — BF-->
+<!--70% — B3-->
+<!--65% — A6-->
+<!--60% — 99-->
+<!--55% — 8C-->
+<!--50% — 80-->
+<!--45% — 73-->
+<!--40% — 66-->
+<!--35% — 59-->
+<!--30% — 4D-->
+<!--25% — 40-->
+<!--20% — 33-->
+<!--15% — 26-->
+<!--10% — 1A-->
+<!--5%  — 0D-->
+<!--0% —  00-->

@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import ekoolab.com.show.R;
+import ekoolab.com.show.activities.BaseActivity;
 import ekoolab.com.show.activities.VideoPlayerActivity;
 import ekoolab.com.show.adapters.VideoAdapter;
 import ekoolab.com.show.api.ApiServer;
@@ -22,10 +23,11 @@ import ekoolab.com.show.fragments.BaseFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.JsonParser.JSONParser.ParserListener;
-import ekoolab.com.show.utils.ListUtils;
+import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.utils.ViewHolder;
 import ekoolab.com.show.views.itemdecoration.GridSpacingItemDecoration;
 import me.shihao.library.XRecyclerView;
+import okhttp3.Response;
 
 public class VideoFragment extends BaseFragment implements ParserListener, VideoAdapter.OnItemClickListener {
     private final String TAG = "VideoFragment";
@@ -90,8 +92,7 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
                     @Override
                     protected void onSuccess(List<Video> videoList) {
                         try {
-                            System.out.println("===videoList==="+videoList.size()+";pageIndex==="+pageIndex);
-                            if (ListUtils.isNotEmpty(videoList)) {
+                            if (Utils.isNotEmpty(videoList)) {
                                 if (flag == 2) {
                                     videos.addAll(videoList);
                                     adapter.notifyItemRangeChanged(videos.size() - videoList.size(), videos.size());
@@ -156,6 +157,7 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
     @Override
     public void onItemClick(Video video) {
         Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
+        intent.putExtra(BaseActivity.IS_FULL_SCREEN, true);
         intent.putParcelableArrayListExtra("videos", this.videos);
 
         for (int i = 0; i < videos.size(); i++) {

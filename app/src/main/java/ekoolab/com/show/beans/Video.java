@@ -17,7 +17,7 @@ public class Video implements Parcelable {
     public double lon;
     public String permission;
     public String category;
-    public User creator;
+    public Friend creator;
     public int likeCount;
     public int favouriteCount;
     public boolean isMyLike;
@@ -64,7 +64,7 @@ public class Video implements Parcelable {
         this.lon = in.readDouble();
         this.permission = in.readString();
         this.category = in.readString();
-        this.creator = in.readParcelable(User.class.getClassLoader());
+        this.creator = in.readParcelable(Friend.class.getClassLoader());
         this.likeCount = in.readInt();
         this.favouriteCount = in.readInt();
         this.isMyLike = in.readByte() != 0;
