@@ -20,7 +20,6 @@ import ekoolab.com.show.api.ResponseData;
 import ekoolab.com.show.beans.TextPicture;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
-import ekoolab.com.show.utils.EventBusMsg;
 import ekoolab.com.show.utils.ToastUtils;
 import ekoolab.com.show.utils.Utils;
 
@@ -54,15 +53,8 @@ public class NicknameActivity extends BaseActivity implements View.OnClickListen
     @Override
     protected void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
     }
-
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onResultEvent(EventBusMsg eventBusMsg) {
-        showOrHideNavAnim(eventBusMsg.getFlag());
-    }
-
 
     private void showOrHideNavAnim(int flag) {
 
@@ -71,7 +63,7 @@ public class NicknameActivity extends BaseActivity implements View.OnClickListen
     @Override
     protected void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -79,6 +71,7 @@ public class NicknameActivity extends BaseActivity implements View.OnClickListen
         Intent intent;
         switch (view.getId()){
             case R.id.tv_cancel:
+                setResult(0);
                 finish();
                 break;
             case R.id.tv_save:
@@ -95,7 +88,7 @@ public class NicknameActivity extends BaseActivity implements View.OnClickListen
 //        progressView.start();
         setViewClickable(false);
         HashMap<String, String> map = new HashMap<>(2);
-        map.put("nickname", nickname);
+        map.put("nickName", nickname);
         map.put("token", AuthUtils.getInstance(NicknameActivity.this).getApiToken());
         ApiServer.basePostRequest(this, Constants.UPDATE_USERPROFILE, map,
                 new TypeToken<ResponseData<TextPicture>>() {

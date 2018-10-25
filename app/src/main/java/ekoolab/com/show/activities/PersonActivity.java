@@ -39,7 +39,7 @@ import ekoolab.com.show.fragments.submyvideos.MyVideoFragment;
 import ekoolab.com.show.fragments.submyvideos.MymomentsFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
-import ekoolab.com.show.utils.EventBusMsg;
+import ekoolab.com.show.utils.ImageLoader;
 import ekoolab.com.show.utils.TimeUtils;
 import ekoolab.com.show.utils.ToastUtils;
 
@@ -140,13 +140,6 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
         return R.layout.activity_person;
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onResultEvent(EventBusMsg eventBusMsg) {
-        if (eventBusMsg.getFlag() == 0 || eventBusMsg.getFlag() == 1) {
-
-        }
-    }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -206,12 +199,14 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
         tv_name.setText(userInfo.name);
         tv_nickname.setText(userInfo.nickname);
         tv_gender.setText((userInfo.gender == 0)? "Male":"Female");
-        tv_birthday.setText(TimeUtils.getDateByTimeStamp(userInfo.birthday, "yy-MM-dd"));
+        tv_birthday.setText(TimeUtils.getDateStringByTimeStamp(userInfo.birthday));
         tv_whatsup.setText(userInfo.whatsup);
         tv_region.setText(userInfo.region);
-        String avatarSmall = AuthUtils.getInstance(getApplicationContext()).getAvator(1);
-        Glide.with(this).load(avatarSmall).into(avatar);
-        Glide.with(this).load(avatarSmall).into(cover_image);
+//        String avatarSmall = AuthUtils.getInstance(getApplicationContext()).getAvator(1);
+//        Glide.with(this).load(avatarSmall).into(avatar);
+//        Glide.with(this).load(avatarSmall).into(cover_image);
+        ImageLoader.displayImageAsCircle(userInfo.avatar.small, avatar);
+        ImageLoader.displayImage(userInfo.avatar.small, cover_image, 5);
         if(userInfo.roleType == 2){
             btn_edit_cover = findViewById(R.id.btn_edit_cover);
             btn_edit_cover.setOnClickListener(this);
@@ -226,19 +221,16 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
         Intent intent;
         switch(view.getId()){
             case R.id.name_rl:
-                name_rl.setClickable(false);
                 intent = new Intent(this, NameActivity.class);
 //                intent.putExtra("name", userInfo.name);
                 this.startActivityForResult(intent, UserInfo.REQUEST_NAME);
                 break;
             case R.id.nickname_rl:
-                nickname_rl.setClickable(false);
                 intent = new Intent(this, NicknameActivity.class);
 //                intent.putExtra("nickName", userInfo.nickName);
                 this.startActivityForResult(intent, UserInfo.REQUEST_NICKNAME);
                 break;
             case R.id.gender_rl:
-                gender_rl.setClickable(false);
                 intent = new Intent(this, GenderActivity.class);
                 intent.putExtra("gender", userInfo.gender);
                 this.startActivityForResult(intent, UserInfo.REQUEST_GENDER);
@@ -252,29 +244,24 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                 datePickerFragment.show(getFragmentManager(), "datepicker");
                 break;
             case R.id.whatsup_rl:
-                whatsup_rl.setClickable(false);
                 intent = new Intent(this, WhatsupActivity.class);
 //                intent.putExtra("whatsup", userInfo.whatsup);
                 this.startActivityForResult(intent, UserInfo.REQUEST_WHATSUP);
                 break;
             case R.id.region_rl:
-                region_rl.setClickable(false);
                 intent = new Intent(this, RegionActivity.class);
                 intent.putExtra("region", userInfo.region);
                 this.startActivityForResult(intent, UserInfo.REQUEST_REGION);
                 break;
             case R.id.btn_edit_cover:
-                btn_edit_cover.setClickable(false);
                 intent = new Intent(this, ChooseCoverActivity.class);
                 this.startActivity(intent);
                 break;
             case R.id.btn_logout:
                 AuthUtils.getInstance(getApplicationContext()).logout();
-                btn_logout.setClickable(false);
                 onBackPressed();
                 break;
             case R.id.title_rl:
-                title_rl.setClickable(false);
                 onBackPressed();
                 break;
         }
@@ -319,13 +306,12 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
 //    }
 
     @Subscribe
-    public void onEventMessage(EventBusMsg event){
-        birthday = event.getMsg();
-        tv_birthday.setText(birthday);
+    public void onEventMessage(String date){
+        tv_birthday.setText(date);
+        Long birthday = TimeUtils.getTimeStampByDate(date + " 00:00", TimeUtils.YYYYmmDDHHMM);
         System.out.println("Enter event bus, birthday: " + birthday);
-        birthday = String.valueOf(TimeUtils.getTimeStampByDate(birthday, TimeUtils.YYYYMMDD));
         HashMap<String, String> map = new HashMap<>(2);
-        map.put("birthday", birthday);
+        map.put("birthday", String.valueOf(birthday));
         map.put("token", AuthUtils.getInstance(PersonActivity.this).getApiToken());
         ApiServer.basePostRequest(this, Constants.UPDATE_USERPROFILE, map,
                 new TypeToken<ResponseData<TextPicture>>() {

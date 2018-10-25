@@ -15,6 +15,7 @@
     <string name="live">Live</string>
     <string name="start">Start</string>
     <string name="login">Login</string>
+    <string name="logout">Logout</string>
     <string name="mobile_number_prompt">Mobile Number:</string>
     <string name="plus_65">+65</string>
     <string name="password_prompt">Password:</string>
@@ -37,6 +38,7 @@
     <string name="whatsup">Whats up</string>
     <string name="region">Region</string>
     <string name="edit_cover">Edit Cover</string>
+    <string name="edit">Edit</string>
     <string name="save">Save</string>
     <string name="post">Post</string>
     <string name="nameinput">Enter your name</string>
@@ -45,7 +47,7 @@
     <string name="female">Female</string>
     <string name="whatsupinput">Say something about your mood?</string>
     <string name="followers">Followers</string>
-    <string name="followings">Followings</string>
+    <string name="following">Following</string>
     <string name="coins">Coins</string>
     <string name="try_again">Try Again later!</string>
     <string name="empty">Content not found!</string>
@@ -78,6 +80,10 @@
     <string name="follow">Follow</string>
     <string name="un_follow">Unfollow</string>
     <string name="my_friend">Friends</string>
+    <!-- Region -->
+    <string name="country_china">China</string>
+    <string name="country_malaysia">Malaysia</string>
+    <string name="country_singapore">Sinapore</string>
 
     <!-- Chat -->
     <string name="video_call">Video Call</string>

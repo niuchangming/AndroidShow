@@ -11,7 +11,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import ekoolab.com.show.R;
-import ekoolab.com.show.utils.EventBusMsg;
+//import ekoolab.com.show.utils.EventBusMsg;
 
 public class FollowersActivity extends BaseActivity implements View.OnClickListener{
     private LinearLayout back_ll;
@@ -21,23 +21,23 @@ public class FollowersActivity extends BaseActivity implements View.OnClickListe
         return R.layout.activity_followers;
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onResultEvent(EventBusMsg eventBusMsg) {
-        if (eventBusMsg.getFlag() == 0 || eventBusMsg.getFlag() == 1) {
-
-        }
-    }
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onResultEvent(EventBusMsg eventBusMsg) {
+//        if (eventBusMsg.getFlag() == 0 || eventBusMsg.getFlag() == 1) {
+//
+//        }
+//    }
 
     @Override
     public void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
     }
 
     @Override

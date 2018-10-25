@@ -24,7 +24,7 @@ import ekoolab.com.show.beans.TextPicture;
 import ekoolab.com.show.beans.UserInfo;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
-import ekoolab.com.show.utils.EventBusMsg;
+//import ekoolab.com.show.utils.EventBusMsg;
 import ekoolab.com.show.utils.ToastUtils;
 import ekoolab.com.show.utils.Utils;
 
@@ -64,17 +64,17 @@ public class GenderActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
         gender = getIntent().getIntExtra("gender", 1);
         System.out.println("gender is " + gender);
         setSelection(gender);
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onResultEvent(EventBusMsg eventBusMsg) {
-        showOrHideNavAnim(eventBusMsg.getFlag());
-    }
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onResultEvent(EventBusMsg eventBusMsg) {
+//        showOrHideNavAnim(eventBusMsg.getFlag());
+//    }
 
 
     private void showOrHideNavAnim(int flag) {
@@ -84,7 +84,7 @@ public class GenderActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
     }
 
     @Override

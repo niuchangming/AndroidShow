@@ -9,13 +9,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.DatePicker;
 
+import com.baidu.mapapi.UIMsg;
 import com.google.gson.reflect.TypeToken;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.Calendar;
-
-import ekoolab.com.show.utils.EventBusMsg;
 
 public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener  {
@@ -36,6 +35,7 @@ public class DatePickerFragment extends DialogFragment
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
         String date = Integer.toString(year) + "-" + Integer.toString(month + 1) + "-" + Integer.toString(day);
-        EventBus.getDefault().post(new EventBusMsg(date));
+        System.out.println("birthday entered: " + date);
+        EventBus.getDefault().post(new String(date));
     }
 }

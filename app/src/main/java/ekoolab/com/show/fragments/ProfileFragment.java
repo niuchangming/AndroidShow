@@ -53,7 +53,8 @@ import ekoolab.com.show.fragments.submyvideos.MyVideoFragment;
 import ekoolab.com.show.fragments.submyvideos.MymomentsFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
-import ekoolab.com.show.utils.EventBusMsg;
+//import ekoolab.com.show.utils.EventBusMsg;
+import ekoolab.com.show.utils.ImageLoader;
 import ekoolab.com.show.utils.ViewHolder;
 import ekoolab.com.show.utils.TimeUtils;
 
@@ -207,7 +208,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
     @Override
     public void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
         if(AuthUtils.getInstance(getContext()).loginState() == LOGGED){
             getUserInfo();;
         } else {
@@ -224,7 +225,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
     @Override
     public void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -285,10 +286,10 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         });
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onResultEvent(EventBusMsg eventBusMsg) {
-        showOrHideNavAnim(eventBusMsg.getFlag());
-    }
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onResultEvent(EventBusMsg eventBusMsg) {
+//        showOrHideNavAnim(eventBusMsg.getFlag());
+//    }
 
 
     private void showOrHideNavAnim(int flag) {
@@ -375,10 +376,11 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         tv_following.setText(Integer.toString(userInfo.following));
         String gender = (userInfo.gender == 0)? "Male":"Female";
         tv_gender.setText(gender);
-        tv_birthday.setText(TimeUtils.getDateByTimeStamp(userInfo.birthday, "yy-MM-dd"));
+        tv_birthday.setText(TimeUtils.getDateStringByTimeStamp(userInfo.birthday));
         tv_region.setText(userInfo.region);
-        String avatarSmall = AuthUtils.getInstance(getApplicationContext()).getAvator(2);
-        Glide.with(this).load(avatarSmall).into(avatar);
+//        String avatarSmall = AuthUtils.getInstance(getApplicationContext()).getAvator(2);
+//        Glide.with(this).load(avatarSmall).into(avatar);
+        ImageLoader.displayImageAsCircle(userInfo.avatar.small, avatar);
     }
 
     private void loadUserInfo(){

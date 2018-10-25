@@ -20,7 +20,6 @@ import ekoolab.com.show.api.ResponseData;
 import ekoolab.com.show.beans.TextPicture;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
-import ekoolab.com.show.utils.EventBusMsg;
 import ekoolab.com.show.utils.ToastUtils;
 import ekoolab.com.show.utils.Utils;
 
@@ -54,13 +53,7 @@ public class WhatsupActivity extends BaseActivity implements View.OnClickListene
     @Override
     protected void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onResultEvent(EventBusMsg eventBusMsg) {
-        showOrHideNavAnim(eventBusMsg.getFlag());
+//        EventBus.getDefault().register(this);
     }
 
 
@@ -71,7 +64,7 @@ public class WhatsupActivity extends BaseActivity implements View.OnClickListene
     @Override
     protected void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
     }
 
     public void onClick(View view){

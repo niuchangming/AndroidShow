@@ -85,6 +85,12 @@ public class AuthUtils {
         spEditor.apply();
     }
 
+    public void logout(){
+        SharedPreferences.Editor spEditor = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE).edit();
+        spEditor.clear();
+        spEditor.apply();
+    }
+
     public enum AuthType {
         UN_AUTH,
         LOGGED

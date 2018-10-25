@@ -15,7 +15,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import ekoolab.com.show.R;
-import ekoolab.com.show.utils.EventBusMsg;
 
 public class RegionActivity extends BaseActivity implements View.OnClickListener {
 
@@ -60,13 +59,7 @@ public class RegionActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onResultEvent(EventBusMsg eventBusMsg) {
-        showOrHideNavAnim(eventBusMsg.getFlag());
+//        EventBus.getDefault().register(this);
     }
 
 
@@ -77,7 +70,7 @@ public class RegionActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
     }
 
     @Override

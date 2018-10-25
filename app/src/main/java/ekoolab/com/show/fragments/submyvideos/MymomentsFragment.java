@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
@@ -43,7 +44,7 @@ import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.DisplayUtils;
 import ekoolab.com.show.utils.ImageLoader;
-import ekoolab.com.show.utils.ListUtils;
+//import ekoolab.com.show.utils.ListUtils;
 import ekoolab.com.show.utils.TimeUtils;
 import ekoolab.com.show.utils.ToastUtils;
 import ekoolab.com.show.utils.Utils;
@@ -61,8 +62,14 @@ public class MymomentsFragment extends BaseFragment implements OnRefreshLoadMore
     private EmptyView mEmptyView;
     private SmartRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
+    private LinearLayout llTipsContainer;
     private BaseQuickAdapter<Moment, BaseViewHolder> mAdapter = null;
     private List<Moment> moments = new ArrayList<>(20);
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
 
     @Override
     protected int getLayoutId() {
@@ -72,8 +79,8 @@ public class MymomentsFragment extends BaseFragment implements OnRefreshLoadMore
 
     @Override
     protected void initData() {
-        super.initData();
-        pageIndex = 0;
+//        super.initData();
+        mEmptyView.showLoading();
         loadMyMoment(true);
     }
 
@@ -84,13 +91,13 @@ public class MymomentsFragment extends BaseFragment implements OnRefreshLoadMore
         recyclerView = holder.get(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         recyclerView.addItemDecoration(new LinearItemDecoration(mContext,
-                1, R.color.gray_very_light, DisplayUtils.dip2px(15)));
+                1, R.color.common_color_gray_lighted, DisplayUtils.dip2px(15)));
         refreshLayout = holder.get(R.id.refreshLayout);
         initRefreshLayout();
         initAdapter();
         recyclerView.setAdapter(mAdapter);
         System.out.println("Action 14");
-//        llTipsContainer = holder.get(R.id.ll_tips_container);
+        llTipsContainer = holder.get(R.id.ll_tips_container);
 
     }
 
@@ -111,10 +118,10 @@ public class MymomentsFragment extends BaseFragment implements OnRefreshLoadMore
                 System.out.println("Enter mymoment converter");
 //                ImageLoader.displayImage(item.creator.avatar.small, helper.getView(R.id.iv_icon));
 //                helper.setText(R.id.tv_name, item.creator.name);
-                helper.setText(R.id.tv_time, TimeUtils.getDateByTimeStamp(item.uploadTime, "MM-dd"));
+                helper.setText(R.id.tv_time, TimeUtils.getDateStringByTimeStamp(item.uploadTime));
                 helper.setGone(R.id.tv_content, !TextUtils.isEmpty(item.body));
                 helper.setText(R.id.tv_content, item.body);
-                helper.setGone(R.id.nine_grid_layout, ListUtils.isNotEmpty(item.photoArray));
+                helper.setGone(R.id.nine_grid_layout, Utils.isNotEmpty(item.photoArray));
                 NewNineGridlayout newNineGridlayout = helper.getView(R.id.nine_grid_layout);
                 newNineGridlayout.showPic(nineTotalWidth, item.photoArray,
                         position -> WatchImageActivity.navToWatchImage(mContext, item.photoArray, position),
@@ -191,7 +198,7 @@ public class MymomentsFragment extends BaseFragment implements OnRefreshLoadMore
                     protected void onSuccess(List<Moment> momentList) {
                         System.out.println("after loading data");
                         System.out.println("===momentList==="+momentList.size()+";pageIndex==="+pageIndex);
-                        if (ListUtils.isNotEmpty(momentList)) {
+                        if (Utils.isNotEmpty(momentList)) {
                             if (isRefresh) {
                                 moments.clear();
                                 System.out.println("Action 1");
