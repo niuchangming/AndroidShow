@@ -8,10 +8,15 @@ import android.database.sqlite.SQLiteException;
 import android.media.MediaPlayer;
 import android.net.Uri;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.luck.picture.lib.cameralibrary.util.FileUtil;
 import com.orhanobut.logger.Logger;
+import com.sendbird.android.FileMessage;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import ekoolab.com.show.beans.enums.FileType;
 import ekoolab.com.show.utils.Constants;
@@ -41,6 +46,19 @@ public class ResourceFile {
         if(fileType == FileType.AUDIO){
             duration = MediaPlayer.create(context, Uri.parse(file.getPath())).getDuration();
         }
+    }
+
+    public ResourceFile(FileMessage fileMessage) {
+        String dataJson = fileMessage.getData();
+        Map<String, String> dataMap = new Gson().fromJson(dataJson, new TypeToken<HashMap<String, String>>() {}.getType());
+
+        this.fileUrl = fileMessage.getUrl();
+        this.fileName = FileUtils.getFileName(this.fileUrl);
+        this.extension = FileUtils.getFileExtension(this.fileUrl);
+        this.fileType = FileType.AUDIO;
+        this.mimeType = FileUtils.getFileContentType(this.fileName);
+        this.fileSize = fileMessage.getSize();
+        this.duration = Long.parseLong(dataMap.get("duration"));
     }
 
     public long save(Context context, long chatMessageId) {

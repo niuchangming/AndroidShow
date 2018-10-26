@@ -1140,4 +1140,12 @@ public class FileUtils {
         String mimeType = mime.getMimeTypeFromExtension(ext);
         return mimeType;
     }
+
+    public static String getFileContentType(String fileName) {
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        int index = fileName.lastIndexOf('.')+1;
+        String ext = fileName.substring(index).toLowerCase();
+        String mimeType = mime.getMimeTypeFromExtension(ext);
+        return mimeType;
+    }
 }

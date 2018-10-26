@@ -93,7 +93,6 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
     private float stopX = 0;
     private float stopY = 0;
     private int mPreviousHeight;
-    private boolean enableScroll;
     private List<ChatMessage> chatMessages;
     private Map<String, ChatMessage> tempChatMessageMap;
 
@@ -421,7 +420,6 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
 
     @Override
     public void onClick(View view) {
-
         switch(view.getId()){
             case R.id.more_btn:
                 if (moreActionRecycleView.getTranslationY() > 0) {
@@ -521,6 +519,7 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
                             int position = chatMessages.indexOf(chatMessage);
                             chatMessages.set(position, tempChatMessage);
                             recyclerView.getAdapter().notifyItemChanged(position);
+                            recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount()-1);
 
                             tempChatMessageMap.remove(chatMessage.resourceFile.filePath);
                             break;
@@ -568,6 +567,7 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
     public void didReceivedMessage(ChatMessage chatMessage) {
         chatMessages.add(chatMessage);
         recyclerView.getAdapter().notifyDataSetChanged();
+        recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount()-1);
     }
 
     private void showMoreAction(){

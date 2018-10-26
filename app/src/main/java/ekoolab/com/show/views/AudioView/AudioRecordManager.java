@@ -218,8 +218,6 @@ public class AudioRecordManager implements Handler.Callback {
             this.mMediaRecorder = new MediaRecorder();
 
             try {
-//                Resources e = this.mContext.getResources();
-//                int bps = e.getInteger(e.getIdentifier("rc_audio_encoding_bit_rate", "integer", this.mContext.getPackageName()));
                 int bps = 7950;
                 this.mMediaRecorder.setAudioSamplingRate(8000);
                 this.mMediaRecorder.setAudioEncodingBitRate(bps);
@@ -228,10 +226,10 @@ public class AudioRecordManager implements Handler.Callback {
             }
 
             this.mMediaRecorder.setAudioChannels(1);
-            this.mMediaRecorder.setAudioSource(1);
-            this.mMediaRecorder.setOutputFormat(3);
-            this.mMediaRecorder.setAudioEncoder(1);
-            this.mAudioPath = Uri.fromFile(new File(SAVE_PATH, System.currentTimeMillis() + "temp.voice"));
+            this.mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            this.mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+            this.mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+            this.mAudioPath = Uri.fromFile(new File(SAVE_PATH, System.currentTimeMillis() + "temp.mp3"));
             this.mMediaRecorder.setOutputFile(this.mAudioPath.getPath());
             this.mMediaRecorder.prepare();
             this.mMediaRecorder.start();

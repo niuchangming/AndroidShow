@@ -94,6 +94,9 @@
     <!-- Permission -->
     <string name="permission_storage">Please open storage permission for better experience</string>
     <string name="permission_contact">Chat and Call your friends with Show</string>
+
+    <!-- Error -->
+    <string name="file_not_exist">File Path doesn\'t exist.</string>
 </resources>
 
 

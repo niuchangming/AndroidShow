@@ -78,6 +78,18 @@ public class ChatManager extends SendBird.ChannelHandler implements SendBird.Con
                     listener.didReceivedMessage(chatMessage);
                 }
             }
+        }else if(baseMessage instanceof FileMessage){
+            FileMessage fileMessage = (FileMessage) baseMessage;
+
+            GroupChannel channel = channelMap.get(fileMessage.getSender().getUserId());
+            if(channel != null){
+                ChatMessage chatMessage = ChatMessage.createByComingFileMessage(context, fileMessage);
+                chatMessage.save(context);
+
+                for (ChatManagerListener listener : chatManagerListenerSet) {
+                    listener.didReceivedMessage(chatMessage);
+                }
+            }
         }
     }
 
@@ -178,8 +190,7 @@ public class ChatManager extends SendBird.ChannelHandler implements SendBird.Con
             Map<String, String> dataMap = new HashMap<String, String>();
             dataMap.put("ext", FileUtils.getFileExtension(resourceFile.extension));
             if (resourceFile.fileType == FileType.AUDIO){
-                long seconds = (long) ((resourceFile.duration / 1000) % 60);
-                dataMap.put("duration", seconds + "");
+                dataMap.put("duration", resourceFile.duration + "");
             }
 
             Gson gson = new Gson();

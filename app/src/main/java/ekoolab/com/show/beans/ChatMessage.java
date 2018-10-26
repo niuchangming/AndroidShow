@@ -5,7 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.os.Message;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.orhanobut.logger.Logger;
 import com.sendbird.android.FileMessage;
 import com.sendbird.android.SendBird;
@@ -14,7 +17,9 @@ import com.sendbird.android.UserMessage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.beans.enums.FileType;
@@ -23,6 +28,7 @@ import ekoolab.com.show.beans.enums.SendState;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.DataBaseManager;
+import ekoolab.com.show.utils.FileUtils;
 import ekoolab.com.show.utils.Utils;
 
 import static ekoolab.com.show.beans.enums.MessageType.AUDIO;
@@ -65,6 +71,27 @@ public class ChatMessage {
         chatMessage.senderName = userMessage.getSender().getNickname();
         chatMessage.senderProfileUrl = userMessage.getSender().getProfileUrl();
         chatMessage.channelUrl = userMessage.getChannelUrl();
+        return chatMessage;
+    }
+
+    public static ChatMessage createByComingFileMessage(Context context, FileMessage fileMessage){
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.messageId = fileMessage.getMessageId();
+        chatMessage.requestId = fileMessage.getRequestId();
+        chatMessage.messageType = MessageType.getMessageType(fileMessage.getCustomType());
+        chatMessage.sendState = SendState.SENT;
+        chatMessage.createAt = fileMessage.getCreatedAt();
+        chatMessage.updateAt = fileMessage.getUpdatedAt();
+        chatMessage.senderId = fileMessage.getSender().getUserId();
+        chatMessage.senderName = fileMessage.getSender().getNickname();
+        chatMessage.senderProfileUrl = fileMessage.getSender().getProfileUrl();
+        chatMessage.channelUrl = fileMessage.getChannelUrl();
+
+        if (Utils.equals(MessageType.AUDIO.getName(), fileMessage.getCustomType())) {
+            chatMessage.message = context.getString(R.string.voice);
+            chatMessage.resourceFile = new ResourceFile(fileMessage);
+        }
+
         return chatMessage;
     }
 
@@ -134,8 +161,8 @@ public class ChatMessage {
             values.put(Constants.ChatMessageTableColumns.senderProfileUrl, this.senderProfileUrl);
             values.put(Constants.ChatMessageTableColumns.createAt, this.createAt);
             values.put(Constants.ChatMessageTableColumns.updateAt, this.updateAt);
-            values.put(Constants.ChatMessageTableColumns.messageId, this.messageId);
-            values.put(Constants.ChatMessageTableColumns.requestId, this.requestId);
+            values.put(Constants.ChatMessageTableColumns.messageId, this.messageId == 0 ? null : this.messageId);
+            values.put(Constants.ChatMessageTableColumns.requestId, Utils.isBlank(this.requestId) ? null : this.requestId);
             values.put(Constants.ChatMessageTableColumns.messageType, this.messageType.getIndex());
             values.put(Constants.ChatMessageTableColumns.sendState, this.sendState.getIndex());
 
