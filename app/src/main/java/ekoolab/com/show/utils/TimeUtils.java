@@ -394,6 +394,15 @@ public class TimeUtils {
         return cal.get(Calendar.YEAR);
     }
 
+    /**
+     * 根据秒数换成mm:ss格式的的字符串
+     *
+     * @param 秒数 integer
+     * @return mm:ss
+     */
+    public static String secondsToString(int pTime) {
+        return String.format("%02d:%02d", pTime / 60, pTime % 60);
+    }
 
     /**
      * 获取过去或者未来 任意天内的日期数组

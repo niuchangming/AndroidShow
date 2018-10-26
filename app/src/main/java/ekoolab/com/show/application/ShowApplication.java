@@ -91,9 +91,11 @@ public class ShowApplication extends Application implements Thread.UncaughtExcep
             OkHttpClient okHttpClient = getOkHttpClient();
             AndroidNetworking.initialize(application, okHttpClient);
             AndroidNetworking.setParserFactory(new FastJsonParserFactory());
+
             Fresco.initialize(this);
             FileUtils.createOrExistsDir(Constants.VIDEO_PATH);
             FileUtils.createOrExistsDir(Constants.IMAGE_PATH);
+            FileUtils.createOrExistsDir(Constants.AUDIO_PATH);
             FileUtils.createOrExistsDir(Constants.IMAGE_CACHE_PATH);
             FileUtils.createOrExistsFile(TEMP_FILE);
             // 在使用 SDK 各组间之前初始化 context 信息，传入 ApplicationContext

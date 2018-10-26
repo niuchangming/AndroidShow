@@ -16,7 +16,7 @@
         android:layout_marginRight="15dp"
         android:layout_marginTop="10dp"
         android:layout_weight="1"
-        android:background="@drawable/white_round_corner_bg"
+        android:background="@drawable/bg_white_round_corner"
         android:gravity="center_vertical"
         android:minHeight="35dp" />
 

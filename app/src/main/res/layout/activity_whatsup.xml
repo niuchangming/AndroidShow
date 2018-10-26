@@ -25,6 +25,6 @@
         android:textColor="@color/colorBlack"
         android:textSize="@dimen/text_size_15sp"
         android:hint="@string/whatsupinput"
-        android:background="@drawable/white_round_corner_bg"/>
+        android:background="@drawable/bg_white_round_corner"/>
 
 </LinearLayout>

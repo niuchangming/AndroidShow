@@ -1,12 +1,14 @@
 package ekoolab.com.show.utils.Chat;
 
 import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
+import android.media.MediaPlayer;
+import android.net.Uri;
 
+import com.google.gson.Gson;
 import com.orhanobut.logger.Logger;
 import com.sendbird.android.BaseChannel;
 import com.sendbird.android.BaseMessage;
+import com.sendbird.android.FileMessage;
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
@@ -22,8 +24,11 @@ import java.util.Set;
 
 import ekoolab.com.show.beans.ChatMessage;
 import ekoolab.com.show.beans.Friend;
+import ekoolab.com.show.beans.ResourceFile;
+import ekoolab.com.show.beans.enums.FileType;
 import ekoolab.com.show.beans.enums.MessageType;
 import ekoolab.com.show.utils.AuthUtils;
+import ekoolab.com.show.utils.FileUtils;
 
 public class ChatManager extends SendBird.ChannelHandler implements SendBird.ConnectionHandler{
     private static final String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_GROUP_CHANNEL_CHAT";
@@ -66,7 +71,7 @@ public class ChatManager extends SendBird.ChannelHandler implements SendBird.Con
 
             GroupChannel channel = channelMap.get(userMessage.getSender().getUserId());
             if(channel != null){
-                ChatMessage chatMessage = ChatMessage.createByComing(context, userMessage);
+                ChatMessage chatMessage = ChatMessage.createByComingUserMessage(context, userMessage);
                 chatMessage.save(context);
 
                 for (ChatManagerListener listener : chatManagerListenerSet) {
@@ -161,6 +166,41 @@ public class ChatManager extends SendBird.ChannelHandler implements SendBird.Con
 
         return null;
 
+    }
+
+    public FileMessage sendFileMessage(ResourceFile resourceFile, String receiverId, MessageType messageType, BaseChannel.SendFileMessageHandler handler){
+
+        GroupChannel groupChannel = channelMap.get(receiverId);
+        if(groupChannel != null){
+            List<String> targetLanguages = new ArrayList<>();
+            targetLanguages.add("zh-CHS");
+
+            Map<String, String> dataMap = new HashMap<String, String>();
+            dataMap.put("ext", FileUtils.getFileExtension(resourceFile.extension));
+            if (resourceFile.fileType == FileType.AUDIO){
+                long seconds = (long) ((resourceFile.duration / 1000) % 60);
+                dataMap.put("duration", seconds + "");
+            }
+
+            Gson gson = new Gson();
+            String data = gson.toJson(dataMap);
+
+            FileMessage fileMessage = groupChannel.sendFileMessage(resourceFile.fileUrl,
+                    resourceFile.fileName, resourceFile.mimeType,
+                    (int)resourceFile.fileSize, data, messageType.getName(),
+                    new BaseChannel.SendFileMessageHandler() {
+                        @Override
+                        public void onSent(FileMessage fileMessage, SendBirdException e) {
+                            if(handler != null){
+                                handler.onSent(fileMessage, e);
+                            }
+                        }
+                    });
+
+            return fileMessage;
+        }
+
+        return null;
     }
 
     public void logout(final SendBird.DisconnectHandler handler) {

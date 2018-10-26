@@ -27,7 +27,7 @@
             android:paddingBottom="2dp"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:background="@drawable/trans_black_round_corner_bg">
+            android:background="@drawable/bg_trans_black_round_corner">
             <ImageView
                 android:id="@+id/live_type_iv"
                 android:layout_width="20dp"

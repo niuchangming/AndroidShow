@@ -124,7 +124,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/layout_margin_16dp"
-            android:src="@mipmap/heart_line" />
+            android:src="@mipmap/ic_heart_line" />
 
         <ImageButton
             android:id="@+id/dismiss_btn"

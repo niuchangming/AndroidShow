@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ekoolab.com.show.utils.Chat.ChatMessageItemLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -42,17 +42,35 @@
         app:cardElevation="0dp"
         app:cardPreventCornerOverlap="false">
 
-        <TextView
-            android:id="@+id/chat_message_tv"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/item_spacing_6dp"
-            android:paddingLeft="@dimen/item_spacing_10dp"
-            android:paddingRight="@dimen/item_spacing_10dp"
-            android:paddingBottom="@dimen/item_spacing_6dp"
-            android:textSize="@dimen/text_size_16sp"
-            android:textColor="@color/colorWhite"
-            android:maxWidth="260dp"/>
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/duration_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:paddingTop="@dimen/item_spacing_6dp"
+                android:paddingLeft="@dimen/item_spacing_10dp"
+                android:paddingRight="@dimen/item_spacing_10dp"
+                android:paddingBottom="@dimen/item_spacing_6dp"
+                android:textSize="@dimen/text_size_16sp"
+                android:textColor="@color/colorWhite"
+                android:maxWidth="260dp"/>
+
+            <ImageView
+                android:id="@+id/audio_iv"
+                android:layout_width="@dimen/icon_size_16dp"
+                android:layout_height="@dimen/icon_size_16dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/layout_margin_8dp"
+                android:background="@drawable/bg_audio_amin_list"
+                android:scaleType="fitCenter"/>
+
+        </LinearLayout>
 
     </android.support.v7.widget.CardView>
 
@@ -74,4 +92,4 @@
         android:scaleType="fitCenter"
         android:visibility="gone"/>
 
-</RelativeLayout>
+</ekoolab.com.show.utils.Chat.ChatMessageItemLayout>

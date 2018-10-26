@@ -18,6 +18,8 @@ public class Constants {
     public static final String FAVOURITE = HOST + "favourites/favourite";
     public static final String FAVOURITECANEL = HOST + "favourites/cancel";
     public static final String UPLOAD_VIDEO = HOST + "video/upload";
+    public static final String UPLOAD_AUDIO = HOST + "chat/upload";
+
     public static final String LIKE = HOST + "likes/like";
     public static final String UNLIKE = HOST + "likes/unlike";
     public static final String FOLLOW = HOST + "follows/add";
@@ -40,6 +42,7 @@ public class Constants {
             + File.separator + "AndroidShow" + File.separator;
     public static final String VIDEO_PATH = ROOT_PATH + "videos" + File.separator;
     public static final String IMAGE_PATH = ROOT_PATH + "images" + File.separator;
+    public static final String AUDIO_PATH = ROOT_PATH + "audios" + File.separator;
     public static final String IMAGE_CACHE_PATH = ROOT_PATH + "imageCache" + File.separator;
 
     public static final String[] homeIndicatorTitles = {"Moment", "Video", "Live"};
@@ -95,6 +98,19 @@ public class Constants {
         public final static String requestId = "request_id";
         public final static String messageType = "message_type";
         public final static String sendState = "send_state";
+    }
+
+    public static final String RESOURCE_FILE_TB = "resource_file";
+    public static final class ResourceFileTableColumns{
+        public final static String fileName = "filename";
+        public final static String fileUrl = "url";
+        public final static String filePath = "path";
+        public final static String fileType = "type";
+        public final static String chatMessageId = "chat_message_id";
+        public final static String fileSize = "file_size";
+        public final static String mimeType = "mime_type";
+        public final static String extension = "extension";
+        public final static String duration = "duration";
     }
 
 }

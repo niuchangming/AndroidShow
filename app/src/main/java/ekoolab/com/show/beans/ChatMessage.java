@@ -7,18 +7,27 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
 import com.orhanobut.logger.Logger;
+import com.sendbird.android.FileMessage;
+import com.sendbird.android.SendBird;
 import com.sendbird.android.UserMessage;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ekoolab.com.show.R;
+import ekoolab.com.show.beans.enums.FileType;
 import ekoolab.com.show.beans.enums.MessageType;
 import ekoolab.com.show.beans.enums.SendState;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.DataBaseManager;
 import ekoolab.com.show.utils.Utils;
+
+import static ekoolab.com.show.beans.enums.MessageType.AUDIO;
+import static ekoolab.com.show.beans.enums.MessageType.PHOTO;
+import static ekoolab.com.show.beans.enums.MessageType.VIDEO;
 
 public class ChatMessage {
 
@@ -33,20 +42,23 @@ public class ChatMessage {
     public String requestId;
     public MessageType messageType;
     public SendState sendState;
+    public ResourceFile resourceFile;
+    public boolean isTemp;
 
     public ChatMessage() {
+        isTemp = false;
         sendState = SendState.SENDING;
         messageType = MessageType.TEXT;
+        createAt = System.currentTimeMillis();
     }
 
-
-    public static ChatMessage createByComing(Context context, UserMessage userMessage){
+    public static ChatMessage createByComingUserMessage(Context context, UserMessage userMessage){
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.message = userMessage.getMessage();
         chatMessage.messageId = userMessage.getMessageId();
         chatMessage.requestId = userMessage.getRequestId();
         chatMessage.messageType = MessageType.getMessageType(userMessage.getCustomType());
-        chatMessage.sendState = SendState.REACHED;
+        chatMessage.sendState = SendState.SENT;
         chatMessage.createAt = userMessage.getCreatedAt();
         chatMessage.updateAt = userMessage.getUpdatedAt();
         chatMessage.senderId = userMessage.getSender().getUserId();
@@ -56,7 +68,7 @@ public class ChatMessage {
         return chatMessage;
     }
 
-    public static ChatMessage createByOutgoing(Context context, UserMessage userMessage){
+    public static ChatMessage createByOutgoingUserMessage(Context context, UserMessage userMessage){
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.message = userMessage.getMessage();
         chatMessage.channelUrl = userMessage.getChannelUrl();
@@ -69,6 +81,45 @@ public class ChatMessage {
         chatMessage.senderProfileUrl = userMessage.getSender().getProfileUrl();
         chatMessage.messageType = MessageType.getMessageType(userMessage.getCustomType());
         return chatMessage;
+    }
+
+    public static ChatMessage createByOutgoingFileMessage(Context context, FileMessage fileMessage, ResourceFile resourceFile){
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.channelUrl = fileMessage.getChannelUrl();
+        chatMessage.senderId = AuthUtils.getInstance(context).getUserCode();
+        chatMessage.createAt = fileMessage.getCreatedAt();
+        chatMessage.updateAt = fileMessage.getUpdatedAt();
+        chatMessage.messageId = fileMessage.getMessageId();
+        chatMessage.requestId = fileMessage.getRequestId();
+        chatMessage.senderName = fileMessage.getSender().getNickname();
+        chatMessage.senderProfileUrl = fileMessage.getSender().getProfileUrl();
+        chatMessage.messageType = MessageType.getMessageType(fileMessage.getCustomType());
+        if (resourceFile.fileType == FileType.AUDIO) {
+            chatMessage.message = context.getString(R.string.voice);
+        }
+        chatMessage.resourceFile = resourceFile;
+        return chatMessage;
+    }
+
+    public static ChatMessage createTempChatMessage(Context context, File fileResource, FileType fileType){
+        ChatMessage audioChatMessage = new ChatMessage();
+        audioChatMessage.isTemp = true;
+        audioChatMessage.message = context.getString(R.string.voice);
+        if (fileType == FileType.AUDIO){
+            audioChatMessage.messageType = MessageType.AUDIO;
+        } else if (fileType == FileType.IMAGE) {
+            audioChatMessage.messageType = MessageType.PHOTO;
+        } else if(fileType == FileType.VIDEO){
+            audioChatMessage.messageType = MessageType.VIDEO;
+        } else if(fileType == FileType.DOCUMENT) {
+            audioChatMessage.messageType = MessageType.OTHER;
+        }
+
+        if (fileResource != null) {
+            audioChatMessage.resourceFile = new ResourceFile(context, fileResource, fileType);
+        }
+
+        return audioChatMessage;
     }
 
     public boolean save(Context context){
@@ -97,6 +148,10 @@ public class ChatMessage {
                     }else{
                         db.update(Constants.FRIEND_TB, values,
                                 Constants.ChatMessageTableColumns.requestId + "=?", new String[]{this.requestId});
+                    }
+                } else {
+                    if(this.resourceFile != null) {
+                        this.resourceFile.save(context, id);
                     }
                 }
             }catch(SQLiteException e){
@@ -133,6 +188,13 @@ public class ChatMessage {
                 chatMessage.requestId = cursor.getString(cursor.getColumnIndexOrThrow(Constants.ChatMessageTableColumns.requestId));
                 chatMessage.messageType = MessageType.getMessageType(cursor.getInt(cursor.getColumnIndexOrThrow(Constants.ChatMessageTableColumns.messageType)));
                 chatMessage.sendState = SendState.getSendState(cursor.getInt(cursor.getColumnIndexOrThrow(Constants.ChatMessageTableColumns.sendState)));
+
+                if(chatMessage.messageType == AUDIO || chatMessage.messageType == PHOTO || chatMessage.messageType == VIDEO){
+                    long chatMessageId = cursor.getLong(cursor.getColumnIndexOrThrow("_id"));
+                    if (chatMessageId > 0) {
+                        chatMessage.resourceFile = ResourceFile.getResourceChatMessageId(context, chatMessageId);
+                    }
+                }
 
                 chatMessages.add(chatMessage);
                 cursor.moveToNext();

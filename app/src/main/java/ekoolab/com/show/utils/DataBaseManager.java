@@ -63,7 +63,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
     String chatMessageSql = "create table if not exists " + Constants.CHAT_MESSAGE_TB + " ("+
             "_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-            Constants.ChatMessageTableColumns.messageId + " INTEGER, "
+            Constants.ChatMessageTableColumns.messageId + " INTEGER UNIQUE ON CONFLICT REPLACE, "
             + Constants.ChatMessageTableColumns.senderId + " VARCHAR, "
             + Constants.ChatMessageTableColumns.senderName+ " VARCHAR, "
             + Constants.ChatMessageTableColumns.senderProfileUrl+ " TEXT, "
@@ -71,16 +71,28 @@ public class DataBaseManager extends SQLiteOpenHelper {
             + Constants.ChatMessageTableColumns.channelUrl + " TEXT, "
             + Constants.ChatMessageTableColumns.createAt + " INTEGER, "
             + Constants.ChatMessageTableColumns.updateAt + " INTEGER, "
-            + Constants.ChatMessageTableColumns.requestId + " VARCHAR, "
+            + Constants.ChatMessageTableColumns.requestId + " VARCHAR UNIQUE ON CONFLICT REPLACE, "
             + Constants.ChatMessageTableColumns.messageType + " INTEGER NOT NULL default 0, "
-            + Constants.ChatMessageTableColumns.sendState + " INTEGER NOT NULL default 0, "
-            + "UNIQUE(" + Constants.ChatMessageTableColumns.messageId + "," + Constants.ChatMessageTableColumns.requestId + ") ON CONFLICT REPLACE);";
+            + Constants.ChatMessageTableColumns.sendState + " INTEGER NOT NULL default 0); ";
+
+    String resourceFileSql = "create table if not exists " + Constants.RESOURCE_FILE_TB + " ("
+            + "_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+            + Constants.ResourceFileTableColumns.chatMessageId + " INTEGER UNIQUE ON CONFLICT REPLACE, "
+            + Constants.ResourceFileTableColumns.fileName + " VARCHAR, "
+            + Constants.ResourceFileTableColumns.fileUrl + " VARCHAR, "
+            + Constants.ResourceFileTableColumns.filePath + " VARCHAR, "
+            + Constants.ResourceFileTableColumns.fileSize + " INTEGER, "
+            + Constants.ResourceFileTableColumns.mimeType + " VARCHAR, "
+            + Constants.ResourceFileTableColumns.extension + " VARCHAR, "
+            + Constants.ResourceFileTableColumns.fileType + " INTEGER, "
+            + Constants.ResourceFileTableColumns.duration + " INTEGER);";
 
     @Override
     public synchronized void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(friendSql);
         sqLiteDatabase.execSQL(photoSql);
         sqLiteDatabase.execSQL(chatMessageSql);
+        sqLiteDatabase.execSQL(resourceFileSql);
     }
 
     @Override
@@ -88,5 +100,6 @@ public class DataBaseManager extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + Constants.FRIEND_TB);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + Constants.PHOTO_TB);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + Constants.CHAT_MESSAGE_TB);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + Constants.RESOURCE_FILE_TB);
     }
 }

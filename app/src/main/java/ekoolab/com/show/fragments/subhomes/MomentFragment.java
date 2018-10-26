@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +23,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -183,7 +185,7 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
                 newNineGridlayout.showPic(nineTotalWidth, item.photoArray,
                         position -> WatchImageActivity.navToWatchImage(mContext, item.photoArray, position),
                         NewNineGridlayout.PHOTO_QUALITY_SMALL);
-                ImageView ivHeart = helper.getView(R.id.iv_heart);
+                ImageButton ivHeart = helper.getView(R.id.iv_heart);
                 ivHeart.setSelected(item.isMyLike);
                 ivHeart.setOnClickListener(view -> {
                     if (zanMap.containsKey(item.resourceId)) {
@@ -191,16 +193,21 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
                     }
                     zanOrCancelMoment(item);
                 });
-                helper.setText(R.id.tv_zan_num, String.valueOf(item.likeCount));
-                helper.getView(R.id.iv_comment).setOnClickListener(view -> {
+                helper.setText(R.id.tv_like_count, String.valueOf(item.likeCount));
+
+                ImageButton commentBtn =  helper.getView(R.id.iv_comment);
+                commentBtn.setOnClickListener(view -> {
                     curMoment = item;
                     curCommentBean = null;
                     showCommentDialog();
                 });
-                helper.getView(R.id.iv_reward).setOnClickListener(view -> {
+
+                ImageButton awardIv = helper.getView(R.id.iv_reward);
+                awardIv.setOnClickListener(view -> {
                     curMoment = item;
                     showGiftDialog();
                 });
+
                 boolean notEmpty = Utils.isNotEmpty(item.comments);
                 helper.setGone(R.id.nest_full_listview, notEmpty);
                 if (notEmpty) {

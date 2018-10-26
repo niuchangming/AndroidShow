@@ -80,9 +80,16 @@
     <string name="my_friend">Friends</string>
 
     <!-- Chat -->
+    <string name="voice">Voice</string>
     <string name="video_call">Video Call</string>
     <string name="voice_call">Voice Call</string>
     <string name="message_empty">Message cannot be empty.</string>
+    <string name="hold_record_voice">Hold to Record</string>
+    <string name="voice_rec">Slippery finger to cancel</string>
+    <string name="voice_cancel">Release finger to cancel</string>
+    <string name="voice_short">Time is too short</string>
+    <string name="voice_failure">Recording failed</string>
+    <string name="audio_permission_error">You haven\'t enabled Audio Access Permission for Show, Please enable it in the setting of your Phone</string>
 
     <!-- Permission -->
     <string name="permission_storage">Please open storage permission for better experience</string>

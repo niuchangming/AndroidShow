@@ -105,9 +105,9 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
             tv_title.setText(video.title + "");
             tv_name.setText(video.creator.name + "");
             if (video.isMyLike) {
-                iv_zan.setBackgroundResource(R.mipmap.heart_red);
+                iv_zan.setBackgroundResource(R.mipmap.ic_heart);
             } else {
-                iv_zan.setBackgroundResource(R.mipmap.heart_line);
+                iv_zan.setBackgroundResource(R.mipmap.ic_heart_line);
             }
             if (video.isMyFavourite) {
                 iv_like.setBackgroundResource(R.mipmap.star_fill);
@@ -275,12 +275,12 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
                                 video.isMyLike = false;
                                 video.likeCount -= 1;
                                 viewHolder.tv_zan.setText(video.likeCount + "");
-                                viewHolder.iv_zan.setBackgroundResource(R.mipmap.heart_line);
+                                viewHolder.iv_zan.setBackgroundResource(R.mipmap.ic_heart_line);
                             } else {
                                 video.isMyLike = true;
                                 video.likeCount += 1;
                                 viewHolder.tv_zan.setText(video.likeCount + "");
-                                viewHolder.iv_zan.setBackgroundResource(R.mipmap.heart_red);
+                                viewHolder.iv_zan.setBackgroundResource(R.mipmap.ic_heart);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
