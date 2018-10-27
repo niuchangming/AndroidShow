@@ -5,17 +5,10 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.common.Priority;
-import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.reflect.TypeToken;
@@ -24,12 +17,8 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -39,20 +28,17 @@ import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
 import ekoolab.com.show.beans.Moment;
+import ekoolab.com.show.beans.Photo;
 import ekoolab.com.show.fragments.BaseFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.DisplayUtils;
-import ekoolab.com.show.utils.ImageLoader;
 //import ekoolab.com.show.utils.ListUtils;
 import ekoolab.com.show.utils.TimeUtils;
-import ekoolab.com.show.utils.ToastUtils;
 import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.utils.ViewHolder;
 import ekoolab.com.show.views.itemdecoration.LinearItemDecoration;
 import ekoolab.com.show.views.nestlistview.NestFullListView;
-import ekoolab.com.show.views.nestlistview.NestFullListViewAdapter;
-import ekoolab.com.show.views.nestlistview.NestFullViewHolder;
 import ekoolab.com.show.views.ninegridview.NewNineGridlayout;
 
 public class MymomentsFragment extends BaseFragment implements OnRefreshLoadMoreListener {
@@ -109,9 +95,9 @@ public class MymomentsFragment extends BaseFragment implements OnRefreshLoadMore
 
     private void initAdapter() {
         System.out.println("Enter initAdapter");
-        mAdapter = new BaseQuickAdapter<Moment, BaseViewHolder>(R.layout.item_moment, moments) {
+        mAdapter = new BaseQuickAdapter<Moment, BaseViewHolder>(R.layout.item_my_moment_list, moments) {
 
-            private int nineTotalWidth = DisplayUtils.getScreenWidth() - DisplayUtils.dip2px(60 * 2);
+            private int nineTotalWidth = DisplayUtils.getScreenWidth() - DisplayUtils.dip2px(120 * 2);
 
             @Override
             protected void convert(BaseViewHolder helper, Moment item) {
@@ -123,6 +109,7 @@ public class MymomentsFragment extends BaseFragment implements OnRefreshLoadMore
                 helper.setText(R.id.tv_content, item.body);
                 helper.setGone(R.id.nine_grid_layout, Utils.isNotEmpty(item.photoArray));
                 NewNineGridlayout newNineGridlayout = helper.getView(R.id.nine_grid_layout);
+//                List<Photo> showingList = (item.photoArray.size()>4)?item.photoArray.subList(0,4):item.photoArray;
                 newNineGridlayout.showPic(nineTotalWidth, item.photoArray,
                         position -> WatchImageActivity.navToWatchImage(mContext, item.photoArray, position),
                         NewNineGridlayout.PHOTO_QUALITY_SMALL);
@@ -144,10 +131,10 @@ public class MymomentsFragment extends BaseFragment implements OnRefreshLoadMore
 //                    curMoment = item;
 //                    showGiftDialog();
 //                });
-//                boolean notEmpty = ListUtils.isNotEmpty(item.comments);
-//                helper.setGone(R.id.nest_full_listview, notEmpty);
-//                if (notEmpty) {
-//                    NestFullListView listView = helper.getView(R.id.nest_full_listview);
+                boolean notEmpty = Utils.isNotEmpty(item.comments);
+                helper.setGone(R.id.nest_full_listview, notEmpty);
+                if (notEmpty) {
+                    NestFullListView listView = helper.getView(R.id.nest_full_listview);
 //                    listView.setAdapter(new NestFullListViewAdapter<Moment.CommentsBean>(R.layout.item_moent_comment, item.comments) {
 //
 //                        @Override
@@ -175,7 +162,7 @@ public class MymomentsFragment extends BaseFragment implements OnRefreshLoadMore
 //                        curMoment = item;
 //                        showCommentDialog();
 //                    });
-//                }
+                }
             }
         };
         mAdapter.setHasStableIds(false);
@@ -204,13 +191,13 @@ public class MymomentsFragment extends BaseFragment implements OnRefreshLoadMore
                                 System.out.println("Action 1");
                             }
 //                            convertData(momentList);
-//                            moments.addAll(momentList);
-//                            if (isRefresh) {
-//                                mAdapter.notifyDataSetChanged();
-//                            } else {
-//                                mAdapter.notifyItemRangeInserted(moments.size() - momentList.size(),
-//                                        momentList.size());
-//                            }
+                            moments.addAll(momentList);
+                            if (isRefresh) {
+                                mAdapter.notifyDataSetChanged();
+                            } else {
+                                mAdapter.notifyItemRangeInserted(moments.size() - momentList.size(),
+                                        momentList.size());
+                            }
                             mEmptyView.showContent();
                             if (momentList.size() < Constants.PAGE_SIZE) {
                                 refreshLayout.setEnableLoadMore(false);

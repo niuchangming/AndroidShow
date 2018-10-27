@@ -35,6 +35,8 @@ public class UserInfo implements Parcelable {
     public static final int REQUEST_GENDER = 3;
     public static final int REQUEST_WHATSUP = 4;
     public static final int REQUEST_REGION = 5;
+    public static final int REQUEST_AVATAR = 6;
+    public static final int REQUEST_COVER = 7;
 
 
     @Override

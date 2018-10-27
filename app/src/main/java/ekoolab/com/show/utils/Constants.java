@@ -15,18 +15,20 @@ public class Constants {
     public static final String VERIFY_2FA = HOST + "user/2fa";
     public static final String GET_USERPROFILE = HOST + "user/getUserprofile";
     public static final String UPDATE_USERPROFILE = HOST + "user/updateUserprofile";
+    public static final String UPDATE_BROADCASTPROFILE = HOST + "broadcast/infoUpdate";
 
     public static final String VIDEO_LIST = HOST + "video/listall";
     public static final String MY_VIDEO_LIST = HOST + "video/list";
     public static final String FAVOURITE = HOST + "favourites/favourite";
     public static final String FAVOURITECANEL = HOST + "favourites/cancel";
+    public static final String MYFAVOURITELIST = HOST + "favourites/favlist";
     public static final String UPLOAD_VIDEO = HOST + "video/upload";
     public static final String LIKE = HOST + "likes/like";
     public static final String UNLIKE = HOST + "likes/unlike";
     public static final String FOLLOW = HOST + "follows/add";
     public static final String FOLLOWCANCEL = HOST + "follows/cancel";
-    public static final String My_FOllOWER =  HOST + "follows/followerlist";
-    public static final String My_FOllOWING =  HOST + "follows/followinglist";
+    public static final String MY_FOllOWER =  HOST + "follows/followerlist";
+    public static final String MY_FOllOWING =  HOST + "follows/followinglist";
     public static final String IS_FOLLOWED = HOST + "follows/isfollow";
     public static final String FRIENDS = HOST + "user/getfriends";
     public static final String UPLOAD_CONTACT_BOOK = HOST + "user/addressbook";

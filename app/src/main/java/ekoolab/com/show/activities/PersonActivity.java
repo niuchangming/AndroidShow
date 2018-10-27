@@ -1,5 +1,6 @@
 package ekoolab.com.show.activities;
 
+import android.Manifest;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -16,11 +17,18 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.facebook.login.Login;
 import com.google.gson.reflect.TypeToken;
+import com.luck.picture.lib.PictureSelector;
+import com.luck.picture.lib.compress.Luban;
+import com.luck.picture.lib.config.PictureConfig;
+import com.luck.picture.lib.config.PictureMimeType;
+import com.luck.picture.lib.entity.LocalMedia;
+import com.luck.picture.lib.tools.PictureFileUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +48,7 @@ import ekoolab.com.show.fragments.submyvideos.MymomentsFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.ImageLoader;
+import ekoolab.com.show.utils.ImageSeclctUtils;
 import ekoolab.com.show.utils.TimeUtils;
 import ekoolab.com.show.utils.ToastUtils;
 
@@ -52,6 +61,7 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
     private ViewPager viewPager;
     private ProfileAdapter pagerAdapter;
     private List<BaseFragment> fragments;
+    private List<LocalMedia> localMedias = new ArrayList<>();
 
 
     private BaseActivity activity;
@@ -61,79 +71,6 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
     private ImageView avatar, cover_image;
     private UserInfo userInfo;
     protected String birthday;
-
-
-//    @Override
-//    protected int getLayoutId() {
-//        return R.layout.activity_person;
-//    }
-
-//    @Override
-//    protected void initViews() {
-//        super.initViews();
-//        indicatorTabLayout = findViewById(R.id.indicator_tab);
-//        viewPager = findViewById(R.id.viewpager);
-//
-//        fragments = new ArrayList<>();
-//        fragments.add(new MyVideoFragment());
-//        fragments.add(new MyCollectsFragment());
-//        fragments.add(new MymomentsFragment());
-//        pagerAdapter =  new ProfileAdapter(getSupportFragmentManager(), fragments);
-//        viewPager.setAdapter(pagerAdapter);
-//        indicatorTabLayout.setupWithViewPager(viewPager);
-//        indicatorTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-//            @Override
-//            public void onTabSelected(TabLayout.Tab tab) {
-//                LinearLayout tabLayout = (LinearLayout) ((ViewGroup) indicatorTabLayout.getChildAt(0)).getChildAt(tab.getPosition());
-//                TextView tabTextView = (TextView) tabLayout.getChildAt(1);
-//                tabTextView.setTypeface(tabTextView.getTypeface(), Typeface.BOLD);
-//            }
-//
-//            @Override
-//            public void onTabUnselected(TabLayout.Tab tab) {
-//                LinearLayout tabLayout = (LinearLayout)((ViewGroup) indicatorTabLayout.getChildAt(0)).getChildAt(tab.getPosition());
-//                TextView tabTextView = (TextView) tabLayout.getChildAt(1);
-//                tabTextView.setTypeface(tabTextView.getTypeface(), Typeface.NORMAL);
-//            }
-//
-//            @Override
-//            public void onTabReselected(TabLayout.Tab tab) {
-//
-//            }
-//        });
-//
-//
-//    }
-//    @Override
-//    protected void initData() {
-//        super.initData();
-//
-//    }
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        EventBus.getDefault().register(this);
-//    }
-
-
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void onResultEvent(EventBusMsg eventBusMsg) {
-//        showOrHideNavAnim(eventBusMsg.getFlag());
-//    }
-
-//
-//    private void showOrHideNavAnim(int flag) {
-//
-//    }
-
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        EventBus.getDefault().unregister(this);
-//    }
-
-    //NEW
-
 
     @Override
     protected int getLayoutId() {
@@ -145,8 +82,11 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
         super.onStart();
         EventBus.getDefault().register(this);
         Bundle info = getIntent().getExtras();
-        userInfo = info.getParcelable("userInfo");
-        loadData();
+        if(userInfo == null){
+            userInfo = info.getParcelable("userInfo");
+            loadData();
+
+        }
     }
 
     @Override
@@ -185,14 +125,10 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
         tv_birthday = findViewById(R.id.tv_birthday);
         tv_whatsup = findViewById(R.id.tv_whatsup);
         tv_region = findViewById(R.id.tv_region);
+        header_rl = findViewById(R.id.header_rl);
         avatar = findViewById(R.id.avatar);
+        avatar.setOnClickListener(this);
         cover_image = findViewById(R.id.cover_image);
-//        tv_name = findViewById(R.id.tv_name);
-//        tv_nickname = findViewById(R.id.tv_nickname);
-//        tv_gender = findViewById(R.id.tv_gender);
-//        tv_birthday = findViewById(R.id.tv_birthday);
-//        tv_whatsup = findViewById(R.id.tv_whatsup);
-//        tv_region = findViewById(R.id.tv_region);
     }
 
     private void loadData(){
@@ -202,19 +138,26 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
         tv_birthday.setText(TimeUtils.getDateStringByTimeStamp(userInfo.birthday));
         tv_whatsup.setText(userInfo.whatsup);
         tv_region.setText(userInfo.region);
-//        String avatarSmall = AuthUtils.getInstance(getApplicationContext()).getAvator(1);
-//        Glide.with(this).load(avatarSmall).into(avatar);
-//        Glide.with(this).load(avatarSmall).into(cover_image);
+
         ImageLoader.displayImageAsCircle(userInfo.avatar.small, avatar);
-        ImageLoader.displayImage(userInfo.avatar.small, cover_image, 5);
         if(userInfo.roleType == 2){
+            ImageLoader.displayImage(userInfo.coverImage.small, cover_image, 20);
             btn_edit_cover = findViewById(R.id.btn_edit_cover);
             btn_edit_cover.setOnClickListener(this);
             btn_edit_cover.setVisibility(View.VISIBLE);
+        } else {
+            ImageLoader.displayImage(userInfo.avatar.small, cover_image, 20);
         }
 //        String coverMedium = AuthUtils.getInstance(getApplicationContext()).getAvator(2);
 //        Glide.with(this).load(userInfo.coverImage.medium).into();
     }
+
+    @Override
+    protected void onDestroy(){
+        PictureFileUtils.deleteCacheDirFile(PersonActivity.this);
+        super.onDestroy();
+    }
+
 
     @Override
     public void onClick(View view) {
@@ -235,10 +178,6 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                 intent.putExtra("gender", userInfo.gender);
                 this.startActivityForResult(intent, UserInfo.REQUEST_GENDER);
                 break;
-//            case R.id.birthday_rl:
-//                intent = new Intent(getApplicationContext(), BirthdayActivity.class);
-//                this.startActivity(intent);
-//                break;
             case R.id.birthday_rl:
                 DatePickerFragment datePickerFragment = new DatePickerFragment();
                 datePickerFragment.show(getFragmentManager(), "datepicker");
@@ -254,8 +193,7 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                 this.startActivityForResult(intent, UserInfo.REQUEST_REGION);
                 break;
             case R.id.btn_edit_cover:
-                intent = new Intent(this, ChooseCoverActivity.class);
-                this.startActivity(intent);
+                selectImage(UserInfo.REQUEST_COVER);
                 break;
             case R.id.btn_logout:
                 AuthUtils.getInstance(getApplicationContext()).logout();
@@ -263,6 +201,9 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                 break;
             case R.id.title_rl:
                 onBackPressed();
+                break;
+            case R.id.avatar:
+                selectImage(UserInfo.REQUEST_AVATAR);
                 break;
         }
     }
@@ -296,6 +237,27 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                     userInfo.whatsup = data.getStringExtra("whatsup");
                     tv_whatsup.setText(userInfo.whatsup);
                     break;
+                case UserInfo.REQUEST_AVATAR:
+                    localMedias = PictureSelector.obtainMultipleResult(data);
+                    userInfo.avatar.small = localMedias.get(0).getCutPath();
+                    ImageLoader.displayImageAsCircle(userInfo.avatar.small, avatar);
+                    if(userInfo.roleType != 2) { ImageLoader.displayImage(userInfo.avatar.small, cover_image, 20); }
+                    updateImage(userInfo.avatar.small, "avatar");
+                    break;
+                case UserInfo.REQUEST_COVER:
+                    localMedias = PictureSelector.obtainMultipleResult(data);
+                    userInfo.coverImage.small = localMedias.get(0).getCutPath();
+                    ImageLoader.displayImage(userInfo.coverImage.small, cover_image, 20);
+                    updateImage(userInfo.coverImage.small, "coverImage");
+                    break;
+//                    PictureFileUtils.deleteCacheDirFile(PersonActivity.this);
+                    // 例如 LocalMedia 里面返回三种path
+                    // 1.media.getPath(); 为原图path
+                    // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true  注意：音视频除外
+                    // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true  注意：音视频除外
+                    // 如果裁剪并压缩了，以取压缩路径为准，因为是先裁剪后压缩的
+//                    adapter.setList(selectList);
+//                    adapter.notifyDataSetChanged();
             }
         }
     }
@@ -307,9 +269,8 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
 
     @Subscribe
     public void onEventMessage(String date){
-        tv_birthday.setText(date);
         Long birthday = TimeUtils.getTimeStampByDate(date + " 00:00", TimeUtils.YYYYmmDDHHMM);
-        System.out.println("Enter event bus, birthday: " + birthday);
+        tv_birthday.setText(TimeUtils.getDateStringByTimeStamp(birthday));
         HashMap<String, String> map = new HashMap<>(2);
         map.put("birthday", String.valueOf(birthday));
         map.put("token", AuthUtils.getInstance(PersonActivity.this).getApiToken());
@@ -326,6 +287,52 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                     protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
                         System.out.println("===errorMsg==="+errorMsg);
                         return super.dealHttpException(code, errorMsg, e);
+                    }
+                });
+    }
+
+    private void updateImage(String path, String field){
+        HashMap<String, File> fileMap = new HashMap<>(1);
+        File image = new File(path);
+        System.out.println("parameter: " + field);
+        fileMap.put(field, image);
+        HashMap<String, String> valueMap = new HashMap<>(1);
+        valueMap.put("token", AuthUtils.getInstance(PersonActivity.this).getApiToken());
+        ApiServer.baseUploadRequest(this, Constants.UPDATE_BROADCASTPROFILE, valueMap, fileMap,
+                new TypeToken<ResponseData<TextPicture>>() {
+                })
+                .subscribe(new NetworkSubscriber<TextPicture>() {
+                    @Override
+                    protected void onSuccess(TextPicture textPicture) {
+                        ToastUtils.showToast("Saved");
+                    }
+
+                    @Override
+                    protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
+                        System.out.println("===errorMsg==="+errorMsg);
+                        return super.dealHttpException(code, errorMsg, e);
+                    }
+                });
+    }
+
+    private void selectImage(int requestNum) {
+        rxPermissions.request(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
+                .subscribe(aBoolean -> {
+                    if (aBoolean) {
+                        PictureSelector.create(PersonActivity.this)
+                                .openGallery(PictureMimeType.ofImage())
+                                .imageSpanCount(4)
+                                .selectionMode(PictureConfig.SINGLE)
+                                .setOutputCameraPath(Constants.IMAGE_PATH)
+                                .previewImage(true)
+                                .compressGrade(Luban.THIRD_GEAR)
+                                .enableCrop(true)
+                                .withAspectRatio(5,3)
+                                .isCamera(true)
+                                .compress(false)
+                                .selectionMedia(localMedias)
+                                .forResult(requestNum);
                     }
                 });
     }
