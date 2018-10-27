@@ -88,8 +88,8 @@ public class ChatMessageAdapter extends RecyclerView.Adapter <RecyclerView.ViewH
         boolean isContinuous = false;
         ChatMessage chatMessage = chatMessages.get(position);
 
-        if (position > 0) {
-            ChatMessage prevMessage = chatMessages.get(position - 1);
+        if (position < chatMessages.size() - 1) {
+            ChatMessage prevMessage = chatMessages.get(position + 1);
             if (!TimeUtils.isSameDate(chatMessage.createAt, prevMessage.createAt)) {
                 isNewDay = true;
             }
@@ -97,7 +97,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter <RecyclerView.ViewH
             if(Utils.equals(chatMessage.senderId, prevMessage.senderId) || isNewDay){
                 isContinuous = true;
             }
-        } else{
+        } else if (position == chatMessages.size() - 1) {
             isNewDay = true;
         }
 

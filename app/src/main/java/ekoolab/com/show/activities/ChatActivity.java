@@ -2,8 +2,10 @@ package ekoolab.com.show.activities;
 
 import android.Manifest;
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
@@ -17,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -26,14 +29,20 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
+import com.luck.picture.lib.tools.Constant;
 import com.orhanobut.logger.Logger;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 import com.sendbird.android.BaseChannel;
+import com.sendbird.android.BaseMessage;
 import com.sendbird.android.FileMessage;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.UserMessage;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -66,13 +75,16 @@ import ekoolab.com.show.views.itemdecoration.LinearItemDecoration;
 public class ChatActivity extends BaseActivity implements View.OnTouchListener, TextWatcher,
         View.OnClickListener,
         TextView.OnEditorActionListener,
-        ViewTreeObserver.OnGlobalLayoutListener, ChatManager.ChatManagerListener {
+        ViewTreeObserver.OnGlobalLayoutListener,
+        ChatManager.ChatManagerListener,
+        OnRefreshLoadMoreListener {
     public static final String FRIEND_DATA = "friend_data";
 
     private final int spanCount = 4;
     private RelativeLayout rootView;
     private View contentView;
     private RecyclerView recyclerView;
+    private SmartRefreshLayout refreshLayout;
     private RelativeLayout editorBar;
     private RecyclerView moreActionRecycleView;
     private ImageButton voiceBtn;
@@ -85,7 +97,8 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
     private List<Action> actions;
 
     private int offset;
-    private int limit;
+    private boolean hasMore;
+    private boolean hasPrevious;
 
     private int moveSpace = 0;
     private float startX = 0;
@@ -107,7 +120,8 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
     protected void initData() {
         super.initData();
         offset = 0;
-        limit = 20;
+        hasMore = true;
+        hasPrevious = true;
         audioGranted = false;
         initActions();
         friend = getIntent().getParcelableExtra(FRIEND_DATA);
@@ -123,6 +137,7 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
         ChatManager.getInstance(this).register(this);
         AudioRecordManager.getInstance(this).setMaxVoiceDuration(60);
         AudioRecordManager.getInstance(this).setAudioSavePath(Constants.AUDIO_PATH);
+
     }
 
     @Override
@@ -141,6 +156,7 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
         recyclerView = findViewById(R.id.message_rv);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(true);
+        linearLayoutManager.setReverseLayout(true);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.addItemDecoration(new LinearItemDecoration(this,
                 0, R.color.colorLightGray, 0));
@@ -205,6 +221,11 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
 
             }
         });
+
+        refreshLayout = findViewById(R.id.refresh_layout);
+        refreshLayout.setEnableAutoLoadMore(true);
+        refreshLayout.setEnableLoadMore(true);
+        refreshLayout.setOnRefreshLoadMoreListener(this);
 
         messageEt = findViewById(R.id.message_et);
         messageEt.addTextChangedListener(this);
@@ -323,7 +344,7 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
                 if (file.exists()) {
                     ChatMessage tempChatMessage = ChatMessage.createTempChatMessage(getBaseContext(), file, FileType.AUDIO);
                     tempChatMessage.senderId = AuthUtils.getInstance(ChatActivity.this).getUserCode();
-                    chatMessages.add(tempChatMessage);
+                    chatMessages.add(0, tempChatMessage);
                     recyclerView.getAdapter().notifyDataSetChanged();
 
                     tempChatMessageMap.put(audioPath.getPath(), tempChatMessage);
@@ -363,9 +384,17 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
     }
 
     private List<ChatMessage> getChatMessageFromDB(){
+        long createAt = System.currentTimeMillis();
+        if(chatMessages.size() > 0){
+            createAt = chatMessages.get(chatMessages.size() - 1).createAt;
+        }
         List<ChatMessage> dbChatMessages = ChatMessage
-                .getChatMessages(this, Constants.ChatMessageTableColumns.channelUrl + "=?",
-                        new String[]{friend.channelUrl}, offset + "," + limit);
+                .getChatMessages(this, Constants.ChatMessageTableColumns.channelUrl + "=? AND " + Constants.ChatMessageTableColumns.createAt + "<?",
+                        new String[]{friend.channelUrl, createAt + ""},"" + Constants.CHAT_LIMIT);
+
+        if(dbChatMessages.size() == 0){
+
+        }
 
         return dbChatMessages;
     }
@@ -476,9 +505,7 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
         UserMessage userMessage = ChatManager.getInstance(this).sendMessage(messageBody, friend.userCode, MessageType.TEXT, new BaseChannel.SendUserMessageHandler() {
             @Override
             public void onSent(UserMessage userMessage, SendBirdException e) {
-                ListIterator<ChatMessage> listIterator = chatMessages.listIterator(chatMessages.size());
-                while(listIterator.hasPrevious()){
-                    ChatMessage chatMessage = listIterator.previous();
+                for(ChatMessage chatMessage  : chatMessages){
                     if (Utils.equals(chatMessage.requestId, userMessage.getRequestId())) {
                         chatMessage.messageId = userMessage.getMessageId();
                         chatMessage.senderId = AuthUtils.getInstance(ChatActivity.this).getUserCode();
@@ -495,20 +522,17 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
 
         ChatMessage chatMessage = ChatMessage.createByOutgoingUserMessage(this, userMessage);
         chatMessage.save(this);
-        chatMessages.add(chatMessage);
+        chatMessages.add(0, chatMessage);
 
         recyclerView.getAdapter().notifyDataSetChanged();
         messageEt.setText("");
-        recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount()-1);
     }
 
     private void sendAudioMessage(final ResourceFile resourceFile, MessageType messageType){
         FileMessage fileMessage = ChatManager.getInstance(this).sendFileMessage(resourceFile, friend.userCode, messageType, new BaseChannel.SendFileMessageHandler() {
             @Override
             public void onSent(FileMessage fileMessage, SendBirdException e) {
-                ListIterator<ChatMessage> listIterator = chatMessages.listIterator(chatMessages.size());
-                while(listIterator.hasPrevious()){
-                    ChatMessage chatMessage = listIterator.previous();
+                for(ChatMessage chatMessage : chatMessages){
                     if (chatMessage.isTemp && chatMessage.resourceFile != null){
                         if(tempChatMessageMap.containsKey(chatMessage.resourceFile.filePath)) {
                             ChatMessage tempChatMessage = tempChatMessageMap.get(chatMessage.resourceFile.filePath);
@@ -519,7 +543,6 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
                             int position = chatMessages.indexOf(chatMessage);
                             chatMessages.set(position, tempChatMessage);
                             recyclerView.getAdapter().notifyItemChanged(position);
-                            recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount()-1);
 
                             tempChatMessageMap.remove(chatMessage.resourceFile.filePath);
                             break;
@@ -565,9 +588,8 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
 
     @Override
     public void didReceivedMessage(ChatMessage chatMessage) {
-        chatMessages.add(chatMessage);
+        chatMessages.add(0, chatMessage);
         recyclerView.getAdapter().notifyDataSetChanged();
-        recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount()-1);
     }
 
     private void showMoreAction(){
@@ -585,6 +607,83 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
         ObjectAnimator.ofFloat(recyclerView, "translationY", 0).setDuration(duration).start();
         ObjectAnimator.ofFloat(editorBar, "translationY", 0).setDuration(duration).start();
         ObjectAnimator.ofFloat(moreActionRecycleView, "translationY", moveSpace).setDuration(duration).start();
+    }
+
+    @Override
+    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+        if (hasMore) {
+            ChatManager.getInstance(this).loadMoreFriendMessages(friend, chatMessages.get(0).messageId, new BaseChannel.GetMessagesHandler() {
+                @Override
+                public void onResult(List<BaseMessage> list, SendBirdException e) {
+                    if (e == null) {
+                        for(BaseMessage baseMessage : list){
+                            if(baseMessage instanceof UserMessage){
+                                UserMessage userMessage = (UserMessage) baseMessage;
+                                ChatMessage chatMessage = ChatMessage.createByComingUserMessage(ChatActivity.this, userMessage);
+                                chatMessage.save(ChatActivity.this);
+
+                                chatMessages.add(0, chatMessage);
+                            }else if (baseMessage instanceof FileMessage){
+                                FileMessage fileMessage = (FileMessage) baseMessage;
+                                ChatMessage chatMessage = ChatMessage.createByComingFileMessage(ChatActivity.this, fileMessage);
+                                chatMessage.save(ChatActivity.this);
+
+                                chatMessages.add(0, chatMessage);
+                            }
+                        }
+                        recyclerView.getAdapter().notifyDataSetChanged();
+
+                        if(list.size() < Constants.CHAT_LIMIT){
+                            hasMore = false;
+                            refreshLayout.setEnableLoadMore(false);
+                        }
+                        refreshLayout.finishLoadMore();
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+        if (hasPrevious) {
+            List<ChatMessage> prevChatMessages = getChatMessageFromDB();
+            if(prevChatMessages.size() == 0){
+                ChatManager.getInstance(this).loadPreviousFriendMessages(friend, chatMessages.get(chatMessages.size() - 1).messageId, new BaseChannel.GetMessagesHandler() {
+                    @Override
+                    public void onResult(List<BaseMessage> list, SendBirdException e) {
+                        if (e == null) {
+                            for(BaseMessage baseMessage : list){
+                                if(baseMessage instanceof UserMessage){
+                                    UserMessage userMessage = (UserMessage) baseMessage;
+                                    ChatMessage chatMessage = ChatMessage.createByComingUserMessage(ChatActivity.this, userMessage);
+                                    chatMessage.save(ChatActivity.this);
+
+                                    chatMessages.add(chatMessage);
+                                }else if (baseMessage instanceof FileMessage){
+                                    FileMessage fileMessage = (FileMessage) baseMessage;
+                                    ChatMessage chatMessage = ChatMessage.createByComingFileMessage(ChatActivity.this, fileMessage);
+                                    chatMessage.save(ChatActivity.this);
+
+                                    chatMessages.add(chatMessage);
+                                }
+                            }
+                            recyclerView.getAdapter().notifyDataSetChanged();
+
+                            if(list.size() < Constants.CHAT_LIMIT){
+                                hasPrevious = false;
+                                refreshLayout.setEnableRefresh(false);
+                            }
+                            refreshLayout.finishRefresh();
+                        }
+                    }
+                });
+            }else{
+                chatMessages.addAll(prevChatMessages);
+                recyclerView.getAdapter().notifyDataSetChanged();
+                refreshLayout.finishRefresh();
+            }
+        }
     }
 
     private void initActions() {

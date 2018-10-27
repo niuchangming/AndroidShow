@@ -9,6 +9,7 @@ import android.os.Message;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.luck.picture.lib.tools.Constant;
 import com.orhanobut.logger.Logger;
 import com.sendbird.android.FileMessage;
 import com.sendbird.android.SendBird;
@@ -78,6 +79,7 @@ public class ChatMessage {
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.messageId = fileMessage.getMessageId();
         chatMessage.requestId = fileMessage.getRequestId();
+        Logger.i("-------> " + fileMessage.getCustomType());
         chatMessage.messageType = MessageType.getMessageType(fileMessage.getCustomType());
         chatMessage.sendState = SendState.SENT;
         chatMessage.createAt = fileMessage.getCreatedAt();
@@ -169,13 +171,9 @@ public class ChatMessage {
             try{
                 long id = db.insertWithOnConflict(Constants.CHAT_MESSAGE_TB, null, values, SQLiteDatabase.CONFLICT_IGNORE);
                 if (id == -1) {
-                    if (this.messageId > 0) {
-                        db.update(Constants.FRIEND_TB, values,
-                                Constants.ChatMessageTableColumns.messageId + "=?", new String[]{this.messageId+""});
-                    }else{
-                        db.update(Constants.FRIEND_TB, values,
-                                Constants.ChatMessageTableColumns.requestId + "=?", new String[]{this.requestId});
-                    }
+                    db.update(Constants.CHAT_MESSAGE_TB, values,
+                            Constants.ChatMessageTableColumns.messageId + "=? or " + Constants.ChatMessageTableColumns.requestId + "=?",
+                            new String[]{this.messageId+"", this.requestId});
                 } else {
                     if(this.resourceFile != null) {
                         this.resourceFile.save(context, id);
@@ -199,7 +197,7 @@ public class ChatMessage {
         Cursor cursor = null;
         try{
             cursor = db.query(Constants.CHAT_MESSAGE_TB, null, selection, args,
-                    null, null, Constants.ChatMessageTableColumns.createAt + " ASC", limit);
+                    null, null, Constants.ChatMessageTableColumns.createAt + " DESC", limit);
             cursor.moveToFirst();
             ChatMessage chatMessage = null;
             while(!cursor.isAfterLast()){
@@ -238,6 +236,5 @@ public class ChatMessage {
         }
         return chatMessages;
     }
-
 
 }

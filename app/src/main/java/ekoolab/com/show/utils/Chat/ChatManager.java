@@ -28,7 +28,10 @@ import ekoolab.com.show.beans.ResourceFile;
 import ekoolab.com.show.beans.enums.FileType;
 import ekoolab.com.show.beans.enums.MessageType;
 import ekoolab.com.show.utils.AuthUtils;
+import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.FileUtils;
+
+import static com.sendbird.android.BaseChannel.MessageTypeFilter.ALL;
 
 public class ChatManager extends SendBird.ChannelHandler implements SendBird.ConnectionHandler{
     private static final String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_GROUP_CHANNEL_CHAT";
@@ -212,6 +215,35 @@ public class ChatManager extends SendBird.ChannelHandler implements SendBird.Con
         }
 
         return null;
+    }
+
+    public void loadPreviousFriendMessages(final Friend friend, long messageId, BaseChannel.GetMessagesHandler handler){
+        GroupChannel groupChannel = channelMap.get(friend.userCode);
+        if(groupChannel != null){
+            groupChannel.getPreviousMessagesById(messageId, false, Constants.CHAT_LIMIT, false, ALL, null, new BaseChannel.GetMessagesHandler() {
+                @Override
+                public void onResult(List<BaseMessage> list, SendBirdException e) {
+                    if (handler != null) {
+                        handler.onResult(list, e);
+                    }
+                }
+            });
+        }
+    }
+
+    public void loadMoreFriendMessages(final Friend friend, long messageId, BaseChannel.GetMessagesHandler handler){
+        GroupChannel groupChannel = channelMap.get(friend.userCode);
+        if(groupChannel != null){
+            groupChannel.getNextMessagesById(messageId, false, Constants.CHAT_LIMIT, false, ALL, null, new BaseChannel.GetMessagesHandler() {
+
+                @Override
+                public void onResult(List<BaseMessage> list, SendBirdException e) {
+                    if (handler != null) {
+                        handler.onResult(list, e);
+                    }
+                }
+            });
+        }
     }
 
     public void logout(final SendBird.DisconnectHandler handler) {

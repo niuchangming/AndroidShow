@@ -6,7 +6,7 @@ public enum MessageType {
     TEXT (0, "text"),
     ADMIN (1, "admin"),
     AUDIO (2, "audio"),
-    PHOTO (3, "audio"),
+    PHOTO (3, "photo"),
     VIDEO (4, "video"),
     LINK (5, "link"),
     VOICE_CALL (6, "voice_call"),

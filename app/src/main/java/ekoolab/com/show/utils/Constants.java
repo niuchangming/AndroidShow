@@ -6,6 +6,7 @@ import java.io.File;
 
 public class Constants {
     public static final int PAGE_SIZE = 20;
+    public static final int CHAT_LIMIT = 20;
     public static final String SBD_APP_ID = "9FFC187F-1F31-46B3-A77D-BB96008A8EED";
     public static final String SBD_TOKEN = "ea52b46dfb6f05f404fc15735557b321c85efd6d";
 

@@ -6,13 +6,18 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/message_rv"
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/fake_navigation_bar"
-        android:layout_above="@id/editor_bar"
-        android:scrollbars="none"/>
+        android:layout_above="@id/editor_bar">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/message_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none"/>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
     <ekoolab.com.show.views.FakeActionBar
         android:id="@+id/fake_navigation_bar"
@@ -72,6 +77,7 @@
             android:layout_toLeftOf="@id/more_btn"
             android:layout_marginRight="@dimen/layout_margin_8dp"
             android:layout_marginLeft="@dimen/layout_margin_8dp"
+            android:nextFocusDown="@id/message_et"
             android:imeOptions="actionSend"
             android:inputType="text"
             android:gravity="top"

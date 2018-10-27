@@ -49,16 +49,19 @@ public class ResourceFile {
     }
 
     public ResourceFile(FileMessage fileMessage) {
-        String dataJson = fileMessage.getData();
-        Map<String, String> dataMap = new Gson().fromJson(dataJson, new TypeToken<HashMap<String, String>>() {}.getType());
-
         this.fileUrl = fileMessage.getUrl();
         this.fileName = FileUtils.getFileName(this.fileUrl);
         this.extension = FileUtils.getFileExtension(this.fileUrl);
         this.fileType = FileType.AUDIO;
         this.mimeType = FileUtils.getFileContentType(this.fileName);
         this.fileSize = fileMessage.getSize();
-        this.duration = Long.parseLong(dataMap.get("duration"));
+        try {
+            String dataJson = fileMessage.getData();
+            Map<String, String> dataMap = new Gson().fromJson(dataJson, new TypeToken<HashMap<String, String>>() {}.getType());
+            this.duration = Long.parseLong(dataMap.get("duration"));
+        }catch(Exception e){
+            this.duration = 0;
+        }
     }
 
     public long save(Context context, long chatMessageId) {
