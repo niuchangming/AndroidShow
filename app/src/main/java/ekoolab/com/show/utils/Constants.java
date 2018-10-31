@@ -37,6 +37,7 @@ public class Constants {
     public static final String COMMENTLIST = HOST + "comments/listall";
     public static final String MOMENTLIST = HOST + "moment/listall";
     public static final String MYMOMENTLIST = HOST + "moment/list";
+    public static final String MOMENTDEL = HOST + "moment/delete";
     public static final String MOMENT_SENDGIFT = HOST + "moment/sendgift";
     public static final String LIVE_LIST = HOST + "broadcast/getlist";
     public static final String GIFTLIST = HOST + "gift/getGifts";

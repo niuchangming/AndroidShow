@@ -84,38 +84,6 @@ public class MyVideoFragment extends BaseFragment implements JSONParser.ParserLi
         });
     }
 
-//    private void loadVideoData(){
-//        emptyView.showLoading();
-//        AndroidNetworking.post(Constants.VIDEO_LIST)
-//                .addBodyParameter("timestamp", new Date().getTime() + "")
-//                .addBodyParameter("pageSize", Constants.PAGE_SIZE + "")
-//                .addBodyParameter("pageIndex", pageIndex + "")
-//                .addBodyParameter("token", AuthUtils.getInstance(getContext()).getApiToken())
-//                .setPriority(Priority.MEDIUM)
-//                .build()
-//                .getAsJSONObject(new JSONObjectRequestListener() {
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//
-//                        try {
-//                            int errorCode = response.getInt("errorCode");
-//                            String message = response.getString("message");
-//                            if (errorCode == 1) {
-//                                emptyView.content().show();
-//                            } else {
-//                                emptyView.error().setErrorText(message).show();
-//                            }
-//                        }catch (JSONException e){
-//                            emptyView.error(e).show();
-//                        }
-//                    }
-//                    @Override
-//                    public void onError(ANError error) {
-//                        emptyView.error(error).show();
-//                    }
-//                });
-//    }
-
     private void loadVideoData(int flag) {
         if (flag == 0) {
             emptyView.showLoading();

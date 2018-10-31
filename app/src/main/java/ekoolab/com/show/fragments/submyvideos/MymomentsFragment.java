@@ -2,6 +2,7 @@ package ekoolab.com.show.fragments.submyvideos;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,22 +24,22 @@ import java.util.HashMap;
 import java.util.List;
 
 import ekoolab.com.show.R;
-import ekoolab.com.show.activities.WatchImageActivity;
+import ekoolab.com.show.activities.MySingleMomentActivity;
 import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
 import ekoolab.com.show.beans.Moment;
-import ekoolab.com.show.beans.Photo;
 import ekoolab.com.show.fragments.BaseFragment;
+import ekoolab.com.show.activities.MySingleMomentActivity;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.DisplayUtils;
 //import ekoolab.com.show.utils.ListUtils;
 import ekoolab.com.show.utils.TimeUtils;
+import ekoolab.com.show.utils.ToastUtils;
 import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.utils.ViewHolder;
 import ekoolab.com.show.views.itemdecoration.LinearItemDecoration;
-import ekoolab.com.show.views.nestlistview.NestFullListView;
 import ekoolab.com.show.views.ninegridview.NewNineGridlayout;
 
 public class MymomentsFragment extends BaseFragment implements OnRefreshLoadMoreListener {
@@ -65,14 +66,12 @@ public class MymomentsFragment extends BaseFragment implements OnRefreshLoadMore
 
     @Override
     protected void initData() {
-//        super.initData();
         mEmptyView.showLoading();
         loadMyMoment(true);
     }
 
     @Override
     protected void initViews(ViewHolder holder, View root) {
-        System.out.println("Enter initview");
         mEmptyView = holder.get(R.id.empty_view);
         recyclerView = holder.get(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
@@ -81,8 +80,19 @@ public class MymomentsFragment extends BaseFragment implements OnRefreshLoadMore
         refreshLayout = holder.get(R.id.refreshLayout);
         initRefreshLayout();
         initAdapter();
+        mAdapter.setOnItemClickListener((parent, view, position) -> {
+            String apiToken = AuthUtils.getInstance(getContext()).getApiToken();
+            if (TextUtils.isEmpty(apiToken)) {
+                ToastUtils.showToast(R.string.login_first);
+                return;
+            }
+            Moment moment = moments.get(position);
+            System.out.println("number of likes: " + moment.likeCount);
+            Intent intent = new Intent(getContext(), MySingleMomentActivity.class);
+            intent.putExtra("moment", moment);
+            getContext().startActivity(intent);
+        });
         recyclerView.setAdapter(mAdapter);
-        System.out.println("Action 14");
         llTipsContainer = holder.get(R.id.ll_tips_container);
 
     }
@@ -94,75 +104,19 @@ public class MymomentsFragment extends BaseFragment implements OnRefreshLoadMore
     }
 
     private void initAdapter() {
-        System.out.println("Enter initAdapter");
         mAdapter = new BaseQuickAdapter<Moment, BaseViewHolder>(R.layout.item_my_moment_list, moments) {
 
             private int nineTotalWidth = DisplayUtils.getScreenWidth() - DisplayUtils.dip2px(120 * 2);
 
             @Override
             protected void convert(BaseViewHolder helper, Moment item) {
-                System.out.println("Enter mymoment converter");
-//                ImageLoader.displayImage(item.creator.avatar.small, helper.getView(R.id.iv_icon));
-//                helper.setText(R.id.tv_name, item.creator.name);
                 helper.setText(R.id.tv_time, TimeUtils.getDateStringByTimeStamp(item.uploadTime));
                 helper.setGone(R.id.tv_content, !TextUtils.isEmpty(item.body));
                 helper.setText(R.id.tv_content, item.body);
                 helper.setGone(R.id.nine_grid_layout, Utils.isNotEmpty(item.photoArray));
                 NewNineGridlayout newNineGridlayout = helper.getView(R.id.nine_grid_layout);
-//                List<Photo> showingList = (item.photoArray.size()>4)?item.photoArray.subList(0,4):item.photoArray;
                 newNineGridlayout.showPic(nineTotalWidth, item.photoArray,
-                        position -> WatchImageActivity.navToWatchImage(mContext, item.photoArray, position),
-                        NewNineGridlayout.PHOTO_QUALITY_SMALL);
-//                ImageView ivHeart = helper.getView(R.id.iv_heart);
-//                ivHeart.setSelected(item.isMyLike);
-//                ivHeart.setOnClickListener(view -> {
-//                    if (zanMap.containsKey(item.resourceId)) {
-//                        return;
-//                    }
-//                    zanOrCancelMoment(item);
-//                });
-//                helper.setText(R.id.tv_zan_num, String.valueOf(item.likeCount));
-//                helper.getView(R.id.iv_comment).setOnClickListener(view -> {
-//                    curMoment = item;
-//                    curCommentBean = null;
-//                    showCommentDialog();
-//                });
-//                helper.getView(R.id.iv_reward).setOnClickListener(view -> {
-//                    curMoment = item;
-//                    showGiftDialog();
-//                });
-                boolean notEmpty = Utils.isNotEmpty(item.comments);
-                helper.setGone(R.id.nest_full_listview, notEmpty);
-                if (notEmpty) {
-                    NestFullListView listView = helper.getView(R.id.nest_full_listview);
-//                    listView.setAdapter(new NestFullListViewAdapter<Moment.CommentsBean>(R.layout.item_moent_comment, item.comments) {
-//
-//                        @Override
-//                        public void onBind(int position, Moment.CommentsBean bean, NestFullViewHolder holder) {
-//                            if (!bean.ishasParentComment) {
-//                                holder.setText(R.id.tv_comment, Html.fromHtml(getString(R.string.moment_reply1,
-//                                        bean.creator.name, bean.body)));
-//                            } else {
-//                                holder.setText(R.id.tv_comment, Html.fromHtml(getString(R.string.moment_reply2,
-//                                        bean.creator.name, bean.replyToName, bean.body)));
-//                            }
-//                        }
-//                    });
-//                    listView.setOnItemClickListener((parent, view, position) -> {
-//                        String apiToken = AuthUtils.getInstance(getContext()).getApiToken();
-//                        if (TextUtils.isEmpty(apiToken)) {
-//                            ToastUtils.showToast(R.string.login_first);
-//                            return;
-//                        }
-//                        Moment.CommentsBean bean = item.comments.get(position);
-//                        if (Utils.equals(bean.creator.userCode, AuthUtils.getInstance(mContext).getUserCode())) {
-//                            return;
-//                        }
-//                        curCommentBean = bean;
-//                        curMoment = item;
-//                        showCommentDialog();
-//                    });
-                }
+                       null, NewNineGridlayout.PHOTO_QUALITY_SMALL);
             }
         };
         mAdapter.setHasStableIds(false);
@@ -173,7 +127,6 @@ public class MymomentsFragment extends BaseFragment implements OnRefreshLoadMore
             pageIndex = 0;
         }
         HashMap<String, String> map = new HashMap<>(4);
-//        map.put("timestamp", System.currentTimeMillis() + "");
         map.put("pageSize", Constants.PAGE_SIZE + "");
         map.put("pageIndex", pageIndex + "");
         map.put("token", AuthUtils.getInstance(getContext()).getApiToken());
@@ -183,14 +136,11 @@ public class MymomentsFragment extends BaseFragment implements OnRefreshLoadMore
                 .subscribe(new NetworkSubscriber<List<Moment>>() {
                     @Override
                     protected void onSuccess(List<Moment> momentList) {
-                        System.out.println("after loading data");
                         System.out.println("===momentList==="+momentList.size()+";pageIndex==="+pageIndex);
                         if (Utils.isNotEmpty(momentList)) {
                             if (isRefresh) {
                                 moments.clear();
-                                System.out.println("Action 1");
                             }
-//                            convertData(momentList);
                             moments.addAll(momentList);
                             if (isRefresh) {
                                 mAdapter.notifyDataSetChanged();
@@ -201,21 +151,16 @@ public class MymomentsFragment extends BaseFragment implements OnRefreshLoadMore
                             mEmptyView.showContent();
                             if (momentList.size() < Constants.PAGE_SIZE) {
                                 refreshLayout.setEnableLoadMore(false);
-                                System.out.println("Action 2");
                             } else {
                                 pageIndex++;
-                                System.out.println("Action 3");
                             }
                         } else if(moments.size()!=0){
                             refreshLayout.setEnableLoadMore(false);
-                            System.out.println("Action 4");
                         } else{
                             mEmptyView.showEmpty();
-                            System.out.println("Action 5");
                         }
                         refreshLayout.finishRefresh();
                         refreshLayout.finishLoadMore();
-                        System.out.println("Action 6");
                     }
 
                     @Override

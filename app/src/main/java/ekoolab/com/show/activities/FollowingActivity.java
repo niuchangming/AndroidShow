@@ -49,7 +49,6 @@ import me.shihao.library.RecyclerAdapter;
 import me.shihao.library.XRecyclerView;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
-//import ekoolab.com.show.utils.EventBusMsg;
 
 public class FollowingActivity extends BaseActivity implements View.OnClickListener,
         OnRefreshLoadMoreListener {
@@ -60,20 +59,12 @@ public class FollowingActivity extends BaseActivity implements View.OnClickListe
     private SmartRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
     private BaseQuickAdapter mAdapter;
-    //    private BaseQuickAdapter<UserInfo, BaseViewHolder> mAdapter = null;
     private List<UserInfo> followers = new ArrayList<>(20);
 
     @Override
     protected int getLayoutId(){
         return R.layout.activity_following;
     }
-
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void onResultEvent(EventBusMsg eventBusMsg) {
-//        if (eventBusMsg.getFlag() == 0 || eventBusMsg.getFlag() == 1) {
-//
-//        }
-//    }
 
 
 
@@ -82,13 +73,11 @@ public class FollowingActivity extends BaseActivity implements View.OnClickListe
         super.onStart();
         mEmptyView.showLoading();
         getFollowers(0);
-//        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-//        EventBus.getDefault().unregister(this);
     }
 
     @Override

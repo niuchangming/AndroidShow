@@ -56,14 +56,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class PersonActivity extends BaseActivity implements View.OnClickListener  {
 
-//    private TextView tv_name,tv_cancel,tv_save;
-    private TabLayout indicatorTabLayout;
-    private ViewPager viewPager;
-    private ProfileAdapter pagerAdapter;
-    private List<BaseFragment> fragments;
     private List<LocalMedia> localMedias = new ArrayList<>();
-
-
     private BaseActivity activity;
     private RelativeLayout name_rl,nickname_rl,gender_rl,birthday_rl,whatsup_rl,region_rl,title_rl,header_rl;
     private TextView tv_name,tv_nickname,tv_gender,tv_birthday,tv_whatsup,tv_region;
@@ -227,8 +220,6 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                     userInfo.gender = data.getIntExtra("gender",userInfo.gender);
                     tv_gender.setText((userInfo.gender == 0)? "Male":"Female");
                     break;
-//            case REQUEST_BIRTHDAY:
-//                break;
                 case UserInfo.REQUEST_REGION:
                     userInfo.region = data.getStringExtra("region");
                     tv_region.setText(userInfo.region);
@@ -250,22 +241,9 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                     ImageLoader.displayImage(userInfo.coverImage.small, cover_image, 20);
                     updateImage(userInfo.coverImage.small, "coverImage");
                     break;
-//                    PictureFileUtils.deleteCacheDirFile(PersonActivity.this);
-                    // 例如 LocalMedia 里面返回三种path
-                    // 1.media.getPath(); 为原图path
-                    // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true  注意：音视频除外
-                    // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true  注意：音视频除外
-                    // 如果裁剪并压缩了，以取压缩路径为准，因为是先裁剪后压缩的
-//                    adapter.setList(selectList);
-//                    adapter.notifyDataSetChanged();
             }
         }
     }
-
-//    private void login(){
-//        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-//        getApplicationContext().startActivity(intent);
-//    }
 
     @Subscribe
     public void onEventMessage(String date){
@@ -316,8 +294,8 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void selectImage(int requestNum) {
-        rxPermissions.request(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
+        rxPermissions.request(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
                 .subscribe(aBoolean -> {
                     if (aBoolean) {
                         PictureSelector.create(PersonActivity.this)

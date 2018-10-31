@@ -110,11 +110,6 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 //        getUserInfo();
     }
 
-//    @Override
-//    public void onResume(){
-//        super.onResume();
-//    }
-
     @Override
     public void onStop() {
         super.onStop();
@@ -194,7 +189,6 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         Intent intent;
         switch(view.getId()){
             case R.id.edit_ll:
-//                edit_ll.setClickable(false);
                 if(AuthUtils.getInstance(getContext()).loginState() == LOGGED){
                     intent = new Intent(getContext(), PersonActivity.class);
                     intent.putExtra("userInfo",userInfo);
@@ -204,7 +198,6 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
                 }
                 break;
             case R.id.btn_edit:
-//                btn_edit.setClickable(false);
                 if(AuthUtils.getInstance(getContext()).loginState() == LOGGED){
                     intent = new Intent(getContext(), PersonActivity.class);
                     intent.putExtra("userInfo",userInfo);
@@ -262,7 +255,6 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 //        }
 //        spEditor.apply();
 
-//        String avatarSmall = sp.getString(Constants.Auth.AVATAR_SMALL, "");
         this.userInfo = userInfo;
         tv_name.setText(userInfo.nickname);
         tv_followers.setText(Integer.toString(userInfo.followers));
@@ -274,11 +266,6 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 //        String avatarSmall = AuthUtils.getInstance(getApplicationContext()).getAvator(2);
 //        Glide.with(this).load(avatarSmall).into(avatar);
         ImageLoader.displayImageAsCircle(userInfo.avatar.small, avatar);
-    }
-
-    private void loadUserInfo(){
-        SharedPreferences sp = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
-
     }
 
     private void login(){

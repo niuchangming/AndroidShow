@@ -50,6 +50,7 @@
     <string name="following">Following</string>
     <string name="coins">Coins</string>
     <string name="try_again">Try Again later!</string>
+    <string name="delete">Delete</string>
     <string name="empty">Content not found!</string>
     <string name="loading">Loading Now...</string>
     <string name="format_error">Format Error !</string>
@@ -83,7 +84,7 @@
     <!-- Region -->
     <string name="country_china">China</string>
     <string name="country_malaysia">Malaysia</string>
-    <string name="country_singapore">Sinapore</string>
+    <string name="country_singapore">Singapore</string>
 
     <!-- Chat -->
     <string name="video_call">Video Call</string>

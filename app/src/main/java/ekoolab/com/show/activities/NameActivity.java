@@ -53,29 +53,18 @@ public class NameActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onStart() {
         super.onStart();
-//        EventBus.getDefault().register(this);
-//        name = getIntent().getStringExtra("name");
-//        tv_name.setText(name);
-    }
-
-
-    private void showOrHideNavAnim(int flag) {
-
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-//        EventBus.getDefault().unregister(this);
     }
 
     @Override
     public void onClick(View view){
-        Intent intent = new Intent();
         switch (view.getId()){
             case R.id.tv_cancel:
-                setResult(0);
-                finish();
+                onBackPressed();
                 break;
             case R.id.tv_save:
                 setName();
@@ -87,8 +76,6 @@ public class NameActivity extends BaseActivity implements View.OnClickListener {
         name = et_name.getText().toString();
         Utils.hideInput(et_name);
         tv_save.setVisibility(View.INVISIBLE);
-//        progressView.setVisibility(View.VISIBLE);
-//        progressView.start();
         setViewClickable(false);
         HashMap<String, String> map = new HashMap<>(2);
         map.put("name", name);
@@ -111,8 +98,6 @@ public class NameActivity extends BaseActivity implements View.OnClickListener {
                         System.out.println("===errorMsg==="+errorMsg);
                         tv_save.setVisibility(View.VISIBLE);
                         setViewClickable(true);
-//                        progressView.setVisibility(View.GONE);
-//                        progressView.stop();
                         return super.dealHttpException(code, errorMsg, e);
                     }
                 });

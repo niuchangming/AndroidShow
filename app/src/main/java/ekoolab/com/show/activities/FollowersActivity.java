@@ -49,7 +49,6 @@ import me.shihao.library.RecyclerAdapter;
 import me.shihao.library.XRecyclerView;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
-//import ekoolab.com.show.utils.EventBusMsg;
 
 public class FollowersActivity extends BaseActivity implements View.OnClickListener,
                                                                     OnRefreshLoadMoreListener {
@@ -68,13 +67,6 @@ public class FollowersActivity extends BaseActivity implements View.OnClickListe
         return R.layout.activity_followers;
     }
 
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void onResultEvent(EventBusMsg eventBusMsg) {
-//        if (eventBusMsg.getFlag() == 0 || eventBusMsg.getFlag() == 1) {
-//
-//        }
-//    }
-
 
 
     @Override
@@ -82,19 +74,16 @@ public class FollowersActivity extends BaseActivity implements View.OnClickListe
         super.onStart();
         mEmptyView.showLoading();
         getFollowers(0);
-//        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-//        EventBus.getDefault().unregister(this);
     }
 
     @Override
     protected void initData() {
         super.initData();
-//        getFollowers(2);
     }
 
     @Override
@@ -112,25 +101,6 @@ public class FollowersActivity extends BaseActivity implements View.OnClickListe
         initRefreshLayout();
         initAdapter();
         recyclerView.setAdapter(mAdapter);
-
-//        recyclerView = findViewById(R.id.recycler_view);
-//        int spanCount = 2;
-//        int spacing = 2;
-//        recyclerView.verticalLayoutManager();
-//        ((SimpleItemAnimator) recyclerView.getRecyclerView().getItemAnimator()).setSupportsChangeAnimations(false);
-//        recyclerView.getRecyclerView().addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, false));
-//        recyclerView.setOnRefreshListener(new XRecyclerView.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                pageIndex = 0;
-//                getFollowers(1);
-//            }
-//
-//            @Override
-//            public void onLoadMore() {
-//                getFollowers(2);
-//            }
-//        });
     }
 
     @Override
@@ -142,7 +112,7 @@ public class FollowersActivity extends BaseActivity implements View.OnClickListe
                 break;
         }
     }
-    
+
     private void initAdapter() {
         System.out.println("Enter initAdapter");
         mAdapter = new BaseQuickAdapter<UserInfo, BaseViewHolder>(R.layout.item_followers_following, followers) {
@@ -155,11 +125,6 @@ public class FollowersActivity extends BaseActivity implements View.OnClickListe
                 } else {
                     helper.setText(R.id.tv_name, item.name);
                 }
-//                boolean notEmpty = Utils.isNotEmpty(item);
-//                helper.setGone(R.id.nest_full_listview, true);
-//                if (notEmpty) {
-//                    NestFullListView listView = helper.getView(R.id.nest_full_listview);
-//                }
             }
         };
         mAdapter.setHasStableIds(false);
@@ -197,7 +162,6 @@ public class FollowersActivity extends BaseActivity implements View.OnClickListe
                                     followers.addAll(followerList);
                                     mAdapter.notifyDataSetChanged();
                                 }
-//                                refreshLayout.finishRefresh();
                                 if (followerList.size() == 20) {
                                     pageIndex++;
                                 } else {
