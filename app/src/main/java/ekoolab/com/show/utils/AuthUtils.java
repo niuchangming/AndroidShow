@@ -57,6 +57,11 @@ public class AuthUtils {
         return sp.getString(Constants.Auth.USERNAME, "");
     }
 
+    public int getRole() {
+        SharedPreferences sp = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+        return sp.getInt(Constants.Auth.ROLE, 0);
+    }
+
     public String getTempUserId(){
         SharedPreferences sp = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
         String tempUserId = sp.getString(Constants.Auth.TEMP_USER_ID, "");

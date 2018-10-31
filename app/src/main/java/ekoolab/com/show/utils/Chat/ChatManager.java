@@ -4,6 +4,9 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
 import com.orhanobut.logger.Logger;
 import com.sendbird.android.BaseChannel;
@@ -33,7 +36,7 @@ import ekoolab.com.show.utils.FileUtils;
 
 import static com.sendbird.android.BaseChannel.MessageTypeFilter.ALL;
 
-public class ChatManager extends SendBird.ChannelHandler implements SendBird.ConnectionHandler{
+public class ChatManager extends SendBird.ChannelHandler implements SendBird.ConnectionHandler, SendBird.DisconnectHandler {
     private static final String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_GROUP_CHANNEL_CHAT";
     private static ChatManager chatManager;
     private Set<ChatManagerListener> chatManagerListenerSet;
@@ -72,8 +75,12 @@ public class ChatManager extends SendBird.ChannelHandler implements SendBird.Con
         if (baseMessage instanceof UserMessage) {
             UserMessage userMessage = (UserMessage) baseMessage;
 
-            GroupChannel channel = channelMap.get(userMessage.getSender().getUserId());
-            if(channel != null){
+            if(baseChannel instanceof GroupChannel){
+                GroupChannel groupChannel = (GroupChannel) baseChannel;
+                if(!channelMap.containsKey(userMessage.getSender().getUserId())){
+                    channelMap.put(userMessage.getSender().getUserId(), groupChannel);
+                }
+
                 ChatMessage chatMessage = ChatMessage.createByComingUserMessage(context, userMessage);
                 chatMessage.save(context);
 
@@ -81,11 +88,16 @@ public class ChatManager extends SendBird.ChannelHandler implements SendBird.Con
                     listener.didReceivedMessage(chatMessage);
                 }
             }
+
         }else if(baseMessage instanceof FileMessage){
             FileMessage fileMessage = (FileMessage) baseMessage;
 
-            GroupChannel channel = channelMap.get(fileMessage.getSender().getUserId());
-            if(channel != null){
+            if(baseChannel instanceof GroupChannel){
+                GroupChannel groupChannel = (GroupChannel) baseChannel;
+                if(!channelMap.containsKey(fileMessage.getSender().getUserId())){
+                    channelMap.put(fileMessage.getSender().getUserId(), groupChannel);
+                }
+
                 ChatMessage chatMessage = ChatMessage.createByComingFileMessage(context, fileMessage);
                 chatMessage.save(context);
 
@@ -93,6 +105,7 @@ public class ChatManager extends SendBird.ChannelHandler implements SendBird.Con
                     listener.didReceivedMessage(chatMessage);
                 }
             }
+
         }
     }
 
@@ -110,6 +123,25 @@ public class ChatManager extends SendBird.ChannelHandler implements SendBird.Con
                 if (handler != null) {
                     handler.onConnected(user, e);
                 }
+            }
+        });
+    }
+
+    public void registerDeviceTokenWithSBird(){
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+
+                String deviceToken = instanceIdResult.getToken();
+
+                SendBird.registerPushTokenForCurrentUser(deviceToken, new SendBird.RegisterPushTokenWithStatusHandler() {
+                    @Override
+                    public void onRegistered(SendBird.PushTokenRegistrationStatus ptrs, SendBirdException e) {
+                        if (e != null) {
+                            return;
+                        }
+                    }
+                });
             }
         });
     }
@@ -217,10 +249,10 @@ public class ChatManager extends SendBird.ChannelHandler implements SendBird.Con
         return null;
     }
 
-    public void loadPreviousFriendMessages(final Friend friend, long messageId, BaseChannel.GetMessagesHandler handler){
+    public void loadPreviousFriendMessages(final Friend friend, long createAt, BaseChannel.GetMessagesHandler handler){
         GroupChannel groupChannel = channelMap.get(friend.userCode);
         if(groupChannel != null){
-            groupChannel.getPreviousMessagesById(messageId, false, Constants.CHAT_LIMIT, false, ALL, null, new BaseChannel.GetMessagesHandler() {
+            groupChannel.getPreviousMessagesByTimestamp(createAt, false, Constants.CHAT_LIMIT, false, ALL, null, new BaseChannel.GetMessagesHandler() {
                 @Override
                 public void onResult(List<BaseMessage> list, SendBirdException e) {
                     if (handler != null) {
@@ -231,10 +263,10 @@ public class ChatManager extends SendBird.ChannelHandler implements SendBird.Con
         }
     }
 
-    public void loadMoreFriendMessages(final Friend friend, long messageId, BaseChannel.GetMessagesHandler handler){
+    public void loadMoreFriendMessages(final Friend friend, long createAt, BaseChannel.GetMessagesHandler handler){
         GroupChannel groupChannel = channelMap.get(friend.userCode);
         if(groupChannel != null){
-            groupChannel.getNextMessagesById(messageId, false, Constants.CHAT_LIMIT, false, ALL, null, new BaseChannel.GetMessagesHandler() {
+            groupChannel.getNextMessagesByTimestamp(createAt, false, Constants.CHAT_LIMIT, false, ALL, null, new BaseChannel.GetMessagesHandler() {
 
                 @Override
                 public void onResult(List<BaseMessage> list, SendBirdException e) {
@@ -270,6 +302,11 @@ public class ChatManager extends SendBird.ChannelHandler implements SendBird.Con
     @Override
     public void onReconnectFailed() {
         Logger.i("Reconnection failed");
+    }
+
+    @Override
+    public void onDisconnected() {
+        Logger.i("Disconnected");
     }
 
     public interface ChatManagerListener {

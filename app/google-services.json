@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "607638255101",
+    "firebase_url": "https://show-569de.firebaseio.com",
+    "project_id": "show-569de",
+    "storage_bucket": "show-569de.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:607638255101:android:00fc7c9f6293bd22",
+        "android_client_info": {
+          "package_name": "ekoolab.com.show"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "607638255101-je0sisa9kpicqm18are0smb17jq7ko5m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ekoolab.com.show",
+            "certificate_hash": "7c29c2d60d612248ba6dc4dd0accf7ae05a9f786"
+          }
+        },
+        {
+          "client_id": "607638255101-2coi497jh4kpoiiq3q3tm7m2si7qookg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYmhhrugJPiHFGya0ueF3jLsCDeMGXdBE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "607638255101-2coi497jh4kpoiiq3q3tm7m2si7qookg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

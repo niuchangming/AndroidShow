@@ -54,7 +54,6 @@
     <color name="bt_bg">#ff221e</color>
     <color name="bt_gray_bg">#999999</color>
     <color name="bt_bg_unselect">#c1c1c1</color>
-    <color name="red_light">#90d33f3f</color>
     <color name="main_text_selected">#d33f3f</color>
     <color name="main_text_unselected">@android:color/background_dark</color>
     <drawable name="catalogue_selected">#ebebeb</drawable>

@@ -14,6 +14,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import ekoolab.com.show.activities.AnchorRegisterActivity;
+import ekoolab.com.show.activities.BroadcastActivity;
 import ekoolab.com.show.activities.LoginActivity;
 import ekoolab.com.show.adapters.HomeAdapter;
 import ekoolab.com.show.fragments.subhomes.LiveFragment;
@@ -21,6 +23,7 @@ import ekoolab.com.show.fragments.subhomes.MomentFragment;
 import ekoolab.com.show.fragments.subhomes.VideoFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.R;
+import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.utils.ViewHolder;
 
 import static ekoolab.com.show.utils.AuthUtils.AuthType.LOGGED;
@@ -110,6 +113,20 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener{
                 login();
                 break;
             case R.id.live_btn:
+                if (AuthUtils.getInstance(getActivity()).loginState() != LOGGED
+                        || Utils.isBlank(AuthUtils.getInstance(getActivity()).getApiToken())){
+                    login();
+                    return;
+                }
+
+                if (AuthUtils.getInstance(getActivity()).getRole() != 2) {
+                    Intent registerAnchorIntent = new Intent(getActivity(), AnchorRegisterActivity.class);
+                    startActivity(registerAnchorIntent);
+                    return;
+                }
+
+                Intent broadcastIntent = new Intent(getActivity(), BroadcastActivity.class);
+                startActivity(broadcastIntent);
                 break;
         }
     }

@@ -79,6 +79,12 @@
     <string name="un_follow">Unfollow</string>
     <string name="my_friend">Friends</string>
 
+    <!-- Broadcast -->
+    <string name="connecting">Connecting</string>
+    <string name="connected">Connected</string>
+    <string name="publishing">Start publishing!</string>
+    <string name="broadcasting">Broadcasting!</string>
+
     <!-- Chat -->
     <string name="voice">Voice</string>
     <string name="video_call">Video Call</string>
@@ -90,13 +96,23 @@
     <string name="voice_short">Time is too short</string>
     <string name="voice_failure">Recording failed</string>
     <string name="audio_permission_error">You haven\'t enabled Audio Access Permission for Show, Please enable it in the setting of your Phone</string>
+    <string name="message_coming">New Message Coming</string>
+
+
+    <string name="default_notification_channel_id" translatable="false">show_fire_base_messaging_channel</string>
+
 
     <!-- Permission -->
-    <string name="permission_storage">Please open storage permission for better experience</string>
-    <string name="permission_contact">Chat and Call your friends with Show</string>
+    <string name="permission_storage">If not allowed, you will not take photos, videos and sending voice messages</string>
+    <string name="permission_contact">Show will upload your address book to its server to help you find out which mobile contacts are using Show. Your uploaded data is only used for matching contacts and won\'t be saved for other purposes.</string>
+    <string name="permission_video_audio">If not allowed, you will not take photos for your profile and record videos.</string>
 
     <!-- Error -->
     <string name="file_not_exist">File Path doesn\'t exist.</string>
+
+
+    <string name="url_thumbnails">https://bitdash-a.akamaihd.net/content/MI201109210084_1/thumbnails/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.jpg</string>
+
 </resources>
 
 

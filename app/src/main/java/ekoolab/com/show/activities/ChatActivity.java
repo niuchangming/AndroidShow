@@ -252,8 +252,11 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
         });
 
         moreActionRecycleView.setAdapter(new ChatActionBtnAdapter(this, actions));
-
         setAudioRecordListener();
+
+        if(chatMessages.size() == 0){
+            onRefresh(refreshLayout);
+        }
     }
 
     private void setAudioRecordListener(){
@@ -612,7 +615,29 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
     @Override
     public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
         if (hasMore) {
-            ChatManager.getInstance(this).loadMoreFriendMessages(friend, chatMessages.get(0).messageId, new BaseChannel.GetMessagesHandler() {
+            if(chatMessages.size() == 0){
+                loadMoreMessages(System.currentTimeMillis());
+            }else {
+                loadMoreMessages(chatMessages.get(0).createAt);
+            }
+        }
+    }
+
+    @Override
+    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+        if (hasPrevious) {
+            if(chatMessages.size() == 0){
+                loadPreviousMessages(System.currentTimeMillis());
+            }else {
+                loadPreviousMessages(chatMessages.get(chatMessages.size() - 1).createAt);
+            }
+        }
+    }
+
+    private void loadPreviousMessages(long timestamp){
+        List<ChatMessage> prevChatMessages = getChatMessageFromDB();
+        if(prevChatMessages.size() == 0){
+            ChatManager.getInstance(this).loadPreviousFriendMessages(friend, timestamp, new BaseChannel.GetMessagesHandler() {
                 @Override
                 public void onResult(List<BaseMessage> list, SendBirdException e) {
                     if (e == null) {
@@ -622,68 +647,63 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
                                 ChatMessage chatMessage = ChatMessage.createByComingUserMessage(ChatActivity.this, userMessage);
                                 chatMessage.save(ChatActivity.this);
 
-                                chatMessages.add(0, chatMessage);
+                                prevChatMessages.add(0, chatMessage);
                             }else if (baseMessage instanceof FileMessage){
                                 FileMessage fileMessage = (FileMessage) baseMessage;
                                 ChatMessage chatMessage = ChatMessage.createByComingFileMessage(ChatActivity.this, fileMessage);
                                 chatMessage.save(ChatActivity.this);
 
-                                chatMessages.add(0, chatMessage);
+                                prevChatMessages.add(0, chatMessage);
                             }
                         }
+                        chatMessages.addAll(prevChatMessages);
                         recyclerView.getAdapter().notifyDataSetChanged();
 
                         if(list.size() < Constants.CHAT_LIMIT){
-                            hasMore = false;
-                            refreshLayout.setEnableLoadMore(false);
+                            hasPrevious = false;
+                            refreshLayout.setEnableRefresh(false);
                         }
-                        refreshLayout.finishLoadMore();
                     }
+                    refreshLayout.finishRefresh();
                 }
             });
+        }else{
+            chatMessages.addAll(prevChatMessages);
+            recyclerView.getAdapter().notifyDataSetChanged();
+            refreshLayout.finishRefresh();
         }
     }
 
-    @Override
-    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-        if (hasPrevious) {
-            List<ChatMessage> prevChatMessages = getChatMessageFromDB();
-            if(prevChatMessages.size() == 0){
-                ChatManager.getInstance(this).loadPreviousFriendMessages(friend, chatMessages.get(chatMessages.size() - 1).messageId, new BaseChannel.GetMessagesHandler() {
-                    @Override
-                    public void onResult(List<BaseMessage> list, SendBirdException e) {
-                        if (e == null) {
-                            for(BaseMessage baseMessage : list){
-                                if(baseMessage instanceof UserMessage){
-                                    UserMessage userMessage = (UserMessage) baseMessage;
-                                    ChatMessage chatMessage = ChatMessage.createByComingUserMessage(ChatActivity.this, userMessage);
-                                    chatMessage.save(ChatActivity.this);
+    private void loadMoreMessages(long timestamp){
+        ChatManager.getInstance(this).loadMoreFriendMessages(friend, timestamp, new BaseChannel.GetMessagesHandler() {
+            @Override
+            public void onResult(List<BaseMessage> list, SendBirdException e) {
+                if (e == null) {
+                    for(BaseMessage baseMessage : list){
+                        if(baseMessage instanceof UserMessage){
+                            UserMessage userMessage = (UserMessage) baseMessage;
+                            ChatMessage chatMessage = ChatMessage.createByComingUserMessage(ChatActivity.this, userMessage);
+                            chatMessage.save(ChatActivity.this);
 
-                                    chatMessages.add(chatMessage);
-                                }else if (baseMessage instanceof FileMessage){
-                                    FileMessage fileMessage = (FileMessage) baseMessage;
-                                    ChatMessage chatMessage = ChatMessage.createByComingFileMessage(ChatActivity.this, fileMessage);
-                                    chatMessage.save(ChatActivity.this);
+                            chatMessages.add(0, chatMessage);
+                        }else if (baseMessage instanceof FileMessage){
+                            FileMessage fileMessage = (FileMessage) baseMessage;
+                            ChatMessage chatMessage = ChatMessage.createByComingFileMessage(ChatActivity.this, fileMessage);
+                            chatMessage.save(ChatActivity.this);
 
-                                    chatMessages.add(chatMessage);
-                                }
-                            }
-                            recyclerView.getAdapter().notifyDataSetChanged();
-
-                            if(list.size() < Constants.CHAT_LIMIT){
-                                hasPrevious = false;
-                                refreshLayout.setEnableRefresh(false);
-                            }
-                            refreshLayout.finishRefresh();
+                            chatMessages.add(0, chatMessage);
                         }
                     }
-                });
-            }else{
-                chatMessages.addAll(prevChatMessages);
-                recyclerView.getAdapter().notifyDataSetChanged();
-                refreshLayout.finishRefresh();
+                    recyclerView.getAdapter().notifyDataSetChanged();
+
+                    if(list.size() < Constants.CHAT_LIMIT){
+                        hasMore = false;
+                        refreshLayout.setEnableLoadMore(false);
+                    }
+                }
+                refreshLayout.finishLoadMore();
             }
-        }
+        });
     }
 
     private void initActions() {

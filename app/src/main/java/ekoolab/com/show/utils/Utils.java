@@ -12,7 +12,9 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
+import com.auth0.jwt.JWTSigner;
 
 public class Utils {
 
@@ -118,5 +120,20 @@ public class Utils {
         }
 
         return mobile;
+    }
+
+    public static String getJWTString(int min){
+        final long iat = System.currentTimeMillis() / 1000L - 180;
+        final long exp = iat + min * 60L;
+
+        JWTSigner signer = new JWTSigner(Constants.TOKBOX_APP_SECRET);
+        final HashMap<String, Object> claims = new HashMap<String, Object>();
+        claims.put("iss", Constants.TOKBOX_APP_ID);
+        claims.put("exp", exp);
+        claims.put("iat", iat);
+        claims.put("ist", "project");
+        claims.put("jti", UUID.randomUUID().toString());
+
+        return signer.sign(claims);
     }
 }

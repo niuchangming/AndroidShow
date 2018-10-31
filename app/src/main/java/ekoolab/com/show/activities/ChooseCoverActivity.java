@@ -2,6 +2,7 @@ package ekoolab.com.show.activities;
 
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,7 +13,17 @@ import android.widget.Space;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.juziwl.ijkplayerlib.media.IjkVideoView;
+import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 import com.luck.picture.lib.CameraActivity;
 
 import java.util.Formatter;
@@ -24,7 +35,6 @@ import ekoolab.com.show.utils.DisplayUtils;
 import ekoolab.com.show.utils.FileUtils;
 import ekoolab.com.show.utils.UIHandler;
 import ekoolab.com.show.views.MyHorizontalScrollView;
-import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
  * @author Army
@@ -32,10 +42,10 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  * @date 2018/9/24
  * @description 选择封面
  */
-public class ChooseCoverActivity extends BaseActivity implements View.OnClickListener, MyHorizontalScrollView.OnScrollChangeListener {
+public class ChooseCoverActivity extends BaseActivity implements View.OnClickListener, MyHorizontalScrollView.OnScrollChangeListener, Player.EventListener {
     public static final int IMAGE_WIDTH = DisplayUtils.dip2px(100);
     public static final int HALF_SCREEN_WIDTH = DisplayUtils.getScreenWidth() / 2;
-    private IjkVideoView videoView;
+    private PlayerView playerView;
     private LinearLayout llScroll;
     private ImageView ivPlay, ivPlayVideo, ivFirstFrame;
     private long videoDuration = 0;
@@ -52,8 +62,6 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     protected void initData() {
-        IjkMediaPlayer.loadLibrariesOnce(null);
-        IjkMediaPlayer.native_profileBegin("libijkplayer.so");
         firstFramePath = getIntent().getStringExtra(CameraActivity.EXTRA_IMAGE_PATH);
         videoPath = getIntent().getStringExtra(CameraActivity.EXTRA_VIDEO_PATH);
         framePaths = getIntent().getStringArrayListExtra(CameraActivity.EXTRA_VIDEO_FRAME_PATHS);
@@ -70,8 +78,6 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected void initViews() {
         super.initViews();
-        videoView = findViewById(R.id.video_view);
-        videoView.setOnPreparedListener(iMediaPlayer -> iMediaPlayer.setLooping(true));
         horizontal = findViewById(R.id.horizontal);
         llScroll = findViewById(R.id.ll_scroll);
         ivFirstFrame = findViewById(R.id.iv_first_frame);
@@ -83,8 +89,28 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
         tvNext = findViewById(R.id.tv_next);
         tvNext.setOnClickListener(this);
         Glide.with(this).load(firstFramePath).into(ivFirstFrame);
-        videoView.setVideoPath(videoPath);
+
+        initPlayer();
         initScroll();
+    }
+
+    private void initPlayer(){
+        playerView = findViewById(R.id.player_view);
+        playerView.hideController();
+        playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
+
+        SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(this);
+        player.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
+        player.addListener(this);
+        player.setPlayWhenReady(true);
+        player.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT);
+        playerView.setPlayer(player);
+
+
+        DataSource.Factory mediaDataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this, "Show"));
+        MediaSource mediaSource = new ExtractorMediaSource.Factory(mediaDataSourceFactory).createMediaSource(Uri.parse(videoPath));
+        player.prepare(mediaSource, false, false);
+        startPlayer();
     }
 
     private void initScroll() {
@@ -92,7 +118,7 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
         horizontal.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 isTouchHorizontalScrollView = true;
-                videoView.pause();
+                pausePlayer();
                 isVideoPlay = false;
                 ivPlay.setSelected(false);
                 UIHandler.getInstance().removeCallbacks(mShowProgress);
@@ -122,7 +148,7 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
             ivPlayVideo.setVisibility(View.GONE);
             ivFirstFrame.setVisibility(View.GONE);
             int curPosition = (int) ((scrollX * 1f / totalFramesWidth) * videoDuration);
-            videoView.seekTo(curPosition);
+            playerView.getPlayer().seekTo(curPosition);
             currentTime.setText(stringForTime(curPosition));
         }
     }
@@ -130,25 +156,25 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
     private Runnable mShowProgress = new Runnable() {
         @Override
         public void run() {
-            int pos = setProgress();
-            if (videoView != null && isVideoPlay) {
+            long pos = setProgress();
+            if (playerView != null && isVideoPlay) {
                 UIHandler.getInstance().postDelayed(mShowProgress, 100 - (pos % 100));
             }
         }
     };
 
-    private int setProgress() {
-        if (videoView == null || !isVideoPlay) {
+    private long setProgress() {
+        if (playerView == null || !isVideoPlay) {
             return 0;
         }
-        int position = videoView.getCurrentPosition();
+        long position = playerView.getPlayer().getCurrentPosition();
         if (horizontal != null) {
             if (videoDuration > 0) {
                 float percent = position * 1f / videoDuration;
                 horizontal.scrollTo((int) (totalFramesWidth * percent), 0);
             }
         }
-        currentTime.setText(stringForTime(position));
+        currentTime.setText(stringForTime((int)position));
         return position;
     }
 
@@ -172,11 +198,11 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
         switch (v.getId()) {
             case R.id.iv_play:
                 if (ivPlay.isSelected()) {
-                    videoView.pause();
+                    pausePlayer();
                     isVideoPlay = false;
                     UIHandler.getInstance().removeCallbacks(mShowProgress);
                 } else {
-                    videoView.start();
+                    startPlayer();
                     isVideoPlay = true;
                     UIHandler.getInstance().post(mShowProgress);
                 }
@@ -184,7 +210,7 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
                 break;
             case R.id.iv_play_video:
                 isVideoPlay = true;
-                videoView.start();
+                startPlayer();
                 UIHandler.getInstance().postDelayed(() -> {
                     ivFirstFrame.setVisibility(View.GONE);
                 }, 100);
@@ -194,7 +220,7 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
                 break;
             case R.id.tv_next:
                 Intent intent = new Intent(this, PostVideoActivity.class);
-                int currentPosition = videoView.getCurrentPosition();
+                long currentPosition = playerView.getPlayer().getCurrentPosition();
                 if (currentPosition == 0) {
                     intent.putExtra(CameraActivity.EXTRA_IMAGE_PATH, firstFramePath);
                 } else if (currentPosition >= videoDuration) {
@@ -223,6 +249,15 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
         super.onBackPressed();
     }
 
+    private void pausePlayer(){
+        playerView.getPlayer().setPlayWhenReady(false);
+        playerView.getPlayer().getPlaybackState();
+    }
+    private void startPlayer(){
+        playerView.getPlayer().setPlayWhenReady(true);
+        playerView.getPlayer().getPlaybackState();
+    }
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_choose_cover;
@@ -231,8 +266,8 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected void onDestroy() {
         UIHandler.getInstance().removeCallbacks(mShowProgress);
-        videoView.stopPlayback();
-        videoView.release(true);
+        pausePlayer();
+        playerView.getPlayer().stop();
         super.onDestroy();
     }
 }

@@ -35,8 +35,17 @@ public class ApiServer {
                                                                 String url,
                                                                 HashMap<String, String> map,
                                                                 TypeToken<T> typeToken) {
+        return basePostRequest(activity, url, null, map, typeToken);
+    }
+
+    public static <T> FlowableSubscribeProxy<T> basePostRequest(BaseActivity activity,
+                                                                String url,
+                                                                HashMap<String, String> headers,
+                                                                HashMap<String, String> map,
+                                                                TypeToken<T> typeToken) {
         return Rx2AndroidNetworking
                 .post(url)
+                .addHeaders(headers)
                 .addBodyParameter(map)
                 .setPriority(Priority.MEDIUM)
                 .build()

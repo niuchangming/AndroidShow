@@ -9,6 +9,8 @@ public class Constants {
     public static final int CHAT_LIMIT = 20;
     public static final String SBD_APP_ID = "9FFC187F-1F31-46B3-A77D-BB96008A8EED";
     public static final String SBD_TOKEN = "ea52b46dfb6f05f404fc15735557b321c85efd6d";
+    public static final String TOKBOX_APP_ID = "46182032";
+    public static final String TOKBOX_APP_SECRET = "60af838781cb8441b88f1434ed213f09a4b6a72d";
 
     public static final String HOST = "http://api.ccmsshow.com:8081/api/";
     public static final String LOGIN = HOST + "user/login";
@@ -38,6 +40,7 @@ public class Constants {
     public static final String LIVE_LIST = HOST + "broadcast/getlist";
     public static final String GIFTLIST = HOST + "gift/getGifts";
     public static final String TextPost = HOST + "moment/publish";
+    public static final String BROADCAST_INFO = HOST + "broadcast/session";
 
     public static final String ROOT_PATH = Environment.getExternalStorageDirectory().getAbsolutePath()
             + File.separator + "AndroidShow" + File.separator;
