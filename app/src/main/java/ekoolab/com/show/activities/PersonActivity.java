@@ -189,8 +189,7 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                 selectImage(UserInfo.REQUEST_COVER);
                 break;
             case R.id.btn_logout:
-                AuthUtils.getInstance(getApplicationContext()).logout();
-                onBackPressed();
+                logout();
                 break;
             case R.id.title_rl:
                 onBackPressed();
@@ -311,6 +310,27 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                                 .compress(false)
                                 .selectionMedia(localMedias)
                                 .forResult(requestNum);
+                    }
+                });
+    }
+
+    private void logout(){
+        HashMap<String, String> map = new HashMap<>(1);
+        map.put("token", AuthUtils.getInstance(PersonActivity.this).getApiToken());
+        ApiServer.basePostRequest(this, Constants.LOGOUT, map,
+                new TypeToken<ResponseData<String>>() {
+                })
+                .subscribe(new NetworkSubscriber<String>() {
+                    @Override
+                    protected void onSuccess(String s) {
+                        AuthUtils.getInstance(getApplicationContext()).logout();
+                        onBackPressed();
+                    }
+
+                    @Override
+                    protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
+                        System.out.println("===errorMsg==="+errorMsg);
+                        return super.dealHttpException(code, errorMsg, e);
                     }
                 });
     }
