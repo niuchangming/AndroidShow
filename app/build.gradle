@@ -75,6 +75,7 @@ dependencies {
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.15'
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-14'
     implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-14'
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
 
     implementation 'com.google.android.exoplayer:exoplayer:2.9.0'
     implementation 'com.googlecode.libphonenumber:libphonenumber:8.9.15'
@@ -84,6 +85,7 @@ dependencies {
     implementation 'com.firebase:firebase-jobdispatcher:0.8.5'
     implementation 'com.opentok.android:opentok-android-sdk:2.14.0'
     implementation 'com.auth0:java-jwt:2.2.1'
+    implementation project(':faceunity')
 }
 
 apply plugin: 'com.google.gms.google-services'

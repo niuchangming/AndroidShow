@@ -34,14 +34,14 @@ public enum MessageType {
         for (MessageType type : MessageType.values()) {
             if (Utils.equals(type.name, strValue)) return type;
         }
-        throw new IllegalArgumentException("Type not found. Amputated?");
+        return TEXT;
     }
 
     public static MessageType getMessageType(int index) {
         for (MessageType type : MessageType.values()) {
             if (type.index == index) return type;
         }
-        throw new IllegalArgumentException("Type not found. Amputated?");
+        return TEXT;
     }
 
 

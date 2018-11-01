@@ -11,6 +11,7 @@ import com.androidnetworking.AndroidNetworking;
 import com.baidu.mapapi.CoordType;
 import com.baidu.mapapi.SDKInitializer;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.faceunity.FURenderer;
 import com.luck.picture.lib.utils.AppManager;
 import com.orhanobut.logger.LogLevel;
 import com.orhanobut.logger.Logger;
@@ -105,6 +106,7 @@ public class ShowApplication extends Application implements Thread.UncaughtExcep
             SDKInitializer.setCoordType(CoordType.BD09LL);
 
             SendBird.init(Constants.SBD_APP_ID, context);
+            FURenderer.initFURenderer(this);
         }
     }
 

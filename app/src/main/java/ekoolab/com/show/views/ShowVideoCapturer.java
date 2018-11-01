@@ -86,6 +86,10 @@ public class ShowVideoCapturer extends BaseVideoCapturer implements
 
     public ShowVideoCapturer(Context context, Publisher.CameraCaptureResolution resolution,
                                Publisher.CameraCaptureFrameRate fps) {
+        if (ShowVideoCaptureListener.class.isAssignableFrom(context.getClass())){
+            setShowVideoCaptureListener((ShowVideoCaptureListener)context);
+        }
+
         this.cameraIndex = getCameraIndexUsingFront(true);
 
         // Get current display to query UI orientation
@@ -362,16 +366,13 @@ public class ShowVideoCapturer extends BaseVideoCapturer implements
         return 0;
     }
 
-
-    /**
-     * demonstrate how to use metadata
-     */
-    public interface CustomVideoCapturerDataSource {
-        public byte[] retrieveMetadata();
+    public interface ShowVideoCaptureListener{
+        void handleFrame(byte[] data, int cameraWidth, int cameraHeight);
     }
-    private CustomVideoCapturerDataSource metadataSource;
-    public void setCustomVideoCapturerDataSource(CustomVideoCapturerDataSource metadataSource) {
-        this.metadataSource = metadataSource;
+
+    private ShowVideoCaptureListener showVideoCaptureListener;
+    public void setShowVideoCaptureListener(ShowVideoCaptureListener showVideoCaptureListener) {
+        this.showVideoCaptureListener = showVideoCaptureListener;
     }
 
     @Override
@@ -386,16 +387,12 @@ public class ShowVideoCapturer extends BaseVideoCapturer implements
                 int currentRotation = compensateCameraRotation(currentDisplay
                         .getRotation());
 
+                if (showVideoCaptureListener != null){
+                    showVideoCaptureListener.handleFrame(data, captureWidth, captureHeight);
+                }
                 // Send buffer
-                if (metadataSource != null) {
-                    byte[] framemetadata = metadataSource.retrieveMetadata();
-                    provideByteArrayFrame(data, NV21, captureWidth,
-                            captureHeight, currentRotation, isFrontCamera(), framemetadata);
-                }
-                else {
-                    provideByteArrayFrame(data, NV21, captureWidth,
-                            captureHeight, currentRotation, isFrontCamera());
-                }
+                provideByteArrayFrame(data, NV21, captureWidth,
+                        captureHeight, currentRotation, isFrontCamera());
 
                 // Give the video buffer to the camera service again.
                 camera.addCallbackBuffer(data);

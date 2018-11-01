@@ -1,1 +1,1 @@
-include ':app', ':picture_library', ':ijkplayerlib', ':library', ':ijkplayer-armv7a'
+include ':app', ':picture_library', ':faceunity', ':library'

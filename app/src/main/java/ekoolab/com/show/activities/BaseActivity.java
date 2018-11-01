@@ -59,6 +59,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                         .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             }
         }
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         initData();
         initViews();
