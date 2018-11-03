@@ -24,6 +24,8 @@
 
     </LinearLayout>
 
+    <include layout="@layout/ic_spitview_horizontal" />
+
     <LinearLayout
         android:padding="8dp"
         android:layout_marginBottom="10dp"
@@ -140,8 +142,8 @@
                     android:layout_weight="1"
                     android:id="@+id/btn_edit"
                     android:text="@string/edit"
-                    android:textColor="@color/colorBlack"
-                    android:background="@drawable/green_round_corner_bg"/>
+                    android:textColor="@color/colorGreen"
+                    android:background="@drawable/green_stroke_corner_bg"/>
                 <Button
                     android:layout_marginLeft="15dp"
                     android:gravity="center"
@@ -150,8 +152,8 @@
                     android:layout_height="35dp"
                     android:layout_weight="1"
                     android:text="@string/register"
-                    android:textColor="@color/colorBlack"
-                    android:background="@drawable/green_round_corner_bg"/>
+                    android:textColor="@color/colorGreen"
+                    android:background="@drawable/green_stroke_corner_bg"/>
             </LinearLayout>
 
         </LinearLayout>
@@ -253,7 +255,8 @@
         app:tabPaddingEnd="0dp"
         app:tabPaddingStart="0dp"
         app:tabSelectedTextColor="@color/colorBlack"
-        app:tabTextColor="@color/colorGray" />
+        app:tabTextColor="@color/colorGray"
+        app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"

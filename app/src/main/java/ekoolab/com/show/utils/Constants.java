@@ -11,8 +11,13 @@ public class Constants {
 
     public static final String HOST = "http://api.ccmsshow.com:8081/api/";
     public static final String LOGIN = HOST + "user/login";
+    public static final String LOGOUT = HOST + "user/logout";
     public static final String SIGNUP = HOST + "user/signup";
+    public static final String SIGNUP_V2 = HOST + "user/v2/signup";
     public static final String VERIFY_2FA = HOST + "user/2fa";
+    public static final String VERIFY_2FA_V2 = HOST + "user/v2/2fa";
+    public static final String RESET_PASSWORD = HOST + "user/v2/signup?resetpwd=true";
+    public static final String SAVE_PASSWORD = HOST + "user/v2/saveuser";
     public static final String GET_USERPROFILE = HOST + "user/getUserprofile";
     public static final String UPDATE_USERPROFILE = HOST + "user/updateUserprofile";
     public static final String UPDATE_BROADCASTPROFILE = HOST + "broadcast/infoUpdate";
@@ -42,6 +47,7 @@ public class Constants {
     public static final String LIVE_LIST = HOST + "broadcast/getlist";
     public static final String GIFTLIST = HOST + "gift/getGifts";
     public static final String TextPost = HOST + "moment/publish";
+    public static final int PersonActResult = 11;
 
     public static final String ROOT_PATH = Environment.getExternalStorageDirectory().getAbsolutePath()
             + File.separator + "AndroidShow" + File.separator;
@@ -50,7 +56,7 @@ public class Constants {
     public static final String IMAGE_CACHE_PATH = ROOT_PATH + "imageCache" + File.separator;
 
     public static final String[] homeIndicatorTitles = {"Moment", "Video", "Live"};
-    public static final String[] profileIndicatorTitles = {"MyVideos", "MyCollects", "MyMoments"};
+    public static final String[] profileIndicatorTitles = {"My Videos", "My Collects", "My Moments"};
 
 
     public static final class Auth {

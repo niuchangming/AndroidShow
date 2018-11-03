@@ -24,7 +24,9 @@
             android:id="@+id/male_icon"
             android:layout_width="@dimen/icon_size_24dp"
             android:layout_height="@dimen/icon_size_24dp"
-            android:layout_centerVertical="true" />
+            android:layout_centerVertical="true"
+            android:src="@mipmap/male"
+            android:tint="@color/blue"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -33,7 +35,7 @@
             android:layout_marginLeft="@dimen/layout_margin_16dp"
             android:layout_toRightOf="@id/male_icon"
             android:text="@string/male"
-            android:textColor="@color/text_color_black"
+            android:textColor="@color/blue"
             android:textSize="@dimen/text_size_16sp" />
 
         <ImageView
@@ -58,7 +60,9 @@
             android:id="@+id/female_icon"
             android:layout_width="@dimen/icon_size_24dp"
             android:layout_height="@dimen/icon_size_24dp"
-            android:layout_centerVertical="true" />
+            android:layout_centerVertical="true"
+            android:src="@mipmap/female"
+            android:tint="@color/colorRed"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -67,7 +71,7 @@
             android:layout_marginLeft="@dimen/layout_margin_16dp"
             android:layout_toRightOf="@id/female_icon"
             android:text="@string/female"
-            android:textColor="@color/text_color_black"
+            android:textColor="@color/colorRed"
             android:textSize="@dimen/text_size_16sp" />
 
         <ImageView

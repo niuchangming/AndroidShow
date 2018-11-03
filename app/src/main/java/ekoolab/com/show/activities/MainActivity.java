@@ -292,5 +292,10 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
                 startActivity(intent);
             }
         }
+        if (requestCode == Constants.PersonActResult && resultCode == RESULT_OK) {
+            if(data.getBooleanExtra("logout", false)==true){
+                tabFragment.backHome();
+            }
+        }
     }
 }

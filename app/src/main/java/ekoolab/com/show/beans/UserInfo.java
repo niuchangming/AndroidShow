@@ -16,6 +16,8 @@ public class UserInfo implements Parcelable {
     public String nickname;
     public String userCode;
     public int gender;
+    public int followerCount;
+    public int followingCount;
 
     public String region;
     public Long birthday;
@@ -61,6 +63,8 @@ public class UserInfo implements Parcelable {
         dest.writeLong(this.birthday);
         dest.writeParcelable(this.avatar, flags);
         dest.writeParcelable(this.coverImage, flags);
+        dest.writeInt(this.followerCount);
+        dest.writeInt(this.followingCount);
     }
 
     public UserInfo(){
@@ -82,6 +86,8 @@ public class UserInfo implements Parcelable {
         this.birthday = in.readLong();
         this.avatar = in.readParcelable(Photo.class.getClassLoader());
         this.coverImage = in.readParcelable(Photo.class.getClassLoader());
+        this.followerCount = in.readInt();
+        this.followingCount = in.readInt();
     }
 
     public static final Creator<UserInfo> CREATOR = new Creator<UserInfo>() {

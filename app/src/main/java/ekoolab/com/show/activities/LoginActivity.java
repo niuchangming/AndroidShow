@@ -1,5 +1,6 @@
 package ekoolab.com.show.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -9,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -38,6 +40,8 @@ import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
 import ekoolab.com.show.beans.AuthInfo;
 import ekoolab.com.show.beans.LoginData;
+import ekoolab.com.show.dialogs.ForgetPasswordDialog;
+import ekoolab.com.show.dialogs.NewPasswordDialog;
 import ekoolab.com.show.dialogs.RegisterDialog;
 import ekoolab.com.show.dialogs.VerifyDialog;
 import ekoolab.com.show.utils.AuthUtils;
@@ -45,7 +49,8 @@ import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.Utils;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener,
-        RegisterDialog.RegisterListener, VerifyDialog.VerifyListener {
+        RegisterDialog.RegisterListener, VerifyDialog.VerifyListener,
+        ForgetPasswordDialog.VerifyMobileListener, NewPasswordDialog.ChangePasswordListener {
     private final static String TAG = "LoginActivity";
     public static final String LOGIN_DATA = "login_data";
     private VideoView videoView;
@@ -54,6 +59,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private EditText passwordEt;
     private Button loginBtn;
     private Button registerBtn;
+    private Button forgetPwdBtn;
 
     private CallbackManager facebookCallbackManager;
     private LoginManager fbLoginManager;
@@ -101,6 +107,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         fbLoginLoadingBar = findViewById(R.id.fb_login_pv);
         loginLoading = findViewById(R.id.login_pv);
 
+        forgetPwdBtn = findViewById(R.id.forget_pwd_btn);
+        forgetPwdBtn.setOnClickListener(this);
+
         videoView = findViewById(R.id.login_video_view);
         videoView.setVideoURI(Uri.parse(videoPath));
         videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -140,6 +149,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             case R.id.login_btn:
                 Utils.hideInput(passwordEt);
                 mobileLogin();
+                break;
+            case R.id.forget_pwd_btn:
+                ForgetPasswordDialog forgetPasswordDialog = new ForgetPasswordDialog(this);
+                forgetPasswordDialog.backgroundColor(getResources().getColor(R.color.colorPink));
+                forgetPasswordDialog.show();
                 break;
             case R.id.register_btn:
                 RegisterDialog dialog = new RegisterDialog(this);
@@ -255,6 +269,23 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void did2FAVerify(LoginData loginData) {
+        if (loginData != null) {
+            AuthUtils.getInstance(this).saveLoginInfo(loginData);
+            broadcastLoggedIn(loginData);
+        }
+        finish();
+    }
+
+    @Override
+    public void didVerifyMobile(LoginData loginData) {
+        NewPasswordDialog newPasswordDialog = new NewPasswordDialog(this);
+        newPasswordDialog.setLoginData(loginData);
+        newPasswordDialog.backgroundColor(this.getResources().getColor(R.color.colorPink));
+        newPasswordDialog.show();
+    }
+
+    @Override
+    public void didChangePassword(LoginData loginData) {
         if (loginData != null) {
             AuthUtils.getInstance(this).saveLoginInfo(loginData);
             broadcastLoggedIn(loginData);

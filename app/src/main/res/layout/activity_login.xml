@@ -107,7 +107,7 @@
             android:textSize="15sp" />
 
         <Button
-            android:id="@+id/forgot_pwd_btn"
+            android:id="@+id/forget_pwd_btn"
             android:layout_width="match_parent"
             android:layout_height="20dp"
             android:layout_marginRight="50dp"

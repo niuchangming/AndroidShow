@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.reflect.TypeToken;
+import com.luck.picture.lib.tools.Constant;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -105,7 +106,6 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         if(AuthUtils.getInstance(getContext()).loginState() == LOGGED){
             getUserInfo();;
         } else {
-            resetView();
         }
 //        getUserInfo();
     }
@@ -192,7 +192,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
                 if(AuthUtils.getInstance(getContext()).loginState() == LOGGED){
                     intent = new Intent(getContext(), PersonActivity.class);
                     intent.putExtra("userInfo",userInfo);
-                    getContext().startActivity(intent);
+                    activity.startActivityForResult(intent, Constants.PersonActResult);
                 } else {
                     login();
                 }
@@ -257,8 +257,8 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 
         this.userInfo = userInfo;
         tv_name.setText(userInfo.nickname);
-        tv_followers.setText(Integer.toString(userInfo.followers));
-        tv_following.setText(Integer.toString(userInfo.following));
+        tv_followers.setText(Integer.toString(userInfo.followerCount));
+        tv_following.setText(Integer.toString(userInfo.followingCount));
         String gender = (userInfo.gender == 0)? "Male":"Female";
         tv_gender.setText(gender);
         tv_birthday.setText(TimeUtils.getDateStringByTimeStamp(userInfo.birthday));

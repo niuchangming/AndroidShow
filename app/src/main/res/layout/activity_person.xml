@@ -15,7 +15,7 @@
         android:orientation="vertical">
         <RelativeLayout
             android:id="@+id/title_rl"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackground"
             android:minHeight="@dimen/item_height_48dp"
@@ -30,12 +30,12 @@
                 android:src="@mipmap/btn_back" />
 
             <TextView
+                android:visibility="visible"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/layout_margin_8dp"
-                android:layout_toRightOf="@id/back_icon"
-                android:text="@string/name"
+                android:layout_centerHorizontal="true"
+                android:text="@string/settings"
                 android:textColor="@color/text_color_black"
                 android:textSize="@dimen/text_size_16sp" />
 
@@ -51,13 +51,13 @@
             <com.facebook.drawee.view.SimpleDraweeView xmlns:fresco="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/cover_image"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:minHeight="180dp"
+                android:layout_height="200dp"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
+                android:scaleType="centerCrop"
                 android:src="@mipmap/default_avatar"
                 android:visibility="visible"
-                fresco:actualImageScaleType="focusCrop"
+                app:layout_constraintDimensionRatio="1:1"
                 fresco:placeholderImage="@mipmap/default_avatar" />
 
                 <com.facebook.drawee.view.SimpleDraweeView
@@ -114,7 +114,8 @@
                 android:layout_width="@dimen/icon_size_24dp"
                 android:layout_height="@dimen/icon_size_24dp"
                 android:layout_centerVertical="true"
-                android:src="@mipmap/ic_launcher" />
+                android:src="@mipmap/namecard"
+                android:tint="@color/colorBlack"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -162,7 +163,8 @@
                 android:layout_width="@dimen/icon_size_24dp"
                 android:layout_height="@dimen/icon_size_24dp"
                 android:layout_centerVertical="true"
-                android:src="@mipmap/ic_launcher" />
+                android:src="@mipmap/comedy"
+                android:tint="@color/colorBlack"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -208,7 +210,8 @@
                 android:layout_width="@dimen/icon_size_24dp"
                 android:layout_height="@dimen/icon_size_24dp"
                 android:layout_centerVertical="true"
-                android:src="@mipmap/ic_launcher" />
+                android:src="@mipmap/gender"
+                android:tint="@color/colorBlack" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -254,7 +257,8 @@
                 android:layout_width="@dimen/icon_size_24dp"
                 android:layout_height="@dimen/icon_size_24dp"
                 android:layout_centerVertical="true"
-                android:src="@mipmap/ic_launcher" />
+                android:src="@mipmap/birthday"
+                android:tint="@color/colorBlack" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -301,7 +305,8 @@
                 android:layout_width="@dimen/icon_size_24dp"
                 android:layout_height="@dimen/icon_size_24dp"
                 android:layout_centerVertical="true"
-                android:src="@mipmap/ic_launcher" />
+                android:src="@mipmap/whatup"
+                android:tint="@color/colorBlack" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -345,7 +350,8 @@
                 android:layout_width="@dimen/icon_size_24dp"
                 android:layout_height="@dimen/icon_size_24dp"
                 android:layout_centerVertical="true"
-                android:src="@mipmap/ic_launcher" />
+                android:src="@mipmap/region"
+                android:tint="@color/colorBlack" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -368,6 +374,147 @@
                 android:textSize="@dimen/text_size_16sp" />
             <ImageView
                 android:id="@+id/region_right_icon"
+                android:layout_width="@dimen/icon_size_16dp"
+                android:layout_height="@dimen/icon_size_16dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/right_arrow_icon" />
+        </RelativeLayout>
+
+        <include layout="@layout/ic_spitview_horizontal" />
+
+        <RelativeLayout
+            android:id="@+id/hobby_rl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
+            android:minHeight="@dimen/item_height_48dp"
+            android:paddingLeft="@dimen/layout_padding_16dp"
+            android:paddingRight="@dimen/layout_padding_16dp">
+
+            <ImageView
+                android:id="@+id/hobby_icon"
+                android:layout_width="@dimen/icon_size_24dp"
+                android:layout_height="@dimen/icon_size_24dp"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/hobby"
+                android:tint="@color/colorBlack" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/layout_margin_16dp"
+                android:layout_toRightOf="@id/hobby_icon"
+                android:text="@string/hobby"
+                android:textColor="@color/text_color_black"
+                android:textSize="@dimen/text_size_16sp" />
+            <TextView
+                android:id="@+id/tv_hobby"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/hobby_right_icon"
+                android:layout_marginLeft="@dimen/layout_margin_2dp"
+                android:text="@string/hobby"
+                android:textColor="@color/text_color_gray"
+                android:textSize="@dimen/text_size_16sp" />
+            <ImageView
+                android:id="@+id/hobby_right_icon"
+                android:layout_width="@dimen/icon_size_16dp"
+                android:layout_height="@dimen/icon_size_16dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/right_arrow_icon" />
+        </RelativeLayout>
+
+        <include layout="@layout/ic_spitview_horizontal" />
+
+        <RelativeLayout
+            android:id="@+id/category_rl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
+            android:minHeight="@dimen/item_height_48dp"
+            android:paddingLeft="@dimen/layout_padding_16dp"
+            android:paddingRight="@dimen/layout_padding_16dp">
+
+            <ImageView
+                android:id="@+id/category_icon"
+                android:layout_width="@dimen/icon_size_24dp"
+                android:layout_height="@dimen/icon_size_24dp"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/hobby"
+                android:tint="@color/colorBlack" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/layout_margin_16dp"
+                android:layout_toRightOf="@id/category_icon"
+                android:text="@string/category"
+                android:textColor="@color/text_color_black"
+                android:textSize="@dimen/text_size_16sp" />
+            <TextView
+                android:id="@+id/tv_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/category_right_icon"
+                android:layout_marginLeft="@dimen/layout_margin_2dp"
+                android:text="@string/category"
+                android:textColor="@color/text_color_gray"
+                android:textSize="@dimen/text_size_16sp" />
+            <ImageView
+                android:id="@+id/category_right_icon"
+                android:layout_width="@dimen/icon_size_16dp"
+                android:layout_height="@dimen/icon_size_16dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/right_arrow_icon" />
+        </RelativeLayout>
+
+        <include layout="@layout/ic_spitview_horizontal" />
+
+        <RelativeLayout
+            android:id="@+id/description_rl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
+            android:minHeight="@dimen/item_height_48dp"
+            android:paddingLeft="@dimen/layout_padding_16dp"
+            android:paddingRight="@dimen/layout_padding_16dp">
+
+            <ImageView
+                android:id="@+id/description_icon"
+                android:layout_width="@dimen/icon_size_24dp"
+                android:layout_height="@dimen/icon_size_24dp"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/resume"
+                android:tint="@color/colorBlack" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/layout_margin_16dp"
+                android:layout_toRightOf="@id/description_icon"
+                android:text="@string/description"
+                android:textColor="@color/text_color_black"
+                android:textSize="@dimen/text_size_16sp" />
+            <TextView
+                android:id="@+id/tv_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/description_right_icon"
+                android:layout_marginLeft="@dimen/layout_margin_2dp"
+                android:text="@string/description"
+                android:textColor="@color/text_color_gray"
+                android:textSize="@dimen/text_size_16sp" />
+            <ImageView
+                android:id="@+id/description_right_icon"
                 android:layout_width="@dimen/icon_size_16dp"
                 android:layout_height="@dimen/icon_size_16dp"
                 android:layout_alignParentRight="true"

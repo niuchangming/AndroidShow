@@ -21,6 +21,9 @@
     <string name="password_prompt">Password:</string>
     <string name="register">Register</string>
     <string name="forget_password">Forget Password?</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_new_password">Confirm New Password</string>
+    <string name="reset_password">Reset Password</string>
     <string name="other_login">Or Login With</string>
     <string name="mobile_hint">Your mobile number</string>
     <string name="password_hint">Your password</string>
@@ -28,7 +31,9 @@
     <string name="cancel">Cancel</string>
     <string name="verification_2fa">2FA Verification</string>
     <string name="verify_code">4 digital code:</string>
+    <string name="verify_hint">Verify code</string>
     <string name="verify_count_down">Verify(%1$s)</string>
+    <string name="verify">Verify</string>
     <string name="resend">Resend</string>
     <string name="login_cancel">Login Cancelled!</string>
     <string name="name">Name</string>
@@ -37,6 +42,9 @@
     <string name="birthday">Birthday</string>
     <string name="whatsup">Whats up</string>
     <string name="region">Region</string>
+    <string name="hobby">Hobby</string>
+    <string name="category">Category</string>
+    <string name="description">Description</string>
     <string name="edit_cover">Edit Cover</string>
     <string name="edit">Edit</string>
     <string name="save">Save</string>
