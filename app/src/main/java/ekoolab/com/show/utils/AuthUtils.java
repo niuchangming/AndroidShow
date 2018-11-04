@@ -62,6 +62,11 @@ public class AuthUtils {
         return sp.getInt(Constants.Auth.ROLE, 0);
     }
 
+    public String getChannelUrl(){
+        SharedPreferences sp = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+        return sp.getString(Constants.Auth.CHANNEL_URL, "");
+    }
+
     public String getTempUserId(){
         SharedPreferences sp = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
         String tempUserId = sp.getString(Constants.Auth.TEMP_USER_ID, "");
@@ -71,6 +76,7 @@ public class AuthUtils {
 
             SharedPreferences.Editor spEditor = sp.edit();
             spEditor.putString(Constants.Auth.TEMP_USER_ID, tempUserId);
+            spEditor.apply();
         }
 
         return tempUserId;
@@ -87,6 +93,18 @@ public class AuthUtils {
         spEditor.putString(Constants.Auth.LOGIN_TYPE, data.accountType);
         spEditor.putString(Constants.Auth.MOBILE, data.mobile);
         spEditor.putInt(Constants.Auth.DIAL_NO, data.countryCode);
+        spEditor.apply();
+    }
+
+    public void saveChannelUrl(String channelUrl){
+        SharedPreferences.Editor spEditor = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE).edit();
+        spEditor.putString(Constants.Auth.CHANNEL_URL, channelUrl);
+        spEditor.apply();
+    }
+
+    public void logout(){
+        SharedPreferences.Editor spEditor = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE).edit();
+        spEditor.clear();
         spEditor.apply();
     }
 

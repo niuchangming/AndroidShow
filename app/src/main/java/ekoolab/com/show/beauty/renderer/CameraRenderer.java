@@ -12,6 +12,8 @@ import android.support.v7.app.AlertDialog;
 import com.faceunity.gles.ProgramTexture2d;
 import com.faceunity.gles.ProgramTextureOES;
 import com.faceunity.gles.core.GlUtil;
+import com.luck.picture.lib.cameralibrary.CameraInterface;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -34,7 +36,7 @@ public class CameraRenderer implements Camera.PreviewCallback, GLSurfaceView.Ren
     public final static String TAG = CameraRenderer.class.getSimpleName();
 
     private Activity mActivity;
-//    private GLSurfaceView mGLSurfaceView;
+    private GLSurfaceView mGLSurfaceView;
 
     public interface OnRendererStatusListener {
 
@@ -77,13 +79,13 @@ public class CameraRenderer implements Camera.PreviewCallback, GLSurfaceView.Ren
 
     public CameraRenderer(Activity activity, GLSurfaceView GLSurfaceView, OnRendererStatusListener onCameraRendererStatusListener) {
         mActivity = activity;
-//        mGLSurfaceView = GLSurfaceView;
+        mGLSurfaceView = GLSurfaceView;
         mOnCameraRendererStatusListener = onCameraRendererStatusListener;
         mFPSUtil = new FPSUtil();
     }
 
     public void onCreate() {
-//        mGLSurfaceView.onResume();
+        mGLSurfaceView.onResume();
     }
 
     public void onResume() {
@@ -96,26 +98,26 @@ public class CameraRenderer implements Camera.PreviewCallback, GLSurfaceView.Ren
 
     public void onDestroy() {
         final CountDownLatch count = new CountDownLatch(1);
-//        mGLSurfaceView.queueEvent(new Runnable() {
-//            @Override
-//            public void run() {
-//                onSurfaceDestroy();
-//                count.countDown();
-//            }
-//        });
+        mGLSurfaceView.queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                onSurfaceDestroy();
+                count.countDown();
+            }
+        });
         try {
             count.await(1, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-//        mGLSurfaceView.onPause();
+        mGLSurfaceView.onPause();
     }
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
         mCameraNV21Byte = data;
         mCamera.addCallbackBuffer(data);
-//        mGLSurfaceView.requestRender();
+        mGLSurfaceView.requestRender();
     }
 
     @Override
@@ -157,7 +159,7 @@ public class CameraRenderer implements Camera.PreviewCallback, GLSurfaceView.Ren
         }
 
         mFPSUtil.limit();
-//        mGLSurfaceView.requestRender();
+        mGLSurfaceView.requestRender();
     }
 
     private void onSurfaceDestroy() {
@@ -294,5 +296,9 @@ public class CameraRenderer implements Camera.PreviewCallback, GLSurfaceView.Ren
 
     public int getCameraHeight() {
         return mCameraHeight;
+    }
+
+    public Camera getmCamera() {
+        return mCamera;
     }
 }

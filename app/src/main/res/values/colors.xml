@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">@color/colorWhite</color>
-    <color name="colorPrimaryDark">@color/colorLightGray</color>
+    <color name="colorPrimaryDark">@color/colorSuperLightGray</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorSuperLightGray">#F0F0F0</color>
@@ -18,7 +18,10 @@
     <color name="lock_bg">#cc000000</color>
     <color name="colorBlue">#35A3FB</color>
     <color name="colorBlueLight">#71BAF2</color>
+    <color name="colorPrimaryBlue">#161723</color>
+    <color name="colorDarkBlue">#161824</color>
     <color name="colorPurple">#774df2</color>
+    <color name="colorBlackShadow">#7F333333</color>
 
 
 

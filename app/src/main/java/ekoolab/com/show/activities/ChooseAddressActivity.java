@@ -97,13 +97,15 @@ public class ChooseAddressActivity extends BaseActivity implements View.OnClickL
             }
         }
     };
-    private BitmapDescriptor bdA = BitmapDescriptorFactory.fromResource(R.mipmap.icon_gcoding);
+    private BitmapDescriptor bdA = null;
     private PoiSearch mPoiSearch;
     private BaseQuickAdapter<PoiResultData, BaseViewHolder> adapter;
     private List<PoiResultData> resultDataList = new ArrayList<>();
 
     @Override
     protected void initData() {
+        bdA = BitmapDescriptorFactory.fromResource(R.mipmap.icon_gcoding);
+
         mLocationClient = new LocationClient(getApplicationContext());
         mLocationClient.registerLocationListener(myListener);
         LocationClientOption option = new LocationClientOption();

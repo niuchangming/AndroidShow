@@ -22,8 +22,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class ShowVideoCapturer extends BaseVideoCapturer implements
-        Camera.PreviewCallback,
+import static com.opentok.android.Publisher.CameraCaptureFrameRate.FPS_30;
+import static com.opentok.android.Publisher.CameraCaptureResolution.MEDIUM;
+
+public class ShowVideoCapturer extends BaseVideoCapturer implements Camera.PreviewCallback,
         BaseVideoCapturer.CaptureSwitch{
 
     private static final String LOG_TAG = ShowVideoCapturer.class.getSimpleName();
@@ -53,10 +55,8 @@ public class ShowVideoCapturer extends BaseVideoCapturer implements
     private boolean blackFrames = false;
     private boolean isCapturePaused = false;
 
-    private Publisher.CameraCaptureResolution preferredResolution =
-            Publisher.CameraCaptureResolution.MEDIUM;
-    private Publisher.CameraCaptureFrameRate preferredFramerate =
-            Publisher.CameraCaptureFrameRate.FPS_30;
+    private Publisher.CameraCaptureResolution preferredResolution = MEDIUM;
+    private Publisher.CameraCaptureFrameRate preferredFramerate = FPS_30;
 
     //default case
     int fps = 1;

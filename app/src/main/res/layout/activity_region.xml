@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,6 +8,119 @@
     android:background="@color/appBackground"
     tools:context=".activities.RegionActivity">
 
-    <include layout="@layout/toolbar_layout" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <include layout="@layout/toolbar_layout" />
 
-</android.support.constraint.ConstraintLayout>
+        <RelativeLayout
+            android:id="@+id/china_rl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorWhite"
+            android:minHeight="@dimen/item_height_48dp"
+            android:paddingLeft="@dimen/layout_padding_16dp"
+            android:paddingRight="@dimen/layout_padding_16dp">
+
+            <ImageView
+                android:id="@+id/flag_china"
+                android:visibility="gone"
+                android:layout_width="@dimen/icon_size_24dp"
+                android:layout_height="@dimen/icon_size_24dp"
+                android:layout_centerVertical="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/layout_margin_16dp"
+                android:layout_toRightOf="@id/flag_china"
+                android:text="@string/country_china"
+                android:textColor="@color/text_color_black"
+                android:textSize="@dimen/text_size_16sp" />
+
+            <ImageView
+                android:id="@+id/china_right_icon"
+                android:layout_width="@dimen/icon_size_16dp"
+                android:layout_height="@dimen/icon_size_16dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/record_ok"
+                android:visibility="invisible"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/singapore_rl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorWhite"
+            android:minHeight="@dimen/item_height_48dp"
+            android:paddingLeft="@dimen/layout_padding_16dp"
+            android:paddingRight="@dimen/layout_padding_16dp">
+
+            <ImageView
+                android:id="@+id/flag_singapore"
+                android:visibility="gone"
+                android:layout_width="@dimen/icon_size_24dp"
+                android:layout_height="@dimen/icon_size_24dp"
+                android:layout_centerVertical="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/layout_margin_16dp"
+                android:layout_toRightOf="@id/flag_singapore"
+                android:text="@string/country_singapore"
+                android:textColor="@color/text_color_black"
+                android:textSize="@dimen/text_size_16sp" />
+
+            <ImageView
+                android:id="@+id/singapore_right_icon"
+                android:layout_width="@dimen/icon_size_16dp"
+                android:layout_height="@dimen/icon_size_16dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/record_ok"
+                android:visibility="invisible"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/malaysia_rl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorWhite"
+            android:minHeight="@dimen/item_height_48dp"
+            android:paddingLeft="@dimen/layout_padding_16dp"
+            android:paddingRight="@dimen/layout_padding_16dp">
+
+            <ImageView
+                android:id="@+id/flag_malaysia"
+                android:visibility="gone"
+                android:layout_width="@dimen/icon_size_24dp"
+                android:layout_height="@dimen/icon_size_24dp"
+                android:layout_centerVertical="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/layout_margin_16dp"
+                android:layout_toRightOf="@id/flag_malaysia"
+                android:text="@string/country_malaysia"
+                android:textColor="@color/text_color_black"
+                android:textSize="@dimen/text_size_16sp" />
+
+            <ImageView
+                android:id="@+id/malaysia_right_icon"
+                android:layout_width="@dimen/icon_size_16dp"
+                android:layout_height="@dimen/icon_size_16dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/record_ok"
+                android:visibility="invisible"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+
+
+</ScrollView>

@@ -151,6 +151,16 @@ public class ApiServer {
 
     }
 
+    public static <T> FlowableSubscribeProxy<T> baseGetRequest(BaseActivity activity, String url, TypeToken<T> typeToken){
+        return Rx2AndroidNetworking
+                .get(url)
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getParseFlowable(typeToken)
+                .compose(RxUtils.rxSchedulerHelper())
+                .as(activity.autoDisposable());
+    }
+
     public interface FileDownloadListener{
         void onSucceeded(File file);
         void onProgressing(float percentage);

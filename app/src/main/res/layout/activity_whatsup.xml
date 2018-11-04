@@ -12,19 +12,19 @@
     <include layout="@layout/toolbar_layout" />
 
     <EditText
-        android:minHeight="100dp"
-        android:id="@+id/et_name"
+        android:id="@+id/et_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textCursorDrawable="@null"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
         android:layout_marginTop="2dp"
-        android:textColor="@color/colorBlack"
-        android:textSize="@dimen/text_size_15sp"
         android:hint="@string/whatsupinput"
+        android:minHeight="100dp"
+        android:paddingLeft="8dp"
+        android:paddingTop="12dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="12dp"
+        android:textColor="@color/colorBlack"
+        android:textCursorDrawable="@null"
+        android:textSize="@dimen/text_size_15sp"
         android:background="@drawable/bg_white_round_corner"/>
 
 </LinearLayout>

@@ -132,25 +132,43 @@ public class BeautyControlView extends FrameLayout {
     }
 
     private void initViewBottomRadio() {
-        mBottomCheckGroup = (CheckGroup) findViewById(R.id.beauty_radio_group);
+        mBottomCheckGroup = findViewById(R.id.beauty_radio_group);
         mBottomCheckGroup.setOnCheckedChangeListener(new CheckGroup.OnCheckedChangeListener() {
-            int checkedId_old = View.NO_ID;
 
             @Override
             public void onCheckedChanged(CheckGroup group, int checkedId) {
-                clickViewBottomRadio(checkedId);
-                if ((checkedId == View.NO_ID || checkedId == checkedId_old) && checkedId_old != View.NO_ID) {
-                    int endHeight = (int) getResources().getDimension(R.dimen.x98);
-                    int startHeight = getHeight();
-                    changeBottomLayoutAnimator(startHeight, endHeight);
-                } else if (checkedId != View.NO_ID && checkedId_old == View.NO_ID) {
-                    int startHeight = (int) getResources().getDimension(R.dimen.x98);
-                    int endHeight = (int) getResources().getDimension(R.dimen.x366);
-                    changeBottomLayoutAnimator(startHeight, endHeight);
+                if(checkedId != View.NO_ID){
+                    clickViewBottomRadio(checkedId);
+                    currentCheckId = checkedId;
                 }
-                checkedId_old = checkedId;
+
+                mBottomCheckGroup.setCheckedStateForView(R.id.beauty_radio_skin_beauty, false);
+                mBottomCheckGroup.setCheckedStateForView(R.id.beauty_radio_face_shape, false);
+                mBottomCheckGroup.setCheckedStateForView(R.id.beauty_radio_beauty_filter, false);
+                mBottomCheckGroup.setCheckedStateForView(R.id.beauty_radio_filter, false);
+
+                mBottomCheckGroup.setCheckedStateForView(currentCheckId, true);
+                mBottomCheckGroup.setmCheckedId(currentCheckId);
             }
         });
+    }
+
+    public void hide(){
+        int endHeight = 0;
+        int startHeight = getHeight();
+        changeBottomLayoutAnimator(startHeight, endHeight);
+    }
+
+    private int currentCheckId = View.NO_ID;
+    public void show(){
+        if(currentCheckId == View.NO_ID){
+            currentCheckId = R.id.beauty_radio_skin_beauty;
+        }
+        clickViewBottomRadio(currentCheckId);
+        mBottomCheckGroup.check(currentCheckId);
+        int startHeight = 0;
+        int endHeight = (int) getResources().getDimension(R.dimen.x366);
+        changeBottomLayoutAnimator(startHeight, endHeight);
     }
 
     private void initViewSkinBeauty() {
@@ -173,7 +191,6 @@ public class BeautyControlView extends FrameLayout {
             @Override
             public void onOpenChanged(BeautyBox beautyBox, boolean isOpen) {
                 sSkinDetect = isOpen ? 1 : 0;
-                setDescriptionShowStr(sSkinDetect == 0 ? "精准美肤 关闭" : "精准美肤 开启");
                 onChangeFaceBeautyLevel(R.id.beauty_box_skin_detect);
             }
         });
@@ -182,7 +199,6 @@ public class BeautyControlView extends FrameLayout {
             @Override
             public void onDoubleChanged(BeautyBox beautyBox, boolean isDouble) {
                 sHeavyBlur = isDouble ? 1 : 0;
-                setDescriptionShowStr(sHeavyBlur == 0 ? "当前为 清晰磨皮 模式" : "当前为 朦胧磨皮 模式");
                 seekToSeekBar(R.id.beauty_box_heavy_blur);
                 onChangeFaceBeautyLevel(R.id.beauty_box_heavy_blur);
                 if (mOnFUControlListener != null)
@@ -546,7 +562,7 @@ public class BeautyControlView extends FrameLayout {
 
     private ValueAnimator mBottomLayoutAnimator;
 
-    private void changeBottomLayoutAnimator(final int startHeight, final int endHeight) {
+    public void changeBottomLayoutAnimator(final int startHeight, final int endHeight) {
         if (mBottomLayoutAnimator != null && mBottomLayoutAnimator.isRunning()) {
             mBottomLayoutAnimator.end();
         }
@@ -572,28 +588,6 @@ public class BeautyControlView extends FrameLayout {
         mBottomCheckGroup.check(View.NO_ID);
     }
 
-    public interface OnDescriptionShowListener {
-        void onDescriptionShowListener(String str);
-    }
-
-    public void setOnDescriptionShowListener(OnDescriptionShowListener onDescriptionShowListener) {
-        mOnDescriptionShowListener = onDescriptionShowListener;
-    }
-
-    private OnDescriptionShowListener mOnDescriptionShowListener;
-
-    private void setDescriptionShowStr(String str) {
-        if (mOnDescriptionShowListener != null)
-            mOnDescriptionShowListener.onDescriptionShowListener(str);
-    }
-
-    public void setHeightPerformance(boolean isHP) {
-        isHeightPerformance = isHP;
-        updateViewSkinBeauty();
-        updateViewFaceShape();
-        mSkinBeautyBoxGroup.check(View.NO_ID);
-        mFaceShapeBeautyBoxGroup.check(View.NO_ID);
-    }
 
     public float getFilterLevel(String filterName) {
         Float level = sFilterLevel.get(sStrFilterLevel + filterName);

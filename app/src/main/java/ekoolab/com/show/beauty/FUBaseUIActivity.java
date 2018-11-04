@@ -9,6 +9,7 @@ import android.opengl.GLSurfaceView;
 import android.view.View;
 import android.view.ViewStub;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 
 import com.faceunity.encoder.MediaVideoEncoder;
 import com.santalu.emptyview.EmptyView;
@@ -25,13 +26,16 @@ public abstract class FUBaseUIActivity extends BaseActivity implements View.OnCl
         SensorEventListener {
 
     protected EmptyView emptyView;
-//    protected FrameLayout publisherContainer;
-    protected GLSurfaceView mGLSurfaceView;
-    protected CameraRenderer mCameraRenderer;
-    private SensorManager mSensorManager;
-    private Sensor mSensor;
+    protected FrameLayout publisherContainer;
+    protected ImageButton flipBtn;
+    protected ImageButton dismissBtn;
+    protected ImageButton beautyBtn;
+    protected ImageButton commentBtn;
 
-    protected ViewStub mBottomViewStub;
+//    protected GLSurfaceView mGLSurfaceView;
+//    protected CameraRenderer mCameraRenderer;
+//    private SensorManager mSensorManager;
+//    private Sensor mSensor;
 
     private long mStartTime = 0;
     private MediaVideoEncoder mVideoEncoder;
@@ -50,26 +54,36 @@ public abstract class FUBaseUIActivity extends BaseActivity implements View.OnCl
     protected void initViews() {
         super.initViews();
         emptyView = findViewById(R.id.empty_view);
-//        publisherContainer = findViewById(R.id.publisher_container);
-        mGLSurfaceView = findViewById(R.id.fu_base_gl_surface);
-        mGLSurfaceView.setEGLContextClientVersion(2);
-        mCameraRenderer = new CameraRenderer(this, mGLSurfaceView, this);
-        mGLSurfaceView.setRenderer(mCameraRenderer);
-        mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+        publisherContainer = findViewById(R.id.publisher_container);
 
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        flipBtn = findViewById(R.id.camera_flip_btn);
+        flipBtn.setOnClickListener(this);
 
-        mBottomViewStub = findViewById(R.id.fu_base_bottom);
-        mBottomViewStub.setInflatedId(R.id.fu_base_bottom);
+        dismissBtn = findViewById(R.id.dismiss_btn);
+        dismissBtn.setOnClickListener(this);
+
+        beautyBtn = findViewById(R.id.beauty_btn);
+        beautyBtn.setOnClickListener(this);
+
+        commentBtn = findViewById(R.id.comment_btn);
+        commentBtn.setOnClickListener(this);
+
+//        mGLSurfaceView = findViewById(R.id.fu_base_gl_surface);
+//        mGLSurfaceView.setEGLContextClientVersion(2);
+//        mCameraRenderer = new CameraRenderer(this, mGLSurfaceView, this);
+//        mGLSurfaceView.setRenderer(mCameraRenderer);
+//        mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+//
+//        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+//        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mCameraRenderer.onCreate();
-        mCameraRenderer.onResume();
-        mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+//        mCameraRenderer.onCreate();
+//        mCameraRenderer.onResume();
+//        mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
@@ -95,20 +109,9 @@ public abstract class FUBaseUIActivity extends BaseActivity implements View.OnCl
 
     }
 
-    protected void sendRecordingData(int texId, final float[] tex_matrix, final long timeStamp) {
-        if (mVideoEncoder != null) {
-            mVideoEncoder.frameAvailableSoon(texId, tex_matrix);
-            if (mStartTime == 0) mStartTime = timeStamp;
-        }
-    }
-
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.fu_base_camera_change:
-                mCameraRenderer.changeCamera();
-                break;
-        }
+
     }
 
     @Override
@@ -139,8 +142,8 @@ public abstract class FUBaseUIActivity extends BaseActivity implements View.OnCl
     @Override
     protected void onPause() {
         super.onPause();
-        mSensorManager.unregisterListener(this);
-        mCameraRenderer.onPause();
-        mCameraRenderer.onDestroy();
+//        mSensorManager.unregisterListener(this);
+//        mCameraRenderer.onPause();
+//        mCameraRenderer.onDestroy();
     }
 }

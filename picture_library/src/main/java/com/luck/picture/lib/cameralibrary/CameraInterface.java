@@ -543,12 +543,6 @@ public class CameraInterface implements Camera.PreviewCallback {
         } else {
             mediaRecorder.setVideoSize(videoSize.width, videoSize.height);
         }
-//        if (SELECTED_CAMERA == CAMERA_FRONT_POSITION) {
-//            mediaRecorder.setOrientationHint(270);
-//        } else {
-//            mediaRecorder.setOrientationHint(recordAngle);
-////            mediaRecorder.setOrientationHint(90);
-//        }
 
         if (SELECTED_CAMERA == CAMERA_FRONT_POSITION) {
             //手机预览倒立的处理

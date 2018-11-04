@@ -2,9 +2,17 @@ package ekoolab.com.show.activities;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.Build;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,37 +36,69 @@ import ekoolab.com.show.utils.ToastUtils;
 import ekoolab.com.show.views.EasyPopup;
 
 /**
- * @author Army
+ * @author Changming Niu
  * @version V_1.0.0
  * @date 2018/9/22
  * @description 发布视频
  */
 public class PostVideoActivity extends BaseActivity implements View.OnClickListener {
-    private TextView tvCancel;
-    private ImageView ivLeft;
-    private TextView tvName;
-    private TextView tvSave;
-    private ImageView ivRight;
+    private Toolbar mTopToolbar;
     private EditText etContent;
-    private TextView tvAtFriend;
+    private Button atFriendBtn;
+    private ImageButton uploadingBtn;
+    private ProgressView uploadingBar;
     private ImageView ivVideoImage;
     private TextView tvLocation;
     private TextView tvLocationLabel;
     private TextView tvPermission;
-    private View toolbarTitle;
     private EasyPopup easyPopup;
     public static final int REQUEST_CHOOSE_ADDRESS = 223;
     private double lat, lnt;
     private String videoPath, imagePath;
-    private ProgressView progressView;
 
+    @Override
+    protected void initViews() {
+        super.initViews();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(this.getResources().getColor(R.color.colorPrimaryBlue));
+        }
+
+        uploadingBtn = findViewById(R.id.upload_btn);
+        uploadingBtn.setOnClickListener(this);
+        uploadingBar = findViewById(R.id.progress_pv);
+
+        etContent = findViewById(R.id.et_content);
+        atFriendBtn = findViewById(R.id.at_friend_btn);
+        atFriendBtn.setOnClickListener(this);
+
+        ivVideoImage = findViewById(R.id.iv_video_image);
+        tvLocation = findViewById(R.id.tv_location);
+        tvLocation.setOnClickListener(this);
+        tvLocationLabel = findViewById(R.id.tv_location_label);
+        tvLocationLabel.setOnClickListener(this);
+        tvPermission = findViewById(R.id.tv_permission);
+        tvPermission.setOnClickListener(this);
+
+        videoPath = getIntent().getStringExtra(ChooseCoverActivity.VIDEO_PATH);
+        imagePath = getIntent().getStringExtra(ChooseCoverActivity.FIRST_FRAME_PATH);
+        Glide.with(this).load(imagePath).into(ivVideoImage);
+
+        mTopToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mTopToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle(getString(R.string.post_video));
+    }
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_left:
                 onBackPressed();
                 break;
-            case R.id.iv_right:
+            case R.id.upload_btn:
                 publishVideo();
                 break;
             case R.id.tv_permission:
@@ -99,9 +139,9 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void publishVideo() {
-        ivRight.setVisibility(View.GONE);
-        progressView.setVisibility(View.VISIBLE);
-        progressView.start();
+        uploadingBtn.setVisibility(View.GONE);
+        uploadingBar.setVisibility(View.VISIBLE);
+        uploadingBar.start();
         setViewClickable(false);
         Map<String, File> fileMap = new HashMap<>(2);
         fileMap.put("preview", new File(imagePath));
@@ -125,10 +165,10 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
 
                     @Override
                     protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
-                        ivRight.setVisibility(View.VISIBLE);
+                        uploadingBtn.setVisibility(View.VISIBLE);
                         setViewClickable(true);
-                        progressView.setVisibility(View.GONE);
-                        progressView.stop();
+                        uploadingBar.setVisibility(View.GONE);
+                        uploadingBar.stop();
                         return super.dealHttpException(code, errorMsg, e);
                     }
                 });
@@ -142,39 +182,6 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
         tvPermission.setClickable(clickable);
     }
 
-    @Override
-    protected void initViews() {
-        super.initViews();
-        toolbarTitle = findViewById(R.id.toolbar_title);
-        toolbarTitle.setBackgroundResource(R.color.colorBlack);
-        tvCancel = findViewById(R.id.tv_cancel);
-        tvCancel.setVisibility(View.GONE);
-        ivLeft = findViewById(R.id.iv_left);
-        ivLeft.setVisibility(View.VISIBLE);
-        ivLeft.setOnClickListener(this);
-        tvName = findViewById(R.id.tv_name);
-        tvName.setText(R.string.post);
-        tvName.setTextColor(Color.WHITE);
-        tvSave = findViewById(R.id.tv_save);
-        tvSave.setVisibility(View.GONE);
-        ivRight = findViewById(R.id.iv_right);
-        ivRight.setVisibility(View.VISIBLE);
-        ivRight.setOnClickListener(this);
-        progressView = findViewById(R.id.progress_bar);
-        etContent = findViewById(R.id.et_content);
-        tvAtFriend = findViewById(R.id.tv_at_friend);
-        ivVideoImage = findViewById(R.id.iv_video_image);
-        tvLocation = findViewById(R.id.tv_location);
-        tvLocation.setOnClickListener(this);
-        tvLocationLabel = findViewById(R.id.tv_location_label);
-        tvLocationLabel.setOnClickListener(this);
-        tvPermission = findViewById(R.id.tv_permission);
-        tvPermission.setOnClickListener(this);
-
-        videoPath = getIntent().getStringExtra(CameraActivity.EXTRA_VIDEO_PATH);
-        imagePath = getIntent().getStringExtra(CameraActivity.EXTRA_IMAGE_PATH);
-        Glide.with(this).load(imagePath).into(ivVideoImage);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -188,6 +195,18 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
     @Override
     protected int getLayoutId() {
         return R.layout.activity_post_video;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 }

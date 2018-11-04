@@ -122,7 +122,7 @@ public class CheckGroup extends LinearLayout {
         }
     }
 
-    private void setCheckedStateForView(int viewId, boolean checked) {
+    public void setCheckedStateForView(int viewId, boolean checked) {
         View checkedView = findViewById(viewId);
         if (checkedView != null && checkedView instanceof CheckBox) {
             ((CheckBox) checkedView).setChecked(checked);
@@ -141,6 +141,10 @@ public class CheckGroup extends LinearLayout {
     @IdRes
     public int getCheckedCheckBoxId() {
         return mCheckedId;
+    }
+
+    public void setmCheckedId(int mCheckedId) {
+        this.mCheckedId = mCheckedId;
     }
 
     /**

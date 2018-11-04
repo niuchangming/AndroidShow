@@ -1,8 +1,6 @@
 package ekoolab.com.show.utils.Chat;
 
 import android.content.Context;
-import android.media.MediaPlayer;
-import android.net.Uri;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -72,41 +70,47 @@ public class ChatManager extends SendBird.ChannelHandler implements SendBird.Con
     @Override
     public void onMessageReceived(BaseChannel baseChannel, BaseMessage baseMessage) {
 
-        if (baseMessage instanceof UserMessage) {
-            UserMessage userMessage = (UserMessage) baseMessage;
+        if (baseChannel.isGroupChannel()) {
+            if (baseMessage instanceof UserMessage) {
+                UserMessage userMessage = (UserMessage) baseMessage;
 
-            if(baseChannel instanceof GroupChannel){
-                GroupChannel groupChannel = (GroupChannel) baseChannel;
-                if(!channelMap.containsKey(userMessage.getSender().getUserId())){
-                    channelMap.put(userMessage.getSender().getUserId(), groupChannel);
+                if(baseChannel instanceof GroupChannel){
+                    GroupChannel groupChannel = (GroupChannel) baseChannel;
+                    if(!channelMap.containsKey(userMessage.getSender().getUserId())){
+                        channelMap.put(userMessage.getSender().getUserId(), groupChannel);
+                    }
+
+                    ChatMessage chatMessage = ChatMessage.createByComingUserMessage(context, userMessage);
+                    chatMessage.save(context);
+
+                    for (ChatManagerListener listener : chatManagerListenerSet) {
+                        listener.didReceivedMessage(chatMessage);
+                    }
                 }
 
-                ChatMessage chatMessage = ChatMessage.createByComingUserMessage(context, userMessage);
-                chatMessage.save(context);
+            }else if(baseMessage instanceof FileMessage){
+                FileMessage fileMessage = (FileMessage) baseMessage;
 
-                for (ChatManagerListener listener : chatManagerListenerSet) {
-                    listener.didReceivedMessage(chatMessage);
+                if(baseChannel instanceof GroupChannel){
+                    GroupChannel groupChannel = (GroupChannel) baseChannel;
+                    if(!channelMap.containsKey(fileMessage.getSender().getUserId())){
+                        channelMap.put(fileMessage.getSender().getUserId(), groupChannel);
+                    }
+
+                    ChatMessage chatMessage = ChatMessage.createByComingFileMessage(context, fileMessage);
+                    chatMessage.save(context);
+
+                    for (ChatManagerListener listener : chatManagerListenerSet) {
+                        listener.didReceivedMessage(chatMessage);
+                    }
                 }
             }
-
-        }else if(baseMessage instanceof FileMessage){
-            FileMessage fileMessage = (FileMessage) baseMessage;
-
-            if(baseChannel instanceof GroupChannel){
-                GroupChannel groupChannel = (GroupChannel) baseChannel;
-                if(!channelMap.containsKey(fileMessage.getSender().getUserId())){
-                    channelMap.put(fileMessage.getSender().getUserId(), groupChannel);
-                }
-
-                ChatMessage chatMessage = ChatMessage.createByComingFileMessage(context, fileMessage);
-                chatMessage.save(context);
-
-                for (ChatManagerListener listener : chatManagerListenerSet) {
-                    listener.didReceivedMessage(chatMessage);
-                }
+        }else{
+            for (ChatManagerListener listener : chatManagerListenerSet) {
+                listener.didReceivedOpenMessage(baseMessage);
             }
-
         }
+
     }
 
     public void login(final SendBird.ConnectHandler handler) {
@@ -311,8 +315,8 @@ public class ChatManager extends SendBird.ChannelHandler implements SendBird.Con
 
     public interface ChatManagerListener {
         void didReceivedMessage(ChatMessage chatMessage);
+        void didReceivedOpenMessage(BaseMessage baseMessage);
     }
-
 }
 
 

@@ -24,6 +24,8 @@ import com.scwang.smartrefresh.layout.api.RefreshHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.sendbird.android.SendBird;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -42,10 +44,9 @@ import ekoolab.com.show.utils.Utils;
 import okhttp3.OkHttpClient;
 
 public class ShowApplication extends Application implements Thread.UncaughtExceptionHandler {
-
     public static Application application;
-
     public static String TEMP_FILE;
+    public static IWXAPI iwxapi;
 
     static {
         //设置全局的Header构建器
@@ -107,6 +108,9 @@ public class ShowApplication extends Application implements Thread.UncaughtExcep
 
             SendBird.init(Constants.SBD_APP_ID, context);
             FURenderer.initFURenderer(this);
+
+            iwxapi = WXAPIFactory.createWXAPI(this, Constants.WECHAT_APP_ID, false);
+            iwxapi.registerApp(Constants.WECHAT_APP_ID);
         }
     }
 

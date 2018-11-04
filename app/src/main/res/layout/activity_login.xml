@@ -13,11 +13,11 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true" />
 
-    <View
+    <ImageView
+        android:id="@+id/mask_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:alpha="0.9"
-        android:background="@mipmap/login_bg" />
+        android:src="@mipmap/login_bg" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -180,20 +180,34 @@
             android:layout_marginTop="30dp"
             android:gravity="center">
 
-            <ImageButton
-                android:id="@+id/wx_login_btn"
+            <RelativeLayout
+                android:id="@+id/wx_login_gp"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_marginRight="10dp"
-                android:background="@android:color/transparent"
-                android:scaleType="centerInside"
-                android:src="@mipmap/wechat_circle" />
+                android:layout_marginRight="10dp">
+
+                <ImageButton
+                    android:id="@+id/wx_login_btn"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@android:color/transparent"
+                    android:scaleType="centerInside"
+                    android:src="@mipmap/wechat_circle" />
+
+                <com.rey.material.widget.ProgressView
+                    android:id="@+id/wx_login_pv"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    app:v_styleId="@array/pv_circular" />
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginLeft="10dp"
-                android:layout_toRightOf="@id/wx_login_btn">
+                android:layout_toRightOf="@id/wx_login_gp">
 
                 <ImageButton
                     android:id="@+id/fb_login_btn"

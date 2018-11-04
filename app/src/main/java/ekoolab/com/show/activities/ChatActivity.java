@@ -2,24 +2,19 @@ package ekoolab.com.show.activities;
 
 import android.Manifest;
 import android.animation.ObjectAnimator;
-import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -29,7 +24,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
-import com.luck.picture.lib.tools.Constant;
 import com.orhanobut.logger.Logger;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -42,10 +36,8 @@ import com.sendbird.android.UserMessage;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import ekoolab.com.show.R;
@@ -68,7 +60,6 @@ import ekoolab.com.show.utils.DisplayUtils;
 import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.views.AudioView.AudioRecordManager;
 import ekoolab.com.show.views.AudioView.IAudioRecordListener;
-import ekoolab.com.show.views.ChatRecyclerView;
 import ekoolab.com.show.views.itemdecoration.GridSpacingItemDecoration;
 import ekoolab.com.show.views.itemdecoration.LinearItemDecoration;
 
@@ -96,7 +87,6 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
     private Friend friend;
     private List<Action> actions;
 
-    private int offset;
     private boolean hasMore;
     private boolean hasPrevious;
 
@@ -119,7 +109,6 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
     @Override
     protected void initData() {
         super.initData();
-        offset = 0;
         hasMore = true;
         hasPrevious = true;
         audioGranted = false;
@@ -595,6 +584,9 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
         recyclerView.getAdapter().notifyDataSetChanged();
     }
 
+    @Override
+    public void didReceivedOpenMessage(BaseMessage baseMessage) { }
+
     private void showMoreAction(){
         Utils.hideInput(messageEt);
         ObjectAnimator.ofFloat(recyclerView, "translationY", -moveSpace).start();
@@ -704,6 +696,12 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
                 refreshLayout.finishLoadMore();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        ChatManager.getInstance(this).unregister(this);
+        super.onDestroy();
     }
 
     private void initActions() {

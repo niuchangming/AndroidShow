@@ -74,6 +74,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void initData() {}
 
     protected void initViews() {
+        if (getLayoutId() == 0) return;
         activityContainer = findViewById(R.id.activity_container);
         activityContainer.addView(LayoutInflater.from(this).inflate(getLayoutId(), activityContainer, false));
     }

@@ -2,6 +2,7 @@ package ekoolab.com.show.activities;
 
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.view.MotionEvent;
@@ -24,7 +25,7 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-import com.luck.picture.lib.CameraActivity;
+import com.orhanobut.logger.Logger;
 
 import java.util.Formatter;
 import java.util.List;
@@ -37,12 +38,16 @@ import ekoolab.com.show.utils.UIHandler;
 import ekoolab.com.show.views.MyHorizontalScrollView;
 
 /**
- * @author Army
+ * @author Changming Niu
  * @version V_1.0.0
  * @date 2018/9/24
  * @description 选择封面
  */
 public class ChooseCoverActivity extends BaseActivity implements View.OnClickListener, MyHorizontalScrollView.OnScrollChangeListener, Player.EventListener {
+    public static final String VIDEO_PATH = "video_path";
+    public static final String FIRST_FRAME_PATH = "first_frame_path";
+    public static final String VIDEO_FRAME_PATHS = "video_frame_paths";
+
     public static final int IMAGE_WIDTH = DisplayUtils.dip2px(100);
     public static final int HALF_SCREEN_WIDTH = DisplayUtils.getScreenWidth() / 2;
     private PlayerView playerView;
@@ -62,15 +67,14 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     protected void initData() {
-        firstFramePath = getIntent().getStringExtra(CameraActivity.EXTRA_IMAGE_PATH);
-        videoPath = getIntent().getStringExtra(CameraActivity.EXTRA_VIDEO_PATH);
-        framePaths = getIntent().getStringArrayListExtra(CameraActivity.EXTRA_VIDEO_FRAME_PATHS);
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        retriever.setDataSource(videoPath);
-        String fileLength = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-        if (!TextUtils.isEmpty(fileLength)) {
-            videoDuration = Long.parseLong(fileLength);
-        }
+        firstFramePath = getIntent().getStringExtra(FIRST_FRAME_PATH);
+        videoPath = getIntent().getStringExtra(VIDEO_PATH);
+        framePaths = getIntent().getStringArrayListExtra(VIDEO_FRAME_PATHS);
+
+        MediaPlayer mp = MediaPlayer.create(this, Uri.parse(videoPath));
+        videoDuration = mp.getDuration();
+        mp.release();
+
         mFormatBuilder = new StringBuilder();
         mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
     }
@@ -106,10 +110,10 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
         player.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT);
         playerView.setPlayer(player);
 
-
         DataSource.Factory mediaDataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this, "Show"));
         MediaSource mediaSource = new ExtractorMediaSource.Factory(mediaDataSourceFactory).createMediaSource(Uri.parse(videoPath));
         player.prepare(mediaSource, false, false);
+
         startPlayer();
     }
 
@@ -149,6 +153,12 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
             ivFirstFrame.setVisibility(View.GONE);
             int curPosition = (int) ((scrollX * 1f / totalFramesWidth) * videoDuration);
             playerView.getPlayer().seekTo(curPosition);
+
+
+            Logger.i("----------> " + curPosition + ", " + playerView.getPlayer().getContentPosition());
+            playerView.getPlayer().getCurrentPosition();
+
+
             currentTime.setText(stringForTime(curPosition));
         }
     }
@@ -222,18 +232,18 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
                 Intent intent = new Intent(this, PostVideoActivity.class);
                 long currentPosition = playerView.getPlayer().getCurrentPosition();
                 if (currentPosition == 0) {
-                    intent.putExtra(CameraActivity.EXTRA_IMAGE_PATH, firstFramePath);
+                    intent.putExtra(FIRST_FRAME_PATH, firstFramePath);
                 } else if (currentPosition >= videoDuration) {
                     String imagePath = framePaths.remove(framePaths.size() - 1);
                     framePaths.add(firstFramePath);
-                    intent.putExtra(CameraActivity.EXTRA_IMAGE_PATH, imagePath);
+                    intent.putExtra(FIRST_FRAME_PATH, imagePath);
                 } else {
                     int position = (int) (framePaths.size() * currentPosition * 1f / videoDuration);
                     String imagePath = framePaths.remove(position);
                     framePaths.add(firstFramePath);
-                    intent.putExtra(CameraActivity.EXTRA_IMAGE_PATH, imagePath);
+                    intent.putExtra(FIRST_FRAME_PATH, imagePath);
                 }
-                intent.putExtra(CameraActivity.EXTRA_VIDEO_PATH, videoPath);
+                intent.putExtra(VIDEO_PATH, videoPath);
                 startActivity(intent);
                 FileUtils.deleteFiles(framePaths);
                 finish();

@@ -21,11 +21,13 @@ import ekoolab.com.show.adapters.HomeAdapter;
 import ekoolab.com.show.fragments.subhomes.LiveFragment;
 import ekoolab.com.show.fragments.subhomes.MomentFragment;
 import ekoolab.com.show.fragments.subhomes.VideoFragment;
+import ekoolab.com.show.fragments.subhomes.WebFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.R;
 import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.utils.ViewHolder;
 
+import static ekoolab.com.show.activities.BaseActivity.IS_FULL_SCREEN;
 import static ekoolab.com.show.utils.AuthUtils.AuthType.LOGGED;
 
 public class HomeFragment extends BaseFragment implements View.OnClickListener{
@@ -126,6 +128,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener{
                 }
 
                 Intent broadcastIntent = new Intent(getActivity(), BroadcastActivity.class);
+                broadcastIntent.putExtra(IS_FULL_SCREEN, true);
                 startActivity(broadcastIntent);
                 break;
         }

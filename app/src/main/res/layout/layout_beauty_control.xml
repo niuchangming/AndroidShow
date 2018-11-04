@@ -379,4 +379,5 @@
             android:textColor="@drawable/beauty_control_bottom_radio_color"
             android:textSize="@dimen/text_size_15sp"/>
     </ekoolab.com.show.beauty.ui.CheckGroup>
+    s
 </android.support.constraint.ConstraintLayout>

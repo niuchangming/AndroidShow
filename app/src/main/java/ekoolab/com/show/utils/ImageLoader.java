@@ -19,8 +19,7 @@ import ekoolab.com.show.views.BlurTransformation;
  * @description
  */
 public class ImageLoader {
-
-    public static final int ERROR_PLACEHOLDER = R.mipmap.ic_launcher;
+    public static final int ERROR_PLACEHOLDER = R.mipmap.placeholder;
 
     public static void displayImage(String imageUrl, ImageView imageView) {
         if (TextUtils.isEmpty(imageUrl)) {

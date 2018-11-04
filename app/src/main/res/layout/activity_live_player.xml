@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="@dimen/item_height_30dp"
+        android:layout_marginTop="@dimen/layout_margin_32dp"
         android:orientation="horizontal">
         <LinearLayout
             android:layout_width="wrap_content"
@@ -89,6 +89,24 @@
             android:layout_weight="2"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottom_bar"
+        android:layout_toLeftOf="@id/bubble_view"
+        android:weightSum="5"
+        android:gravity="bottom"
+        android:orientation="vertical">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:layout_marginRight="@dimen/layout_margin_8dp"
+            android:layout_marginBottom="@dimen/layout_margin_8dp"
+            android:layout_marginLeft="@dimen/layout_margin_8dp"
+            android:scrollbars="none"/>
+    </LinearLayout>
 
     <ekoolab.com.show.views.BubbleView
         android:id="@+id/bubble_view"
@@ -99,6 +117,7 @@
         android:layout_alignParentBottom="true"/>
 
     <RelativeLayout
+        android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

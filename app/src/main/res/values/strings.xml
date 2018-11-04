@@ -15,6 +15,10 @@
     <string name="live">Live</string>
     <string name="start">Start</string>
     <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="no_wx_install">You do not have WeChat installed.</string>
+    <string name="wx_login_cancel">WeChat Login Cancelled</string>
+    <string name="wx_login_reject">WeChat Login rejected</string>
     <string name="mobile_number_prompt">Mobile Number:</string>
     <string name="plus_65">+65</string>
     <string name="password_prompt">Password:</string>
@@ -37,6 +41,7 @@
     <string name="whatsup">Whats up</string>
     <string name="region">Region</string>
     <string name="edit_cover">Edit Cover</string>
+    <string name="edit">Edit</string>
     <string name="save">Save</string>
     <string name="post">Post</string>
     <string name="nameinput">Enter your name</string>
@@ -45,9 +50,10 @@
     <string name="female">Female</string>
     <string name="whatsupinput">Say something about your mood?</string>
     <string name="followers">Followers</string>
-    <string name="followings">Followings</string>
+    <string name="following">Following</string>
     <string name="coins">Coins</string>
     <string name="try_again">Try Again later!</string>
+    <string name="delete">Delete</string>
     <string name="empty">Content not found!</string>
     <string name="loading">Loading Now...</string>
     <string name="format_error">Format Error !</string>
@@ -78,6 +84,16 @@
     <string name="follow">Follow</string>
     <string name="un_follow">Unfollow</string>
     <string name="my_friend">Friends</string>
+    <string name="music">Music</string>
+    <string name="beauty">Beauty</string>
+    <string name="flip">Flip</string>
+    <string name="post_video">Post Video</string>
+    <string name="hot">HOT</string>
+
+    <!-- Region -->
+    <string name="country_china">China</string>
+    <string name="country_malaysia">Malaysia</string>
+    <string name="country_singapore">Singapore</string>
 
     <!-- Broadcast -->
     <string name="connecting">Connecting</string>
@@ -97,6 +113,8 @@
     <string name="voice_failure">Recording failed</string>
     <string name="audio_permission_error">You haven\'t enabled Audio Access Permission for Show, Please enable it in the setting of your Phone</string>
     <string name="message_coming">New Message Coming</string>
+    <string name="me">:Me</string>
+    <string name="admin">Admin</string>
 
 
     <string name="default_notification_channel_id" translatable="false">show_fire_base_messaging_channel</string>

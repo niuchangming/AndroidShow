@@ -1,6 +1,9 @@
 package ekoolab.com.show.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +15,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.VideoView;
 
 import com.androidnetworking.AndroidNetworking;
@@ -25,6 +29,7 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.gson.reflect.TypeToken;
 import com.rey.material.widget.ProgressView;
+import com.tencent.mm.opensdk.modelmsg.SendAuth;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,16 +38,20 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import ekoolab.com.show.R;
+import ekoolab.com.show.Services.FriendService;
 import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
+import ekoolab.com.show.application.ShowApplication;
 import ekoolab.com.show.beans.AuthInfo;
 import ekoolab.com.show.beans.LoginData;
 import ekoolab.com.show.dialogs.RegisterDialog;
 import ekoolab.com.show.dialogs.VerifyDialog;
+import ekoolab.com.show.fragments.ChatListFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.Utils;
+import ekoolab.com.show.wxapi.WXEntryActivity;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener,
         RegisterDialog.RegisterListener, VerifyDialog.VerifyListener {
@@ -54,12 +63,31 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private EditText passwordEt;
     private Button loginBtn;
     private Button registerBtn;
+    private ImageView maskView;
 
     private CallbackManager facebookCallbackManager;
     private LoginManager fbLoginManager;
     private ImageButton facebookBtn;
     private ProgressView fbLoginLoadingBar;
+    private ImageButton wxLoginBtn;
+    private ProgressView wxLoginLoadingBar;
     private ProgressView loginLoading;
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver(){
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(WXEntryActivity.WX_LOGIN_STARTED)) {
+                beforeLogin(LoginType.WECHAT);
+            }else if (intent.getAction().equals(WXEntryActivity.WX_LOGIN_ENDED)) {
+                LoginData loginData = intent.getParcelableExtra(LOGIN_DATA);
+                afterLogin(LoginType.WECHAT);
+
+                if(loginData != null){
+                    broadcastLoggedIn(loginData);
+                }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,6 +97,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         initFacebookStuff();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(WXEntryActivity.WX_LOGIN_STARTED);
+        filter.addAction(WXEntryActivity.WX_LOGIN_ENDED);
+        this.registerReceiver(broadcastReceiver, filter);
     }
 
     @Override
@@ -86,6 +123,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     protected void initViews() {
         super.initViews();
 
+        maskView = findViewById(R.id.mask_view);
+        maskView.setAlpha(0.8f);
+
         mobileEt = findViewById(R.id.log_mobile_et);
         passwordEt = findViewById(R.id.log_password_et);
 
@@ -98,6 +138,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         facebookBtn = findViewById(R.id.fb_login_btn);
         facebookBtn.setOnClickListener(this);
 
+        wxLoginBtn = findViewById(R.id.wx_login_btn);
+        wxLoginBtn.setOnClickListener(this);
+
+        wxLoginLoadingBar = findViewById(R.id.wx_login_pv);
         fbLoginLoadingBar = findViewById(R.id.fb_login_pv);
         loginLoading = findViewById(R.id.login_pv);
 
@@ -149,6 +193,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             case R.id.fb_login_btn:
                 facebookLogin();
                 break;
+            case R.id.wx_login_btn:
+                wxLogin();
+                break;
         }
     }
 
@@ -168,7 +215,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             return;
         }
 
-        beforeLogin(false);
+        beforeLogin(LoginType.MOBILE);
         HashMap<String, String> map = new HashMap<>(4);
         map.put("countryCode", "65");
         map.put("mobile", mobile);
@@ -178,7 +225,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 .subscribe(new NetworkSubscriber<LoginData>() {
                     @Override
                     protected void onSuccess(LoginData loginData) {
-                        afterLogin(false);
+                        afterLogin(LoginType.MOBILE);
                         AuthUtils.getInstance(getApplicationContext()).saveLoginInfo(loginData);
                         broadcastLoggedIn(loginData);
                         LoginActivity.this.finish();
@@ -186,7 +233,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
                     @Override
                     protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
-                        afterLogin(false);
+                        afterLogin(LoginType.MOBILE);
                         return super.dealHttpException(code, errorMsg, e);
                     }
                 });
@@ -197,7 +244,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     }
 
     private void afterFacebookLogin(final LoginResult loginResult) {
-        beforeLogin(true);
+        beforeLogin(LoginType.FACEBOOK);
         HashMap<String, String> map = new HashMap<>(4);
         map.put("type", "facebook");
         map.put("fb_token", loginResult.getAccessToken().getToken());
@@ -207,7 +254,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 .subscribe(new NetworkSubscriber<LoginData>() {
                     @Override
                     protected void onSuccess(LoginData loginData) {
-                        afterLogin(true);
+                        afterLogin(LoginType.FACEBOOK);
                         AuthUtils.getInstance(getApplicationContext()).saveLoginInfo(loginData);
                         broadcastLoggedIn(loginData);
                         LoginActivity.this.finish();
@@ -215,34 +262,61 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
                     @Override
                     protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
-                        afterLogin(true);
+                        afterLogin(LoginType.FACEBOOK);
                         return super.dealHttpException(code, errorMsg, e);
                     }
                 });
     }
 
-    private void beforeLogin(boolean isFB) {
-        if (isFB) {
-            fbLoginLoadingBar.start();
-            facebookBtn.setVisibility(View.INVISIBLE);
-            loginBtn.setEnabled(false);
-        } else {
-            loginLoading.start();
-            facebookBtn.setEnabled(false);
-            loginBtn.setVisibility(View.INVISIBLE);
+    private void wxLogin(){
+        if (!ShowApplication.iwxapi.isWXAppInstalled()) {
+            toastLong(getString(R.string.no_wx_install));
+            return;
         }
+        final SendAuth.Req req = new SendAuth.Req();
+        req.scope = "snsapi_userinfo";
+        req.state = "diandi_wx_login";
+        ShowApplication.iwxapi.sendReq(req);
     }
 
-    private void afterLogin(boolean isFB) {
-        if (isFB) {
-            fbLoginLoadingBar.stop();
-            facebookBtn.setVisibility(View.VISIBLE);
-            loginBtn.setEnabled(true);
-        } else {
-            loginLoading.stop();
-            facebookBtn.setEnabled(true);
-            loginBtn.setVisibility(View.VISIBLE);
+    private void beforeLogin(LoginType loginType) {
+        switch (loginType){
+            case MOBILE:
+                loginLoading.start();
+                loginBtn.setVisibility(View.INVISIBLE);
+                break;
+            case WECHAT:
+                wxLoginLoadingBar.start();
+                wxLoginBtn.setVisibility(View.INVISIBLE);
+                break;
+            case FACEBOOK:
+                fbLoginLoadingBar.start();
+                facebookBtn.setVisibility(View.INVISIBLE);
+                break;
         }
+        loginBtn.setEnabled(false);
+        wxLoginBtn.setEnabled(false);
+        facebookBtn.setEnabled(false);
+    }
+
+    private void afterLogin(LoginType loginType) {
+        switch (loginType){
+            case MOBILE:
+                loginLoading.stop();
+                loginBtn.setVisibility(View.VISIBLE);
+                break;
+            case WECHAT:
+                wxLoginLoadingBar.stop();
+                wxLoginBtn.setVisibility(View.VISIBLE);
+                break;
+            case FACEBOOK:
+                fbLoginLoadingBar.stop();
+                facebookBtn.setVisibility(View.VISIBLE);
+                break;
+        }
+        facebookBtn.setEnabled(true);
+        loginBtn.setEnabled(true);
+        wxLoginBtn.setEnabled(true);
     }
 
     @Override
@@ -273,5 +347,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         facebookCallbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(broadcastReceiver);
+        super.onDestroy();
+    }
+
+    private enum LoginType {
+        MOBILE, FACEBOOK, WECHAT;
     }
 }
