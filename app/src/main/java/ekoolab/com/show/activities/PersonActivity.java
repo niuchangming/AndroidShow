@@ -23,6 +23,7 @@ import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.tools.PictureFileUtils;
+import com.sendbird.android.SendBird;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -46,7 +47,9 @@ import ekoolab.com.show.fragments.submyvideos.MyCollectsFragment;
 import ekoolab.com.show.fragments.submyvideos.MyVideoFragment;
 import ekoolab.com.show.fragments.submyvideos.MymomentsFragment;
 import ekoolab.com.show.utils.AuthUtils;
+import ekoolab.com.show.utils.Chat.ChatManager;
 import ekoolab.com.show.utils.Constants;
+import ekoolab.com.show.utils.DisplayUtils;
 import ekoolab.com.show.utils.ImageLoader;
 import ekoolab.com.show.utils.ImageSeclctUtils;
 import ekoolab.com.show.utils.TimeUtils;
@@ -63,6 +66,7 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
     private Button btn_edit_cover, btn_logout;
     private ImageView avatar, cover_image;
     private UserInfo userInfo;
+    private int screenWidth, screenHeight;
     protected String birthday;
 
     @Override
@@ -122,6 +126,8 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
         avatar = findViewById(R.id.avatar);
         avatar.setOnClickListener(this);
         cover_image = findViewById(R.id.cover_image);
+        ViewGroup.LayoutParams params = header_rl.getLayoutParams();
+        params.height = DisplayUtils.getScreenWidth()*9/16;
     }
 
     private void loadData(){
@@ -324,6 +330,15 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                     @Override
                     protected void onSuccess(String s) {
                         AuthUtils.getInstance(getApplicationContext()).logout();
+//                        ChatManager.getInstance(PersonActivity.this).logout(new SendBird.DisconnectHandler() {
+//                            @Override
+//                            public void onDisconnected() {
+//                                onDisconnected();
+//                            }
+//                        });
+                        Intent intent = new Intent();
+                        intent.putExtra("logout", true);
+                        setResult(RESULT_OK, intent);
                         onBackPressed();
                     }
 

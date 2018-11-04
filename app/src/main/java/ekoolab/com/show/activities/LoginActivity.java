@@ -18,10 +18,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.VideoView;
 
-import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.common.Priority;
-import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -31,30 +27,27 @@ import com.google.gson.reflect.TypeToken;
 import com.rey.material.widget.ProgressView;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.Arrays;
 import java.util.HashMap;
 
 import ekoolab.com.show.R;
-import ekoolab.com.show.Services.FriendService;
 import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
 import ekoolab.com.show.application.ShowApplication;
-import ekoolab.com.show.beans.AuthInfo;
 import ekoolab.com.show.beans.LoginData;
+import ekoolab.com.show.dialogs.ForgetPasswordDialog;
+import ekoolab.com.show.dialogs.NewPasswordDialog;
 import ekoolab.com.show.dialogs.RegisterDialog;
 import ekoolab.com.show.dialogs.VerifyDialog;
-import ekoolab.com.show.fragments.ChatListFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.wxapi.WXEntryActivity;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener,
-        RegisterDialog.RegisterListener, VerifyDialog.VerifyListener {
+        RegisterDialog.RegisterListener, VerifyDialog.VerifyListener,
+        ForgetPasswordDialog.VerifyMobileListener, NewPasswordDialog.ChangePasswordListener {
     private final static String TAG = "LoginActivity";
     public static final String LOGIN_DATA = "login_data";
     private VideoView videoView;
@@ -64,6 +57,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private Button loginBtn;
     private Button registerBtn;
     private ImageView maskView;
+    private Button forgetPwdBtn;
 
     private CallbackManager facebookCallbackManager;
     private LoginManager fbLoginManager;
@@ -145,6 +139,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         fbLoginLoadingBar = findViewById(R.id.fb_login_pv);
         loginLoading = findViewById(R.id.login_pv);
 
+        forgetPwdBtn = findViewById(R.id.forget_pwd_btn);
+        forgetPwdBtn.setOnClickListener(this);
+
         videoView = findViewById(R.id.login_video_view);
         videoView.setVideoURI(Uri.parse(videoPath));
         videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -184,6 +181,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             case R.id.login_btn:
                 Utils.hideInput(passwordEt);
                 mobileLogin();
+                break;
+            case R.id.forget_pwd_btn:
+                ForgetPasswordDialog forgetPasswordDialog = new ForgetPasswordDialog(this);
+                forgetPasswordDialog.backgroundColor(getResources().getColor(R.color.colorPink));
+                forgetPasswordDialog.show();
                 break;
             case R.id.register_btn:
                 RegisterDialog dialog = new RegisterDialog(this);
@@ -329,6 +331,23 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void did2FAVerify(LoginData loginData) {
+        if (loginData != null) {
+            AuthUtils.getInstance(this).saveLoginInfo(loginData);
+            broadcastLoggedIn(loginData);
+        }
+        finish();
+    }
+
+    @Override
+    public void didVerifyMobile(LoginData loginData) {
+        NewPasswordDialog newPasswordDialog = new NewPasswordDialog(this);
+        newPasswordDialog.setLoginData(loginData);
+        newPasswordDialog.backgroundColor(this.getResources().getColor(R.color.colorPink));
+        newPasswordDialog.show();
+    }
+
+    @Override
+    public void didChangePassword(LoginData loginData) {
         if (loginData != null) {
             AuthUtils.getInstance(this).saveLoginInfo(loginData);
             broadcastLoggedIn(loginData);

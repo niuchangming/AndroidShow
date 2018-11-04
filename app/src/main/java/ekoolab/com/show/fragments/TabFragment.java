@@ -87,6 +87,10 @@ public class TabFragment extends BaseFragment implements View.OnClickListener {
         mOnNavigationReselectListener = listener;
     }
 
+    public void backHome(){
+        doSelect(tabHome);
+    }
+
     public void select(int index) {
         if (tabProfile != null)
             doSelect(tabProfile);
