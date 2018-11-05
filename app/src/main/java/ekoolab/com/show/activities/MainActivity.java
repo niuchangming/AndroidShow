@@ -1,6 +1,7 @@
 package ekoolab.com.show.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -121,6 +122,7 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
                     if (!aBoolean) {
                         ToastUtils.showToast(getString(R.string.permission_storage));
                     }
+
                 });
 
         loginSBirdChat(null);

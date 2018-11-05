@@ -2,8 +2,6 @@ package ekoolab.com.show.activities;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Color;
 import android.os.Build;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -17,6 +15,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.gson.reflect.TypeToken;
 import com.luck.picture.lib.CameraActivity;
 import com.luck.picture.lib.utils.AppManager;
@@ -52,7 +55,7 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
     private TextView tvLocationLabel;
     private TextView tvPermission;
     private EasyPopup easyPopup;
-    public static final int REQUEST_CHOOSE_ADDRESS = 223;
+    public static final int REQUEST_PICKER_ADDRESS = 223;
     private double lat, lnt;
     private String videoPath, imagePath;
 
@@ -126,16 +129,29 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
                 break;
             case R.id.tv_location:
             case R.id.tv_location_label:
-                rxPermissions.request(Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.ACCESS_WIFI_STATE,
-                        Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS)
-                        .subscribe(aBoolean -> {
-                            startActivityForResult(new Intent(this, ChooseAddressActivity.class), REQUEST_CHOOSE_ADDRESS);
-                        });
+                openPlacePicker();
                 break;
             default:
                 break;
         }
+    }
+
+    private void openPlacePicker(){
+        rxPermissions.request(Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS)
+                .subscribe(aBoolean -> {
+                    try {
+                        PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
+                        Intent intent = intentBuilder.build(this);
+                        startActivityForResult(intent, REQUEST_PICKER_ADDRESS);
+
+                    } catch (GooglePlayServicesRepairableException e) {
+                        GooglePlayServicesUtil
+                                .getErrorDialog(e.getConnectionStatusCode(), this, 0);
+                    } catch (GooglePlayServicesNotAvailableException e) {
+                        toastLong("Google Play Services is not available.");
+                    }
+                });
     }
 
     private void publishVideo() {
@@ -185,10 +201,11 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CHOOSE_ADDRESS && resultCode == RESULT_OK) {
-            lat = data.getDoubleExtra(ChooseAddressActivity.EXTRA_LATITUDE, 0);
-            lnt = data.getDoubleExtra(ChooseAddressActivity.EXTRA_LONGITUDE, 0);
-            tvLocation.setText(data.getStringExtra(ChooseAddressActivity.EXTRA_ADDRESS));
+        if (requestCode == REQUEST_PICKER_ADDRESS && resultCode == RESULT_OK) {
+            Place selectedPlace = PlacePicker.getPlace(data, this);
+            lat = selectedPlace.getLatLng().latitude;
+            lnt = selectedPlace.getLatLng().longitude;
+            tvLocation.setText(selectedPlace.getAddress());
         }
     }
 

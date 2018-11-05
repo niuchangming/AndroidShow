@@ -301,4 +301,8 @@ public class CameraRenderer implements Camera.PreviewCallback, GLSurfaceView.Ren
     public Camera getmCamera() {
         return mCamera;
     }
+
+    public int getmCurrentCameraType() {
+        return mCurrentCameraType;
+    }
 }

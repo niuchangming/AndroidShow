@@ -4,13 +4,8 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.DatePicker;
-
-import com.baidu.mapapi.UIMsg;
-import com.google.gson.reflect.TypeToken;
 
 import org.greenrobot.eventbus.EventBus;
 

@@ -24,11 +24,10 @@
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.READ_LOGS" />
 
-
+    <uses-feature android:name="android.hardware.location.network" android:required="false" />
+    <uses-feature android:name="android.hardware.location.gps" android:required="false"  />
     <uses-feature android:name="android.hardware.camera"/>
-    <uses-feature
-        android:glEsVersion="0x00020000"
-        android:required="true"/>
+    <uses-feature android:glEsVersion="0x00020000" android:required="true"/>
 
     <supports-screens
         android:anyDensity="true"
@@ -164,13 +163,11 @@
         </activity>
 
         <meta-data
-            android:name="com.baidu.lbsapi.API_KEY"
-            android:value="z6uIAidDDYYelerKMPbLirPyP1ZYkeGz" />
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key"/>
 
-        <service
-            android:name="com.baidu.location.f"
-            android:enabled="true"
-            android:process=":remote" />
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
         <service android:name=".Services.ShowFirebaseMessagingService">
             <intent-filter>

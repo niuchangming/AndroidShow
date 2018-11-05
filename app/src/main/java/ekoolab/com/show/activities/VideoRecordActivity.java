@@ -51,6 +51,7 @@ import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.FileUtils;
 
 import static android.graphics.Bitmap.createBitmap;
+import static android.hardware.Camera.CameraInfo.CAMERA_FACING_FRONT;
 
 public class VideoRecordActivity extends BaseActivity implements View.OnClickListener,
         CameraRenderer.OnRendererStatusListener, SensorEventListener {
@@ -257,9 +258,15 @@ public class VideoRecordActivity extends BaseActivity implements View.OnClickLis
                 byte[] bytes = out.toByteArray();
                 Bitmap frame = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 Matrix matrix = new Matrix();
-                if(angle == 0){
-                    matrix.setRotate(270);
-                    matrix.postScale(-1, 1, frame.getWidth() / 2, frame.getHeight() / 2);
+                if (mCameraRenderer.getmCurrentCameraType() == CAMERA_FACING_FRONT) {
+                    if(angle == 0){
+                        matrix.setRotate(270);
+                        matrix.postScale(-1, 1, frame.getWidth() / 2, frame.getHeight() / 2);
+                    }
+                }else{
+                    if(angle == 0){
+                        matrix.setRotate(90);
+                    }
                 }
                 frame = createBitmap(frame, 0, 0, frame.getWidth(), frame
                         .getHeight(), matrix, true);
