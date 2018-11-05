@@ -74,7 +74,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener{
         fragments.add(new LiveFragment());
 
         viewPager = holder.get(R.id.viewpager);
-        pagerAdapter =  new HomeAdapter(getFragmentManager(), fragments);
+        pagerAdapter =  new HomeAdapter(getContext(), getFragmentManager(), fragments);
         viewPager.setOffscreenPageLimit(3);
         viewPager.setAdapter(pagerAdapter);
 

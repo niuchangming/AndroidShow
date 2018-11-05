@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">秀</string>
+    <string name="action_settings">设置</string>
+    <string name="facebook_app_id">448548218982781</string>
+    <string name="fb_login_protocol_scheme">fb448548218982781</string>
+    <string name="home">主页</string>
+    <string name="zsc">ZSC</string>
+    <string name="create">创建</string>
+    <string name="chat">聊天</string>
+    <string name="profile">我的</string>
+    <string name="tip_double_click_exit">再按一次退出应用!</string>
+    <string name="moment">图文</string>
+    <string name="video">视频</string>
+    <string name="live">直播</string>
+    <string name="start">开始</string>
+    <string name="login">登录</string>
+    <string name="logout">退出</string>
+    <string name="no_wx_install">未安装微信</string>
+    <string name="wx_login_cancel">微信登录被取消</string>
+    <string name="wx_login_reject">微信登录被拒绝</string>
+    <string name="mobile_number_prompt">手机号码</string>
+    <string name="plus_65">+65</string>
+    <string name="password_prompt">密码</string>
+    <string name="register">注册</string>
+    <string name="forget_password">忘记密码</string>
+    <string name="new_password">新密码</string>
+    <string name="confirm_new_password">确认新密码</string>
+    <string name="reset_password">重置密码</string>
+    <string name="other_login">其他方式登录</string>
+    <string name="mobile_hint">您的手机号码</string>
+    <string name="password_hint">您的密码</string>
+    <string name="mobile_registration">手机注册</string>
+    <string name="cancel">取消</string>
+    <string name="verification_2fa">2FA验证</string>
+    <string name="verify_code">短信验证码</string>
+    <string name="verify_hint">验证码提示</string>
+    <string name="verify_count_down">倒计时(%1$s)</string>
+    <string name="verify">验证</string>
+    <string name="resend">重发短信</string>
+    <string name="login_cancel">登录被取消</string>
+    <string name="my_moment">我的图文</string>
+    <string name="my_favorite">我的收藏</string>
+    <string name="my_video">我的视频</string>
+    <string name="name">名字</string>
+    <string name="nickname">昵称</string>
+    <string name="gender">性别</string>
+    <string name="birthday">生日</string>
+    <string name="whatsup">心情</string>
+    <string name="region">区域</string>
+    <string name="hobby">兴趣爱好</string>
+    <string name="category">分类</string>
+    <string name="description">描述</string>
+    <string name="edit_cover">编辑背景</string>
+    <string name="edit">编辑</string>
+    <string name="save">保存</string>
+    <string name="post">发布</string>
+    <string name="nameinput">输入名字</string>
+    <string name="nicknameinput">输入昵称</string>
+    <string name="male">男</string>
+    <string name="female">女</string>
+    <string name="whatsupinput">说点什么吧</string>
+    <string name="followers">粉丝</string>
+    <string name="following">关注</string>
+    <string name="coins">秀币</string>
+    <string name="try_again">请稍后再试</string>
+    <string name="delete">删除</string>
+    <string name="empty">内容没找到</string>
+    <string name="loading">加载中...</string>
+    <string name="format_error">格式错误</string>
+    <string name="useless_network">网络不通</string>
+    <string name="request_fail">请求失败</string>
+    <string name="weak_network">网络信号弱</string>
+    <string name="choose_your_content">选择内容</string>
+    <string name="post_a_text">发布文字</string>
+    <string name="post_pictures">发布图片</string>
+    <string name="post_a_video">发布视频</string>
+    <string name="friends">我的好友</string>
+    <string name="post_video_content_hint">说点什么吧</string>
+    <string name="place">地点</string>
+    <string name="who_can_view_my_video">谁可以看我的视频</string>
+    <string name="permission_public">公开</string>
+    <string name="permission">权限</string>
+    <string name="permissioin_friend">朋友</string>
+    <string name="permissioin_follower">粉丝</string>
+    <string name="permission_private">私密</string>
+    <string name="choose_place">选择地址</string>
+    <string name="next">下一步</string>
+    <string name="send_comment">发送</string>
+    <string name="moment_reply1"><Data><![CDATA[<font color="#03ABE3">%1$s</font>：%2$s]]></Data></string>
+    <string name="moment_reply2"><Data><![CDATA[<font color="#03ABE3">%1$s</font>回复<font color="#03ABE3">%2$s</font>：%3$s]]></Data></string>
+    <string name="login_first">请先登录</string>
+    <string name="recharge">充值</string>
+    <string name="send">发送</string>
+    <string name="follow">关注</string>
+    <string name="un_follow">取消关注</string>
+    <string name="my_friend">我的好友</string>
+    <string name="music">音乐</string>
+    <string name="beauty">美颜</string>
+    <string name="flip">翻转</string>
+    <string name="post_video">发布视频</string>
+    <string name="hot">热点</string>
+    <string name="settings">设置</string>
+    <string name="google_maps_key">AIzaSyCYmhhrugJPiHFGya0ueF3jLsCDeMGXdBE</string>
+
+    <!-- Region -->
+    <string name="country_china">中国大陆</string>
+    <string name="country_malaysia">马来西亚</string>
+    <string name="country_singapore">新加坡</string>
+
+    <!-- Broadcast -->
+    <string name="connecting">正在连接中</string>
+    <string name="connected">已连接</string>
+    <string name="publishing">发布</string>
+    <string name="broadcasting">直播中</string>
+
+    <!-- Chat -->
+    <string name="voice">语音</string>
+    <string name="video_call">视频通话</string>
+    <string name="voice_call">语音通话</string>
+    <string name="message_empty">内容不能为空</string>
+    <string name="hold_record_voice">长按录制</string>
+    <string name="voice_rec">语音录制或取消</string>
+    <string name="voice_cancel">松开手指取消</string>
+    <string name="voice_short">语音太短</string>
+    <string name="voice_failure">语音录制失败</string>
+    <string name="audio_permission_error">您尚未启用“显示音频访问权限”，请在“手机”设置中启用它</string>
+    <string name="message_coming">新消息来了</string>
+    <string name="me">我</string>
+    <string name="admin">管理员</string>
+
+
+    <string name="default_notification_channel_id" translatable="false">默认提醒通道id</string>
+
+
+    <!-- Permission -->
+    <string name="permission_storage">若未授权，您不能拍照视频和发送语言消息</string>
+    <string name="permission_contact">Show会将您的地址簿上传到其服务器，以帮助您找出哪些移动联系人正在使用Show。您上传的数据仅用于匹配联系人，不会保存用于其他目的。</string>
+    <string name="permission_video_audio">如果不允许，您不会为您的个人资料拍摄照片并录制视频。
+</string>
+
+    <!-- Error -->
+    <string name="file_not_exist">文件路径不存在</string>
+
+
+    <string name="url_thumbnails">https://bitdash-a.akamaihd.net/content/MI201109210084_1/thumbnails/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.jpg</string>
+</resources>

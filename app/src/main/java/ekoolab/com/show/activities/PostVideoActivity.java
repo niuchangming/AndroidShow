@@ -89,10 +89,11 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
         imagePath = getIntent().getStringExtra(ChooseCoverActivity.FIRST_FRAME_PATH);
         Glide.with(this).load(imagePath).into(ivVideoImage);
 
-        mTopToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mTopToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mTopToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setTitle(getString(R.string.post_video));
     }
     @Override
@@ -182,9 +183,9 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
                     @Override
                     protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
                         uploadingBtn.setVisibility(View.VISIBLE);
-                        setViewClickable(true);
                         uploadingBar.setVisibility(View.GONE);
                         uploadingBar.stop();
+                        setViewClickable(true);
                         return super.dealHttpException(code, errorMsg, e);
                     }
                 });

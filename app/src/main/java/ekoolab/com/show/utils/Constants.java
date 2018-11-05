@@ -56,7 +56,7 @@ public class Constants {
     public static final String TextPost = HOST + "moment/publish";
     public static final String BROADCAST_INFO = HOST + "broadcast/session";
     public static final String UPLOAD_BROADCAST_INFO = HOST + "broadcast/broadcastId";
-    public static final String UPLOAD_CHANNEL_URL = HOST + "broadcast/uploadChannelId";
+    public static final String UPLOAD_CHANNEL_URL = HOST + "broadc7ast/uploadChannelId";
 
     public static final int PersonActResult = 11;
 
@@ -66,10 +66,6 @@ public class Constants {
     public static final String IMAGE_PATH = ROOT_PATH + "images" + File.separator;
     public static final String AUDIO_PATH = ROOT_PATH + "audios" + File.separator;
     public static final String IMAGE_CACHE_PATH = ROOT_PATH + "imageCache" + File.separator;
-
-    public static final String[] homeIndicatorTitles = {"Moment", "Video", "Live"};
-    public static final String[] profileIndicatorTitles = {"My Videos", "My Collects", "My Moments"};
-
 
     public static final class Auth {
         public static final String LOGGED_IN = "logged_in";

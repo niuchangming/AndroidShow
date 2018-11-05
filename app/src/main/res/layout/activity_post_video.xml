@@ -14,17 +14,17 @@
         android:elevation="4dp">
 
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/icon_size_24dp"
+            android:layout_height="@dimen/icon_size_24dp"
             android:layout_marginRight="@dimen/layout_margin_16dp"
-            android:visibility="gone"
             android:layout_gravity="right">
 
             <ImageButton
                 android:id="@+id/upload_btn"
-                android:layout_width="@dimen/icon_size_32dp"
-                android:layout_height="@dimen/icon_size_32dp"
+                android:layout_width="@dimen/icon_size_24dp"
+                android:layout_height="@dimen/icon_size_24dp"
                 android:src="@mipmap/upload"
+                android:scaleType="centerInside"
                 android:background="@android:color/transparent"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
@@ -61,7 +61,7 @@
         android:gravity="left|top"
         android:hint="@string/post_video_content_hint"
         android:textColor="@color/white"
-        android:textColorHint="@color/white"
+        android:textColorHint="@color/colorSuperLightGray"
         android:textSize="@dimen/text_size_15sp"
         app:layout_constraintBottom_toTopOf="@+id/at_friend_btn"
         app:layout_constraintHorizontal_weight="1"
@@ -114,8 +114,8 @@
         android:layout_marginRight="@dimen/layout_margin_8dp"
         android:drawableLeft="@mipmap/pin_camera"
         android:gravity="center"
-        android:text="@string/add_location"
-        android:textColor="@color/white"
+        android:text="@string/place"
+        android:textColor="@color/colorSuperLightGray"
         android:textSize="@dimen/text_size_15sp"
         app:layout_constraintLeft_toLeftOf="@id/at_friend_btn"
         app:layout_constraintTop_toBottomOf="@id/space2" />
@@ -152,7 +152,7 @@
         android:drawableLeft="@mipmap/unlock"
         android:gravity="center"
         android:text="@string/who_can_view_my_video"
-        android:textColor="@color/white"
+        android:textColor="@color/colorSuperLightGray"
         android:textSize="@dimen/text_size_15sp"
         app:layout_constraintLeft_toLeftOf="@id/at_friend_btn"
         app:layout_constraintTop_toBottomOf="@id/space3" />

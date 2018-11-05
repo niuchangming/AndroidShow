@@ -39,6 +39,9 @@
     <string name="verify">Verify</string>
     <string name="resend">Resend</string>
     <string name="login_cancel">Login Cancelled!</string>
+    <string name="my_moment">Moments</string>
+    <string name="my_favorite">Favorites</string>
+    <string name="my_video">Videos</string>
     <string name="name">Name</string>
     <string name="nickname">Nickname</string>
     <string name="gender">Gender</string>
@@ -74,7 +77,7 @@
     <string name="post_a_video">Post A Video</string>
     <string name="friends">Friends</string>
     <string name="post_video_content_hint">What are you going to say</string>
-    <string name="add_location">Add Location</string>
+    <string name="place">Place</string>
     <string name="who_can_view_my_video">Who can view my video</string>
     <string name="permission_public">Public</string>
     <string name="permission">Permission</string>
