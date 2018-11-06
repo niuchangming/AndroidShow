@@ -4,25 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <ekoolab.com.show.views.FakeActionBar
-        android:id="@+id/fake_navigation_bar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/navigation_bar_height"
-        android:background="@color/colorWhite">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/layout_margin_16dp"
-            android:layout_centerInParent="true"
-            android:text="@string/my_friend"
-            android:textColor="@color/colorBlack"
-            android:textSize="@dimen/text_size_16sp" />
-
-    </ekoolab.com.show.views.FakeActionBar>
+    android:orientation="vertical"
+    android:background="@color/colorBlack">
 
     <com.santalu.emptyview.EmptyView
         android:id="@+id/empty_view"
@@ -44,7 +27,8 @@
         app:ev_error_titleTextColor="@color/white"
         app:ev_gravity="center"
         app:ev_loading_drawable="@drawable/ic_sentiment_satisfied"
-        app:ev_loading_drawableTint="@color/colorPrimary"
+        app:ev_loading_drawableTint="@color/colorGray"
+        app:ev_loading_textColor="@color/colorGray"
         app:ev_loading_title="@string/loading"
         app:ev_loading_type="circular"
         app:ev_transition="auto">
@@ -56,6 +40,4 @@
             android:overScrollMode="never" />
 
     </com.santalu.emptyview.EmptyView>
-
-
 </LinearLayout>

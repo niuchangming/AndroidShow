@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.os.Build;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -26,16 +28,21 @@ import com.luck.picture.lib.utils.AppManager;
 import com.rey.material.widget.ProgressView;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
+import ekoolab.com.show.beans.Friend;
+import ekoolab.com.show.dialogs.FriendDialog;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.ToastUtils;
+import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.views.EasyPopup;
 
 /**
@@ -44,7 +51,7 @@ import ekoolab.com.show.views.EasyPopup;
  * @date 2018/9/22
  * @description 发布视频
  */
-public class PostVideoActivity extends BaseActivity implements View.OnClickListener {
+public class PostVideoActivity extends BaseActivity implements View.OnClickListener, FriendDialog.FriendDialogListener {
     private Toolbar mTopToolbar;
     private EditText etContent;
     private Button atFriendBtn;
@@ -55,9 +62,20 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
     private TextView tvLocationLabel;
     private TextView tvPermission;
     private EasyPopup easyPopup;
+    private LinearLayout mentionContainer;
+    private FriendDialog friendDialog;
     public static final int REQUEST_PICKER_ADDRESS = 223;
-    private double lat, lnt;
+    private double lat, lon;
     private String videoPath, imagePath;
+    private List<Friend> selectedFriends;
+    private Map<String, TextView> mentionTvMap;
+
+    @Override
+    protected void initData() {
+        super.initData();
+        selectedFriends = new ArrayList<>();
+        mentionTvMap = new HashMap<>();
+    }
 
     @Override
     protected void initViews() {
@@ -68,6 +86,8 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(this.getResources().getColor(R.color.colorPrimaryBlue));
         }
+
+        mentionContainer = findViewById(R.id.mention_container);
 
         uploadingBtn = findViewById(R.id.upload_btn);
         uploadingBtn.setOnClickListener(this);
@@ -132,6 +152,9 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
             case R.id.tv_location_label:
                 openPlacePicker();
                 break;
+            case R.id.at_friend_btn:
+                showFriendPicker();
+                break;
             default:
                 break;
         }
@@ -163,12 +186,24 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
         Map<String, File> fileMap = new HashMap<>(2);
         fileMap.put("preview", new File(imagePath));
         fileMap.put("videofile", new File(videoPath));
-        Map<String, String> valueMap = new HashMap<>(4);
+
+        Map<String, Object> valueMap = new HashMap<>();
         valueMap.put("token", AuthUtils.getInstance(getApplicationContext()).getApiToken());
-        valueMap.put("title", etContent.getText().toString());
+        valueMap.put("title", "");
+        valueMap.put("description", etContent.getText().toString());
         valueMap.put("permission", tvPermission.getHint().toString());
+        valueMap.put("category", "");
         valueMap.put("lat", lat + "");
-        valueMap.put("lnt", lnt + "");
+        valueMap.put("lon", lon + "");
+
+        if (selectedFriends.size() > 0){
+            List<String> userCodes = new ArrayList<>();
+            for(Friend friend : selectedFriends){
+                userCodes.add(friend.userCode);
+            }
+            valueMap.put("mentionList", userCodes);
+        }
+
         ApiServer.baseUploadRequest(this, Constants.UPLOAD_VIDEO, valueMap, fileMap,
                 new TypeToken<ResponseData<String>>() {
                 })
@@ -205,7 +240,7 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
         if (requestCode == REQUEST_PICKER_ADDRESS && resultCode == RESULT_OK) {
             Place selectedPlace = PlacePicker.getPlace(data, this);
             lat = selectedPlace.getLatLng().latitude;
-            lnt = selectedPlace.getLatLng().longitude;
+            lon = selectedPlace.getLatLng().longitude;
             tvLocation.setText(selectedPlace.getAddress());
         }
     }
@@ -226,5 +261,47 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
                 return super.onOptionsItemSelected(item);
         }
     }
+    private void showFriendPicker() {
+        if(friendDialog == null){
+            friendDialog = new FriendDialog(this, R.layout.dialog_friend_picker);
+        }
 
+        if(selectedFriends.size() > 0){
+            Map<String, Friend> selectedFriendMap = new HashMap<>();
+            for(Friend friend : selectedFriends){
+                selectedFriendMap.put(friend.userCode, friend);
+            }
+
+            friendDialog.setSelectedFriendMap(selectedFriendMap);
+        }
+
+        friendDialog.fullWidth().fromBottom().showDialog();
+    }
+
+    @Override
+    public void friendChanged(Friend friend) {
+        if(selectedFriends.contains(friend)){
+            selectedFriends.remove(friend);
+            TextView textView = mentionTvMap.get(friend.userCode);
+            if(textView != null){
+                mentionTvMap.remove(textView);
+            }
+        }else{
+            selectedFriends.add(friend);
+
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.setMargins(5, 0, 5, 0);
+            TextView textView = new TextView(this);
+            textView.setLayoutParams(layoutParams);
+            textView.setTextColor(getResources().getColor(R.color.colorLightGray));
+            textView.setPadding(8, 4, 8, 4);
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+            textView.setText(Utils.getDisplayName(friend.name, friend.nickName));
+            textView.setBackground(getDrawable(R.drawable.bg_black_round_corner));
+            mentionContainer.addView(textView);
+
+            mentionTvMap.put(friend.userCode, textView);
+        }
+
+    }
 }

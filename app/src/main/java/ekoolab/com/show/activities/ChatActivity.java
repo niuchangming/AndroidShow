@@ -551,7 +551,7 @@ public class ChatActivity extends BaseActivity implements View.OnTouchListener, 
     }
 
     private void uploadAudio(final File audioFile){
-        HashMap<String, String> params = new HashMap<>();
+        HashMap<String, Object> params = new HashMap<>();
         params.put("token", AuthUtils.getInstance(this).getApiToken());
 
         HashMap<String, File> fileParams = new HashMap<>();

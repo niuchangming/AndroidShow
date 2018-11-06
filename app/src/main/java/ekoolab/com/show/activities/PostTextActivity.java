@@ -63,7 +63,7 @@ public class PostTextActivity extends BaseActivity implements View.OnClickListen
         progressView.setVisibility(View.VISIBLE);
         progressView.start();
         setViewClickable(false);
-        HashMap<String, String> map = new HashMap<>(4);
+        HashMap<String, Object> map = new HashMap<>(4);
         map.put("body", et_content.getText().toString());
         map.put("type", "text");
         map.put("permission", tv_permission.getText().toString().toLowerCase());

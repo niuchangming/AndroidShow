@@ -113,27 +113,26 @@ public class GenderActivity extends BaseActivity implements View.OnClickListener
         HashMap<String, String> map = new HashMap<>(2);
         map.put("gender", Integer.toString(gender));
         map.put("token", AuthUtils.getInstance(GenderActivity.this).getApiToken());
-        ApiServer.baseUploadRequest(this, Constants.UPDATE_USERPROFILE, map, null,
-                new TypeToken<ResponseData<TextPicture>>() {
-                })
-                .subscribe(new NetworkSubscriber<TextPicture>() {
-                    @Override
-                    protected void onSuccess(TextPicture textPicture) {
-                        ToastUtils.showToast("Saved");
-                        Intent intent = new Intent();
-                        intent.putExtra("gender", gender);
-                        setResult(RESULT_OK, intent);
-                        finish();
-                    }
 
-                    @Override
-                    protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
-                        System.out.println("===errorMsg==="+errorMsg);
-                        tv_save.setVisibility(View.VISIBLE);
-                        setViewClickable(true);
-                        return super.dealHttpException(code, errorMsg, e);
-                    }
-                });
+        ApiServer.basePostRequest(this, Constants.UPDATE_USERPROFILE, map, new TypeToken<ResponseData<TextPicture>>() {
+        }).subscribe(new NetworkSubscriber<TextPicture>() {
+            @Override
+            protected void onSuccess(TextPicture textPicture) {
+                ToastUtils.showToast("Saved");
+                Intent intent = new Intent();
+                intent.putExtra("gender", gender);
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+
+            @Override
+            protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
+                System.out.println("===errorMsg==="+errorMsg);
+                tv_save.setVisibility(View.VISIBLE);
+                setViewClickable(true);
+                return super.dealHttpException(code, errorMsg, e);
+            }
+        });
     }
 
     private void setViewClickable(boolean clickable) {

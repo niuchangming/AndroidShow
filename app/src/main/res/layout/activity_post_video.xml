@@ -70,6 +70,7 @@
         app:layout_constraintTop_toBottomOf="@id/separator_1"
         app:layout_constraintVertical_weight="1" />
 
+
     <Button
         android:id="@+id/at_friend_btn"
         android:layout_width="wrap_content"
@@ -85,19 +86,42 @@
         android:textColor="@color/white"
         android:textAllCaps="false"
         android:textSize="@dimen/text_size_12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_video_image"
+        app:layout_constraintBottom_toBottomOf="@id/iv_video_image"
         app:layout_constraintLeft_toLeftOf="@id/et_content" />
 
     <ImageView
         android:id="@+id/iv_video_image"
         android:layout_width="100dp"
-        android:layout_height="160dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="9:16"
         android:layout_marginLeft="@dimen/layout_margin_8dp"
         android:layout_marginRight="@dimen/layout_margin_8dp"
         android:layout_marginTop="16dp"
         app:layout_constraintLeft_toRightOf="@id/et_content"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/separator_1" />
+
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/layout_margin_8dp"
+        android:layout_marginLeft="@dimen/layout_margin_8dp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintTop_toTopOf="@+id/at_friend_btn"
+        app:layout_constraintBottom_toBottomOf="@+id/at_friend_btn"
+        app:layout_constraintRight_toLeftOf="@+id/iv_video_image"
+        app:layout_constraintLeft_toRightOf="@+id/at_friend_btn">
+
+        <LinearLayout
+            android:id="@+id/mention_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left|center_vertical"
+            android:orientation="horizontal">
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
 
     <Space
         android:id="@+id/space2"
@@ -124,9 +148,10 @@
         android:id="@+id/tv_location"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:drawableRight="@mipmap/right_arrow_icon"
+        android:drawableRight="@drawable/ic_next_arrow"
         android:gravity="right|center_vertical"
         android:drawablePadding="@dimen/item_spacing_8dp"
+        android:layout_marginRight="@dimen/icon_size_16dp"
         android:singleLine="true"
         android:text="Singapore"
         android:textColor="@color/white"
@@ -161,7 +186,9 @@
         android:id="@+id/tv_permission"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:drawableRight="@mipmap/right_arrow_icon"
+        android:drawableRight="@drawable/ic_next_arrow"
+        android:drawablePadding="@dimen/item_spacing_8dp"
+        android:layout_marginRight="@dimen/icon_size_16dp"
         android:gravity="right|center_vertical"
         android:hint="public"
         android:text="Public"

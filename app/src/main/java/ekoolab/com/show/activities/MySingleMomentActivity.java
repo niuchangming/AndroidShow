@@ -78,7 +78,7 @@ public class MySingleMomentActivity extends BaseActivity implements View.OnClick
         ImageLoader.displayImageAsCircle(item.creator.avatar.small, iv_icon);
         NewNineGridlayout newNineGridlayout = findViewById(R.id.nine_grid_layout);
         newNineGridlayout.showPic(nineTotalWidth, item.photoArray,
-                position -> WatchImageActivity.navToWatchImage(this, item.photoArray, position),
+                null,
                 NewNineGridlayout.PHOTO_QUALITY_SMALL);
         boolean notEmpty = Utils.isNotEmpty(item.comments);
         if (notEmpty) {

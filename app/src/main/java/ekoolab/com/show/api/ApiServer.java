@@ -82,7 +82,7 @@ public class ApiServer {
 
     public static <T> FlowableSubscribeProxy<T> baseUploadRequest(BaseActivity activity,
                                                                   String url,
-                                                                  Map<String, String> valueMap,
+                                                                  Map<String, Object> valueMap,
                                                                   Map<String, File> fileMap,
                                                                   TypeToken<T> typeToken) {
         return Rx2AndroidNetworking

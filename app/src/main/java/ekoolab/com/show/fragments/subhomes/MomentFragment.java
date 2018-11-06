@@ -67,8 +67,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import ekoolab.com.show.R;
-import ekoolab.com.show.activities.MainActivity;
-import ekoolab.com.show.activities.WatchImageActivity;
 import ekoolab.com.show.adapters.DialogGiftPagerAdapter;
 import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
@@ -175,7 +173,6 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
         recyclerView.setAdapter(mAdapter);
         llTipsContainer = holder.get(R.id.ll_tips_container);
 
-
         imagePreview = new ImageViewer(getActivity());
         imagePreview.doDrag(true);
         imagePreview.setDragType(ImageDraggerType.DRAG_TYPE_WX);
@@ -210,13 +207,6 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
                 });
             }
         });
-
-        int LAYOUT_FLAG;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-        } else {
-            LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_PHONE;
-        }
 
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT,
