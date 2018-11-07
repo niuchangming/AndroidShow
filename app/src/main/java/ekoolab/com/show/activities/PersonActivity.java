@@ -178,6 +178,9 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                 this.startActivityForResult(intent, UserInfo.REQUEST_GENDER);
                 break;
             case R.id.birthday_rl:
+//                intent = new Intent(this, BirthdayActivity.class);
+////                intent.putExtra("gender", userInfo.gender);
+//                this.startActivityForResult(intent, UserInfo.REQUEST_BIRTHDAY);
                 DatePickerFragment datePickerFragment = new DatePickerFragment();
                 datePickerFragment.show(getFragmentManager(), "datepicker");
                 break;
@@ -224,6 +227,10 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                 case UserInfo.REQUEST_GENDER:
                     userInfo.gender = data.getIntExtra("gender",userInfo.gender);
                     tv_gender.setText((userInfo.gender == 0)? "Male":"Female");
+                    break;
+                case UserInfo.REQUEST_BIRTHDAY:
+                    userInfo.birthday = data.getLongExtra("timeStamp", 0);
+                    tv_nickname.setText(data.getStringExtra("birthday"));
                     break;
                 case UserInfo.REQUEST_REGION:
                     userInfo.region = data.getStringExtra("region");

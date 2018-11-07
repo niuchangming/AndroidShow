@@ -309,6 +309,7 @@
                 android:tint="@color/colorBlack" />
 
             <TextView
+                android:id="@+id/whatsup_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -322,9 +323,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:layout_margin="@dimen/layout_margin_5dp"
                 android:layout_toLeftOf="@id/what_right_icon"
+                android:layout_toRightOf="@id/whatsup_title"
                 android:layout_marginLeft="@dimen/layout_margin_2dp"
                 android:text="@string/whatsup"
+                android:textDirection="rtl"
                 android:textColor="@color/text_color_gray"
                 android:textSize="@dimen/text_size_16sp" />
             <ImageView

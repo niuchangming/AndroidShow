@@ -50,6 +50,7 @@
     <string name="save">Save</string>
     <string name="post">Post</string>
     <string name="nameinput">Enter your name</string>
+    <string name="hobby_input">Enter your hobbies</string>
     <string name="nicknameinput">Enter your nickname</string>
     <string name="male">Male</string>
     <string name="female">Female</string>
