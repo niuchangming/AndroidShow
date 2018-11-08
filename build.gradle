@@ -21,6 +21,7 @@ allprojects {
         maven { url "https://jitpack.io" }
         maven { url 'https://tokbox.bintray.com/maven' }
         maven { url "https://raw.githubusercontent.com/smilefam/SendBird-SDK-Android/master/" }
+        maven { url "https://dl.bintray.com/albertlii/android-maven/" }
     }
 }
 

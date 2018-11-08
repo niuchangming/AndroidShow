@@ -78,6 +78,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
                 if(loginData != null){
                     broadcastLoggedIn(loginData);
+                    LoginActivity.this.finish();
                 }
             }
         }

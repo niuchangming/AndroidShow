@@ -207,12 +207,10 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
                 }
                 break;
             case R.id.followers_ll:
-                followers_ll.setClickable(false);
                 intent = new Intent(getContext(), FollowersActivity.class);
                 getContext().startActivity(intent);
                 break;
             case R.id.following_ll:
-                following_ll.setClickable(false);
                 intent = new Intent(getContext(), FollowingActivity.class);
                 getContext().startActivity(intent);
                 break;

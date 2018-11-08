@@ -2,12 +2,16 @@ package ekoolab.com.show.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.provider.Settings;
 
+import com.luck.picture.lib.cameralibrary.util.FileUtil;
 import com.luck.picture.lib.tools.Constant;
+import com.sendbird.android.SendBird;
 
 import ekoolab.com.show.beans.AuthInfo;
 import ekoolab.com.show.beans.LoginData;
+import ekoolab.com.show.utils.Chat.ChatManager;
 
 public class AuthUtils {
     public static final int ORIGIN = 0;
@@ -103,9 +107,17 @@ public class AuthUtils {
     }
 
     public void logout(){
-        SharedPreferences.Editor spEditor = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE).edit();
-        spEditor.clear();
-        spEditor.apply();
+        ChatManager.getInstance(context).logout(new SendBird.DisconnectHandler() {
+            @Override
+            public void onDisconnected() {}
+        });
+        FileUtils.clearApplicationData(context);
+
+        SQLiteDatabase db = DataBaseManager.getInstance(context).openDatabase();
+        DataBaseManager.getInstance(context).onClear(db);
+        if (db != null){
+            DataBaseManager.getInstance(context).closeDatabase();
+        }
     }
 
     public enum AuthType {

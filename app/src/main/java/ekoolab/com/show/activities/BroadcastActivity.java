@@ -169,16 +169,16 @@ public class BroadcastActivity extends FUBaseUIActivity implements View.OnClickL
         mFURenderer.setTrackOrientation(rotation);
     }
 
-    @Override
-    public void onCameraChange(int currentCameraType, int cameraOrientation) {
-        mFURenderer.onCameraChange(currentCameraType, cameraOrientation);
-    }
-
-    @Override
-    public int onDrawFrame(byte[] cameraNV21Byte, int cameraTextureId, int cameraWidth, int cameraHeight, float[] mtx, long timeStamp) {
-        int fuTextureId = mFURenderer.onDrawFrame(cameraNV21Byte, cameraTextureId, cameraWidth, cameraHeight);
-        return fuTextureId;
-    }
+//    @Override
+//    public void onCameraChange(int currentCameraType, int cameraOrientation) {
+//        mFURenderer.onCameraChange(currentCameraType, cameraOrientation);
+//    }
+//
+//    @Override
+//    public int onDrawFrame(byte[] cameraNV21Byte, int cameraTextureId, int cameraWidth, int cameraHeight, float[] mtx, long timeStamp) {
+//        int fuTextureId = mFURenderer.onDrawFrame(cameraNV21Byte, cameraTextureId, cameraWidth, cameraHeight);
+//        return fuTextureId;
+//    }
 
     @Override
     public void handleFrame(byte[] data, int cameraWidth, int cameraHeight) {
@@ -186,20 +186,20 @@ public class BroadcastActivity extends FUBaseUIActivity implements View.OnClickL
         Logger.i("Texture Id: " + textureId);
     }
 
-    @Override
-    public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        mFURenderer.onSurfaceCreated();
-    }
-
-    @Override
-    public void onSurfaceChanged(GL10 gl, int width, int height) {
-
-    }
-
-    @Override
-    public void onSurfaceDestroy() {
-        mFURenderer.onSurfaceDestroyed();
-    }
+//    @Override
+//    public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+//        mFURenderer.onSurfaceCreated();
+//    }
+//
+//    @Override
+//    public void onSurfaceChanged(GL10 gl, int width, int height) {
+//
+//    }
+//
+//    @Override
+//    public void onSurfaceDestroy() {
+//        mFURenderer.onSurfaceDestroyed();
+//    }
 
     private void requestBroadcastInfo(){
         emptyView.showLoading();

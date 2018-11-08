@@ -2,12 +2,21 @@ package ekoolab.com.show.wxapi;
 
 import android.content.Intent;
 
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.Priority;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.facebook.login.LoginResult;
 import com.google.gson.reflect.TypeToken;
+import com.orhanobut.logger.Logger;
+import com.rx2androidnetworking.Rx2AndroidNetworking;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +31,7 @@ import ekoolab.com.show.application.ShowApplication;
 import ekoolab.com.show.beans.LoginData;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
+import ekoolab.com.show.utils.RxUtils;
 
 public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler{
     public static final String WX_LOGIN_STARTED = "ekoolab.com.show.wx.login.started";
@@ -65,20 +75,28 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler{
         String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=" + Constants.WECHAT_APP_ID + "&secret=" + Constants.WECHAT_SECRET + "&code=" + code + "&grant_type=authorization_code";
 
         sendBroadcast(WX_LOGIN_STARTED, null);
-        ApiServer.baseGetRequest(this, url, new TypeToken<ResponseData<Map<String, String>>>(){})
-                .subscribe(new NetworkSubscriber<Map<String, String>>(){
 
-                    @Override
-                    protected void onSuccess(Map<String, String> responseMap) {
-                        String accessToken = responseMap.get("acces_token");
-                        String openId = responseMap.get("openid");
-                        String unionId = responseMap.get("unionid");
-                        long expiredIn = Long.parseLong(responseMap.get("expires_in"));
-                        String refreshToken = responseMap.get("refresh_token");
+        AndroidNetworking.get(url).build().getAsJSONObject(new JSONObjectRequestListener() {
+            @Override
+            public void onResponse(JSONObject responseMap) {
+                try {
+                    String accessToken = responseMap.getString("access_token");
+                    String openId = responseMap.getString("openid");
+                    String unionId = responseMap.getString("unionid");
+                    long expiredIn = responseMap.getLong("expires_in");
+                    String refreshToken = responseMap.getString("refresh_token");
 
-                        afterWeChatLogin(accessToken, openId, unionId, expiredIn, refreshToken);
-                    }
-                });
+                    afterWeChatLogin(accessToken, openId, unionId, expiredIn, refreshToken);
+                }catch(JSONException e){
+                    sendBroadcast(WX_LOGIN_ENDED, null);
+                }
+            }
+
+            @Override
+            public void onError(ANError anError) {
+                sendBroadcast(WX_LOGIN_ENDED, null);
+            }
+        });
     }
 
     private void afterWeChatLogin(final String accessToken, String openId, String unionId, long expiredIn, String refreshToken) {
@@ -112,6 +130,7 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler{
         }
         msgIntent.setAction(identifier);
         this.sendBroadcast(msgIntent);
+        this.finish();
     }
 
 

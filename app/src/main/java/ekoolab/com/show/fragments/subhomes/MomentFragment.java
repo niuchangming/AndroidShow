@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -25,7 +24,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
@@ -34,7 +32,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -44,10 +41,6 @@ import com.bumptech.glide.request.transition.Transition;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.reflect.TypeToken;
-import com.liyi.viewer.ViewData;
-import com.liyi.viewer.dragger.ImageDraggerType;
-import com.liyi.viewer.widget.ImageViewer;
-import com.liyi.viewer.widget.ScaleImageView;
 import com.luck.picture.lib.utils.ThreadExecutorManager;
 import com.orhanobut.logger.Logger;
 import com.santalu.emptyview.EmptyView;
@@ -81,13 +74,18 @@ import ekoolab.com.show.fragments.BaseFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.DisplayUtils;
-import ekoolab.com.show.utils.ImageLoader;;
+import ekoolab.com.show.utils.ImageLoader;
 import ekoolab.com.show.utils.RxUtils;
 import ekoolab.com.show.utils.TimeUtils;
 import ekoolab.com.show.utils.ToastUtils;
 import ekoolab.com.show.utils.UIHandler;
 import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.utils.ViewHolder;
+import ekoolab.com.show.views.ImageViewer.IyImageLoader;
+import ekoolab.com.show.views.ImageViewer.ViewData;
+import ekoolab.com.show.views.ImageViewer.dragger.ImageDraggerType;
+import ekoolab.com.show.views.ImageViewer.widget.ImageViewer;
+import ekoolab.com.show.views.ImageViewer.widget.ScaleImageView;
 import ekoolab.com.show.views.itemdecoration.LinearItemDecoration;
 import ekoolab.com.show.views.nestlistview.NestFullListView;
 import ekoolab.com.show.views.nestlistview.NestFullListViewAdapter;
@@ -178,7 +176,7 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
         imagePreview.setDragType(ImageDraggerType.DRAG_TYPE_WX);
         imagePreview.setBackgroundColor(Color.BLACK);
         imagePreview.setVisibility(View.GONE);
-        imagePreview.setImageLoader(new com.liyi.viewer.ImageLoader<String>() {
+        imagePreview.setImageLoader(new IyImageLoader<String>() {
 
             @Override
             public void displayImage(final int position, String src, final ImageView imageView) {

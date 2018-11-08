@@ -102,4 +102,12 @@ public class DataBaseManager extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + Constants.CHAT_MESSAGE_TB);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + Constants.RESOURCE_FILE_TB);
     }
+
+    public void onClear(SQLiteDatabase sqLiteDatabase) {
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + Constants.FRIEND_TB);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + Constants.PHOTO_TB);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + Constants.CHAT_MESSAGE_TB);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + Constants.RESOURCE_FILE_TB);
+        onCreate(sqLiteDatabase);
+    }
 }

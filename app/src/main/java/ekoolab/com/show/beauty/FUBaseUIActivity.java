@@ -22,7 +22,7 @@ import ekoolab.com.show.activities.BaseActivity;
 import ekoolab.com.show.beauty.renderer.CameraRenderer;
 
 public abstract class FUBaseUIActivity extends BaseActivity implements View.OnClickListener,
-        CameraRenderer.OnRendererStatusListener,
+//        CameraRenderer.OnRendererStatusListener,
         SensorEventListener {
 
     protected EmptyView emptyView;
@@ -114,30 +114,30 @@ public abstract class FUBaseUIActivity extends BaseActivity implements View.OnCl
 
     }
 
-    @Override
-    public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+//    @Override
+//    public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+//
+//    }
+//
+//    @Override
+//    public void onSurfaceChanged(GL10 gl, int width, int height) {
+//
+//    }
 
-    }
+//    @Override
+//    public int onDrawFrame(byte[] cameraNV21Byte, int cameraTextureId, int cameraWidth, int cameraHeight, float[] mtx, long timeStamp) {
+//        return 0;
+//    }
 
-    @Override
-    public void onSurfaceChanged(GL10 gl, int width, int height) {
+//    @Override
+//    public void onSurfaceDestroy() {
+//
+//    }
 
-    }
-
-    @Override
-    public int onDrawFrame(byte[] cameraNV21Byte, int cameraTextureId, int cameraWidth, int cameraHeight, float[] mtx, long timeStamp) {
-        return 0;
-    }
-
-    @Override
-    public void onSurfaceDestroy() {
-
-    }
-
-    @Override
-    public void onCameraChange(int currentCameraType, int cameraOrientation) {
-
-    }
+//    @Override
+//    public void onCameraChange(int currentCameraType, int cameraOrientation) {
+//
+//    }
 
     @Override
     protected void onPause() {

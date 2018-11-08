@@ -32,10 +32,10 @@
         app:ev_loading_type="circular"
         app:ev_transition="auto">
 
-        <android.opengl.GLSurfaceView
-            android:id="@+id/fu_base_gl_surface"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        <!--<android.opengl.GLSurfaceView-->
+            <!--android:id="@+id/fu_base_gl_surface"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent" />-->
 
         <FrameLayout
             android:id="@+id/publisher_container"
