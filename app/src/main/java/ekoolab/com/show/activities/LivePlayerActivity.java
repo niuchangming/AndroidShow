@@ -7,6 +7,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -29,7 +31,15 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.gson.reflect.TypeToken;
 import com.luck.picture.lib.utils.ThreadExecutorManager;
+import com.orhanobut.logger.Logger;
 import com.rey.material.widget.ProgressView;
+import com.sendbird.android.BaseChannel;
+import com.sendbird.android.BaseMessage;
+import com.sendbird.android.OpenChannel;
+import com.sendbird.android.SendBird;
+import com.sendbird.android.SendBirdException;
+import com.sendbird.android.User;
+import com.sendbird.android.UserMessage;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,21 +50,32 @@ import java.util.TimerTask;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.adapters.DialogGiftPagerAdapter;
+import ekoolab.com.show.adapters.OpenMessageAdapter;
 import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
+import ekoolab.com.show.beans.ChatMessage;
 import ekoolab.com.show.beans.Gift;
 import ekoolab.com.show.beans.Live;
+import ekoolab.com.show.beans.enums.MessageType;
+import ekoolab.com.show.dialogs.CommentDialog;
 import ekoolab.com.show.dialogs.DialogViewHolder;
 import ekoolab.com.show.dialogs.XXDialog;
 import ekoolab.com.show.utils.AuthUtils;
+import ekoolab.com.show.utils.Chat.ChatManager;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.DisplayUtils;
+import ekoolab.com.show.utils.GlideApp;
+import ekoolab.com.show.utils.ImageLoader;
 import ekoolab.com.show.utils.ToastUtils;
+import ekoolab.com.show.utils.UIHandler;
 import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.views.BubbleView;
+import ekoolab.com.show.views.itemdecoration.LinearItemDecoration;
 
-public class LivePlayerActivity extends BaseActivity implements View.OnClickListener, Player.EventListener {
+import static com.sendbird.android.SendBird.ConnectionState.OPEN;
+
+public class LivePlayerActivity extends BaseActivity implements View.OnClickListener, Player.EventListener, ChatManager.ChatManagerListener {
     public static final String LIVE_DATA = "live_data";
     private Live live;
     private PlayerView playerView;
@@ -73,8 +94,12 @@ public class LivePlayerActivity extends BaseActivity implements View.OnClickList
     private ImageButton giftBtn;
     private ImageButton shareBtn;
     private ProgressView followStatePv;
-
     private List<Gift> gifts = new ArrayList<>();
+
+    private RecyclerView chatRecyclerView;
+    private OpenChannel openChannel;
+    private List<BaseMessage> openMessages = null;
+    private CommentDialog commentDialog = null;
 
     long mLastTime = 0;
     long mCurTime = 0;
@@ -101,37 +126,59 @@ public class LivePlayerActivity extends BaseActivity implements View.OnClickList
     protected void initData() {
         super.initData();
 
-//        live = getIntent().getParcelableExtra(LIVE_DATA);
+        live = getIntent().getParcelableExtra(LIVE_DATA);
         getGifts();
+
+        if(SendBird.getConnectionState() == OPEN){
+            getChannel(live.channelId);
+        }else{
+            ChatManager.getInstance(this).login(new SendBird.ConnectHandler() {
+                @Override
+                public void onConnected(User user, SendBirdException e) {
+                    if (e == null) {
+                        getChannel(live.channelId);
+                    }
+                }
+            });
+        }
     }
 
     @Override
     protected void initViews() {
         super.initViews();
 
-//        maskImageView = findViewById(R.id.mask_iv);
-//        ImageLoader.displayImage(live.coverImage.medium, maskImageView, 25);
-//
-//        likeBtn = findViewById(R.id.like_float_btn);
-//        likeBtn.setOnClickListener(this);
-//
-//        avatarIv = findViewById(R.id.avatar_iv);
-//        ImageLoader.displayImageAsCircle(live.avatar.small, avatarIv);
-//
-//        nameTv = findViewById(R.id.name_tv);
-//        nameTv.setText(Utils.getDisplayName(live.author, live.nickname));
-//
-//        audienceTv = findViewById(R.id.audience_amount_tv);
-//        audienceTv.setText(live.audienceCount.size()+"");
-//
-//        followBtn = findViewById(R.id.follow_btn);
-//        followBtn.setOnClickListener(this);
-//
-//        dismissBtn = findViewById(R.id.dismiss_btn);
-//        dismissBtn.setOnClickListener(this);
-//
-//        commentBtn = findViewById(R.id.comment_btn);
-//        commentBtn.setOnClickListener(this);
+        maskImageView = findViewById(R.id.mask_iv);
+        ImageLoader.displayImage(live.coverImage.medium, maskImageView, 15);
+
+        chatRecyclerView = findViewById(R.id.recycler_view);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        chatRecyclerView.setLayoutManager(linearLayoutManager);
+        chatRecyclerView.addItemDecoration(new LinearItemDecoration(this,
+                0, R.color.colorLightGray, 0));
+        chatRecyclerView.setAdapter(new OpenMessageAdapter(this, openMessages));
+
+        likeBtn = findViewById(R.id.like_float_btn);
+        likeBtn.setOnClickListener(this);
+
+        avatarIv = findViewById(R.id.avatar_iv);
+        if(!Utils.isBlank(live.avatar.small)){
+            ImageLoader.displayImageAsCircle(live.avatar.small, avatarIv);
+        }
+
+        nameTv = findViewById(R.id.name_tv);
+        nameTv.setText(Utils.getDisplayName(live.author, live.nickname));
+
+        audienceTv = findViewById(R.id.audience_amount_tv);
+        audienceTv.setText(live.audienceCount.size()+"");
+
+        followBtn = findViewById(R.id.follow_btn);
+        followBtn.setOnClickListener(this);
+
+        dismissBtn = findViewById(R.id.dismiss_btn);
+        dismissBtn.setOnClickListener(this);
+
+        commentBtn = findViewById(R.id.comment_btn);
+        commentBtn.setOnClickListener(this);
 
         giftBtn = findViewById(R.id.gift_btn);
         giftBtn.setOnClickListener(this);
@@ -151,18 +198,19 @@ public class LivePlayerActivity extends BaseActivity implements View.OnClickList
     public void onStart() {
         super.onStart();
         if (Util.SDK_INT > 23) {
-//            initPlayer();
+            initPlayer();
         }
+        ChatManager.getInstance(this).register(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         if ((Util.SDK_INT <= 23 || player == null)) {
-//            initPlayer();
+            initPlayer();
         }
 
-//        isFollowed();
+        isFollowed();
     }
 
     private void initPlayer(){
@@ -276,6 +324,7 @@ public class LivePlayerActivity extends BaseActivity implements View.OnClickList
                 showGiftDialog();
                 break;
             case R.id.comment_btn:
+                showCommentDialog();
                 break;
             case R.id.dismiss_btn:
                 onBackPressed();
@@ -321,6 +370,60 @@ public class LivePlayerActivity extends BaseActivity implements View.OnClickList
 
         delayTimer = new Timer();
         delayTimer.schedule(timeTask, DELAY);
+    }
+
+    private void showCommentDialog() {
+        if (commentDialog == null) {
+            commentDialog = new CommentDialog(this);
+            commentDialog.setOnClickListener(content -> {
+                sendChat(content);
+                commentDialog.dismiss();
+                commentDialog.clearText();
+            });
+        }
+        commentDialog.show();
+        UIHandler.getInstance().postDelayed(() -> commentDialog.showKeyboard(), 150L);
+    }
+
+    private void sendChat(String content){
+        if(openChannel != null){
+            List<String> targetLanguages = new ArrayList<>();
+            targetLanguages.add("zh-CHS");
+            openChannel.sendUserMessage(content, "", MessageType.TEXT.getName(), targetLanguages, new BaseChannel.SendUserMessageHandler() {
+                @Override
+                public void onSent(UserMessage userMessage, SendBirdException e) {
+                    if (e == null) {
+                        openMessages.add(userMessage);
+                        chatRecyclerView.getAdapter().notifyDataSetChanged();
+                    }
+                }
+            });
+
+        }
+    }
+
+    private void getChannel(String channelUrl){
+        if (Utils.isBlank(channelUrl)) return;
+        OpenChannel.getChannel(channelUrl, new OpenChannel.OpenChannelGetHandler() {
+            @Override
+            public void onResult(OpenChannel openChannel, SendBirdException e) {
+                if(e == null){
+                    LivePlayerActivity.this.openChannel = openChannel;
+                    enterChannel();
+                }
+            }
+        });
+    }
+
+    private void enterChannel(){
+        if (this.openChannel != null) {
+            this.openChannel.enter(new OpenChannel.OpenChannelEnterHandler() {
+                @Override
+                public void onResult(SendBirdException e) {
+                    Logger.i("Enter Open Channel Failed");
+                }
+            });
+        }
     }
 
     private void showGiftDialog() {
@@ -382,14 +485,14 @@ public class LivePlayerActivity extends BaseActivity implements View.OnClickList
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         switch (playbackState) {
-            case Player.STATE_IDLE:       // The player does not have any media to play yet.
+            case Player.STATE_IDLE:
                 break;
-            case Player.STATE_BUFFERING:  // The player is buffering (loading the content)
+            case Player.STATE_BUFFERING:
                 break;
-            case Player.STATE_READY:      // The player is able to immediately play
+            case Player.STATE_READY:
                 removeMask();
                 break;
-            case Player.STATE_ENDED:      // The player has finished playing the media
+            case Player.STATE_ENDED:
                 break;
         }
     }
@@ -408,12 +511,26 @@ public class LivePlayerActivity extends BaseActivity implements View.OnClickList
         if (Util.SDK_INT > 23) {
             releasePlayer();
         }
+        ChatManager.getInstance(this).unregister(this);
     }
 
     private void releasePlayer() {
         if (player != null) {
             player.release();
             player = null;
+        }
+    }
+
+    @Override
+    public void didReceivedMessage(ChatMessage chatMessage) {
+
+    }
+
+    @Override
+    public void didReceivedOpenMessage(BaseMessage baseMessage) {
+        if (Utils.equals(openChannel.getUrl(), baseMessage.getChannelUrl())){
+            openMessages.add(baseMessage);
+            chatRecyclerView.getAdapter().notifyDataSetChanged();
         }
     }
 }

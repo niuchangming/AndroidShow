@@ -149,7 +149,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         fragments.add(new MyVideoFragment());
         fragments.add(new MyCollectsFragment());
         fragments.add(new MymomentsFragment());
-        pagerAdapter =  new ProfileAdapter(getChildFragmentManager(), fragments);
+        pagerAdapter =  new ProfileAdapter(getContext(), getChildFragmentManager(), fragments);
         viewPager.setAdapter(pagerAdapter);
         indicatorTabLayout.setupWithViewPager(viewPager);
         indicatorTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

@@ -122,22 +122,22 @@ public class CameraActivity extends AppCompatActivity {
             @Override
             public void recordSuccess(String url, String firstFramePath, List<String> framePaths) {
                 //获取视频路径
-                Intent intent = new Intent();
-                intent.putExtra(EXTRA_VIDEO_PATH, url);
-                if (jumpClass != null) {
-                    intent.putExtra(EXTRA_IMAGE_PATH, firstFramePath);
-                    intent.putStringArrayListExtra(EXTRA_VIDEO_FRAME_PATHS, (ArrayList<String>) framePaths);
-                    intent.putExtra(EXTRA_JUMP_CLASS, jumpClass);
-                    try {
-                        intent.setClass(CameraActivity.this, Class.forName("ekoolab.com.show.activities.ChooseCoverActivity"));
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                    startActivity(intent);
-                } else {
-                    setResult(PictureSelectorActivity.RESULT_OK, intent);
-                    finish();
-                }
+//                Intent intent = new Intent();
+//                intent.putExtra(EXTRA_VIDEO_PATH, url);
+//                if (jumpClass != null) {
+//                    intent.putExtra(EXTRA_IMAGE_PATH, firstFramePath);
+//                    intent.putStringArrayListExtra(EXTRA_VIDEO_FRAME_PATHS, (ArrayList<String>) framePaths);
+//                    intent.putExtra(EXTRA_JUMP_CLASS, jumpClass);
+//                    try {
+//                        intent.setClass(CameraActivity.this, Class.forName("ekoolab.com.show.activities.ChooseCoverActivity"));
+//                    } catch (ClassNotFoundException e) {
+//                        e.printStackTrace();
+//                    }
+//                    startActivity(intent);
+//                } else {
+//                    setResult(PictureSelectorActivity.RESULT_OK, intent);
+//                    finish();
+//                }
             }
 
             @Override

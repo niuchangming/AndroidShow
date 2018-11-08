@@ -1,7 +1,7 @@
 package ekoolab.com.show.beans.enums;
 
 public enum SendState {
-    SENDING(0), SENT(1), REACHED(2), READ(3), FAILED(4), NOT_ANSWERED(5), ACCEPTED(6), DECLINED(7), ENDED(8);
+    SENDING(0), SENT(1), READ(2), FAILED(3), NOT_ANSWERED(4), ACCEPTED(5), DECLINED(6), ENDED(7);
 
     private int index;
 

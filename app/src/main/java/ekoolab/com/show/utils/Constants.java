@@ -6,8 +6,13 @@ import java.io.File;
 
 public class Constants {
     public static final int PAGE_SIZE = 20;
+    public static final int CHAT_LIMIT = 20;
     public static final String SBD_APP_ID = "9FFC187F-1F31-46B3-A77D-BB96008A8EED";
     public static final String SBD_TOKEN = "ea52b46dfb6f05f404fc15735557b321c85efd6d";
+    public static final String TOKBOX_APP_ID = "46182032";
+    public static final String TOKBOX_APP_SECRET = "60af838781cb8441b88f1434ed213f09a4b6a72d";
+    public static final String WECHAT_APP_ID = "wxeda3982509da49ac";
+    public static final String WECHAT_SECRET = "715b77b4345364d97659f34cb74a9d7b";
 
     public static final String HOST = "http://api.ccmsshow.com:8081/api/";
     public static final String LOGIN = HOST + "user/login";
@@ -28,6 +33,8 @@ public class Constants {
     public static final String FAVOURITECANEL = HOST + "favourites/cancel";
     public static final String MYFAVOURITELIST = HOST + "favourites/favlist";
     public static final String UPLOAD_VIDEO = HOST + "video/upload";
+    public static final String UPLOAD_AUDIO = HOST + "chat/upload";
+
     public static final String LIKE = HOST + "likes/like";
     public static final String UNLIKE = HOST + "likes/unlike";
     public static final String FOLLOW = HOST + "follows/add";
@@ -47,17 +54,18 @@ public class Constants {
     public static final String LIVE_LIST = HOST + "broadcast/getlist";
     public static final String GIFTLIST = HOST + "gift/getGifts";
     public static final String TextPost = HOST + "moment/publish";
+    public static final String BROADCAST_INFO = HOST + "broadcast/session";
+    public static final String UPLOAD_BROADCAST_INFO = HOST + "broadcast/broadcastId";
+    public static final String UPLOAD_CHANNEL_URL = HOST + "broadc7ast/uploadChannelId";
+
     public static final int PersonActResult = 11;
 
     public static final String ROOT_PATH = Environment.getExternalStorageDirectory().getAbsolutePath()
             + File.separator + "AndroidShow" + File.separator;
     public static final String VIDEO_PATH = ROOT_PATH + "videos" + File.separator;
     public static final String IMAGE_PATH = ROOT_PATH + "images" + File.separator;
+    public static final String AUDIO_PATH = ROOT_PATH + "audios" + File.separator;
     public static final String IMAGE_CACHE_PATH = ROOT_PATH + "imageCache" + File.separator;
-
-    public static final String[] homeIndicatorTitles = {"Moment", "Video", "Live"};
-    public static final String[] profileIndicatorTitles = {"My Videos", "My Collects", "My Moments"};
-
 
     public static final class Auth {
         public static final String LOGGED_IN = "logged_in";
@@ -69,9 +77,9 @@ public class Constants {
         public static final String USERNAME = "user_name";
         public static final String NICKNAME = "nickname";
         public static final String ROLE = "role";
+        public static final String CHANNEL_URL = "channel_url";
         public static final String TEMP_USER_ID = "temp_user_id";
     }
-
 
     public static final String FRIEND_TB = "friend";
     public static final class FriendTableColumns {
@@ -108,6 +116,19 @@ public class Constants {
         public final static String requestId = "request_id";
         public final static String messageType = "message_type";
         public final static String sendState = "send_state";
+    }
+
+    public static final String RESOURCE_FILE_TB = "resource_file";
+    public static final class ResourceFileTableColumns{
+        public final static String fileName = "filename";
+        public final static String fileUrl = "url";
+        public final static String filePath = "path";
+        public final static String fileType = "type";
+        public final static String chatMessageId = "chat_message_id";
+        public final static String fileSize = "file_size";
+        public final static String mimeType = "mime_type";
+        public final static String extension = "extension";
+        public final static String duration = "duration";
     }
 
 }

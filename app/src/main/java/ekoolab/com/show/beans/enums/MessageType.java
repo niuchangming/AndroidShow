@@ -6,7 +6,7 @@ public enum MessageType {
     TEXT (0, "text"),
     ADMIN (1, "admin"),
     AUDIO (2, "audio"),
-    PHOTO (3, "audio"),
+    PHOTO (3, "photo"),
     VIDEO (4, "video"),
     LINK (5, "link"),
     VOICE_CALL (6, "voice_call"),
@@ -34,14 +34,14 @@ public enum MessageType {
         for (MessageType type : MessageType.values()) {
             if (Utils.equals(type.name, strValue)) return type;
         }
-        throw new IllegalArgumentException("Type not found. Amputated?");
+        return TEXT;
     }
 
     public static MessageType getMessageType(int index) {
         for (MessageType type : MessageType.values()) {
             if (type.index == index) return type;
         }
-        throw new IllegalArgumentException("Type not found. Amputated?");
+        return TEXT;
     }
 
 

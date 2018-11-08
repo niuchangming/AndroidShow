@@ -2,63 +2,127 @@ package ekoolab.com.show.activities;
 
 import android.Manifest;
 import android.content.Intent;
-import android.graphics.Color;
+import android.os.Build;
+import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.gson.reflect.TypeToken;
 import com.luck.picture.lib.CameraActivity;
 import com.luck.picture.lib.utils.AppManager;
 import com.rey.material.widget.ProgressView;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
+import ekoolab.com.show.beans.Friend;
+import ekoolab.com.show.dialogs.FriendDialog;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.ToastUtils;
+import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.views.EasyPopup;
 
 /**
- * @author Army
+ * @author Changming Niu
  * @version V_1.0.0
  * @date 2018/9/22
  * @description 发布视频
  */
-public class PostVideoActivity extends BaseActivity implements View.OnClickListener {
-    private TextView tvCancel;
-    private ImageView ivLeft;
-    private TextView tvName;
-    private TextView tvSave;
-    private ImageView ivRight;
+public class PostVideoActivity extends BaseActivity implements View.OnClickListener, FriendDialog.FriendDialogListener {
+    private Toolbar mTopToolbar;
     private EditText etContent;
-    private TextView tvAtFriend;
+    private Button atFriendBtn;
+    private ImageButton uploadingBtn;
+    private ProgressView uploadingBar;
     private ImageView ivVideoImage;
     private TextView tvLocation;
     private TextView tvLocationLabel;
     private TextView tvPermission;
-    private View toolbarTitle;
     private EasyPopup easyPopup;
-    public static final int REQUEST_CHOOSE_ADDRESS = 223;
-    private double lat, lnt;
+    private LinearLayout mentionContainer;
+    private FriendDialog friendDialog;
+    public static final int REQUEST_PICKER_ADDRESS = 223;
+    private double lat, lon;
     private String videoPath, imagePath;
-    private ProgressView progressView;
+    private List<Friend> selectedFriends;
+    private Map<String, TextView> mentionTvMap;
 
+    @Override
+    protected void initData() {
+        super.initData();
+        selectedFriends = new ArrayList<>();
+        mentionTvMap = new HashMap<>();
+    }
+
+    @Override
+    protected void initViews() {
+        super.initViews();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(this.getResources().getColor(R.color.colorPrimaryBlue));
+        }
+
+        mentionContainer = findViewById(R.id.mention_container);
+
+        uploadingBtn = findViewById(R.id.upload_btn);
+        uploadingBtn.setOnClickListener(this);
+        uploadingBar = findViewById(R.id.progress_pv);
+
+        etContent = findViewById(R.id.et_content);
+        atFriendBtn = findViewById(R.id.at_friend_btn);
+        atFriendBtn.setOnClickListener(this);
+
+        ivVideoImage = findViewById(R.id.iv_video_image);
+        tvLocation = findViewById(R.id.tv_location);
+        tvLocation.setOnClickListener(this);
+        tvLocationLabel = findViewById(R.id.tv_location_label);
+        tvLocationLabel.setOnClickListener(this);
+        tvPermission = findViewById(R.id.tv_permission);
+        tvPermission.setOnClickListener(this);
+
+        videoPath = getIntent().getStringExtra(ChooseCoverActivity.VIDEO_PATH);
+        imagePath = getIntent().getStringExtra(ChooseCoverActivity.FIRST_FRAME_PATH);
+        Glide.with(this).load(imagePath).into(ivVideoImage);
+
+        mTopToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mTopToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setTitle(getString(R.string.post_video));
+    }
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_left:
                 onBackPressed();
                 break;
-            case R.id.iv_right:
+            case R.id.upload_btn:
                 publishVideo();
                 break;
             case R.id.tv_permission:
@@ -86,32 +150,60 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
                 break;
             case R.id.tv_location:
             case R.id.tv_location_label:
-                rxPermissions.request(Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.ACCESS_WIFI_STATE,
-                        Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS)
-                        .subscribe(aBoolean -> {
-                            startActivityForResult(new Intent(this, ChooseAddressActivity.class), REQUEST_CHOOSE_ADDRESS);
-                        });
+                openPlacePicker();
+                break;
+            case R.id.at_friend_btn:
+                showFriendPicker();
                 break;
             default:
                 break;
         }
     }
 
+    private void openPlacePicker(){
+        rxPermissions.request(Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS)
+                .subscribe(aBoolean -> {
+                    try {
+                        PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
+                        Intent intent = intentBuilder.build(this);
+                        startActivityForResult(intent, REQUEST_PICKER_ADDRESS);
+
+                    } catch (GooglePlayServicesRepairableException e) {
+                        GooglePlayServicesUtil
+                                .getErrorDialog(e.getConnectionStatusCode(), this, 0);
+                    } catch (GooglePlayServicesNotAvailableException e) {
+                        toastLong("Google Play Services is not available.");
+                    }
+                });
+    }
+
     private void publishVideo() {
-        ivRight.setVisibility(View.GONE);
-        progressView.setVisibility(View.VISIBLE);
-        progressView.start();
+        uploadingBtn.setVisibility(View.GONE);
+        uploadingBar.setVisibility(View.VISIBLE);
+        uploadingBar.start();
         setViewClickable(false);
         Map<String, File> fileMap = new HashMap<>(2);
         fileMap.put("preview", new File(imagePath));
         fileMap.put("videofile", new File(videoPath));
-        Map<String, String> valueMap = new HashMap<>(4);
+
+        Map<String, Object> valueMap = new HashMap<>();
         valueMap.put("token", AuthUtils.getInstance(getApplicationContext()).getApiToken());
-        valueMap.put("title", etContent.getText().toString());
+        valueMap.put("title", "");
+        valueMap.put("description", etContent.getText().toString());
         valueMap.put("permission", tvPermission.getHint().toString());
+        valueMap.put("category", "");
         valueMap.put("lat", lat + "");
-        valueMap.put("lnt", lnt + "");
+        valueMap.put("lon", lon + "");
+
+        if (selectedFriends.size() > 0){
+            List<String> userCodes = new ArrayList<>();
+            for(Friend friend : selectedFriends){
+                userCodes.add(friend.userCode);
+            }
+            valueMap.put("mentionList", userCodes);
+        }
+
         ApiServer.baseUploadRequest(this, Constants.UPLOAD_VIDEO, valueMap, fileMap,
                 new TypeToken<ResponseData<String>>() {
                 })
@@ -125,10 +217,10 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
 
                     @Override
                     protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
-                        ivRight.setVisibility(View.VISIBLE);
+                        uploadingBtn.setVisibility(View.VISIBLE);
+                        uploadingBar.setVisibility(View.GONE);
+                        uploadingBar.stop();
                         setViewClickable(true);
-                        progressView.setVisibility(View.GONE);
-                        progressView.stop();
                         return super.dealHttpException(code, errorMsg, e);
                     }
                 });
@@ -142,46 +234,14 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
         tvPermission.setClickable(clickable);
     }
 
-    @Override
-    protected void initViews() {
-        super.initViews();
-        toolbarTitle = findViewById(R.id.toolbar_title);
-        toolbarTitle.setBackgroundResource(R.color.colorBlack);
-        tvCancel = findViewById(R.id.tv_cancel);
-        tvCancel.setVisibility(View.GONE);
-        ivLeft = findViewById(R.id.iv_left);
-        ivLeft.setVisibility(View.VISIBLE);
-        ivLeft.setOnClickListener(this);
-        tvName = findViewById(R.id.tv_name);
-        tvName.setText(R.string.post);
-        tvName.setTextColor(Color.WHITE);
-        tvSave = findViewById(R.id.tv_save);
-        tvSave.setVisibility(View.GONE);
-        ivRight = findViewById(R.id.iv_right);
-        ivRight.setVisibility(View.VISIBLE);
-        ivRight.setOnClickListener(this);
-        progressView = findViewById(R.id.progress_bar);
-        etContent = findViewById(R.id.et_content);
-        tvAtFriend = findViewById(R.id.tv_at_friend);
-        ivVideoImage = findViewById(R.id.iv_video_image);
-        tvLocation = findViewById(R.id.tv_location);
-        tvLocation.setOnClickListener(this);
-        tvLocationLabel = findViewById(R.id.tv_location_label);
-        tvLocationLabel.setOnClickListener(this);
-        tvPermission = findViewById(R.id.tv_permission);
-        tvPermission.setOnClickListener(this);
-
-        videoPath = getIntent().getStringExtra(CameraActivity.EXTRA_VIDEO_PATH);
-        imagePath = getIntent().getStringExtra(CameraActivity.EXTRA_IMAGE_PATH);
-        Glide.with(this).load(imagePath).into(ivVideoImage);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CHOOSE_ADDRESS && resultCode == RESULT_OK) {
-            lat = data.getDoubleExtra(ChooseAddressActivity.EXTRA_LATITUDE, 0);
-            lnt = data.getDoubleExtra(ChooseAddressActivity.EXTRA_LONGITUDE, 0);
-            tvLocation.setText(data.getStringExtra(ChooseAddressActivity.EXTRA_ADDRESS));
+        if (requestCode == REQUEST_PICKER_ADDRESS && resultCode == RESULT_OK) {
+            Place selectedPlace = PlacePicker.getPlace(data, this);
+            lat = selectedPlace.getLatLng().latitude;
+            lon = selectedPlace.getLatLng().longitude;
+            tvLocation.setText(selectedPlace.getAddress());
         }
     }
 
@@ -190,4 +250,58 @@ public class PostVideoActivity extends BaseActivity implements View.OnClickListe
         return R.layout.activity_post_video;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    private void showFriendPicker() {
+        if(friendDialog == null){
+            friendDialog = new FriendDialog(this, R.layout.dialog_friend_picker);
+        }
+
+        if(selectedFriends.size() > 0){
+            Map<String, Friend> selectedFriendMap = new HashMap<>();
+            for(Friend friend : selectedFriends){
+                selectedFriendMap.put(friend.userCode, friend);
+            }
+
+            friendDialog.setSelectedFriendMap(selectedFriendMap);
+        }
+
+        friendDialog.fullWidth().fromBottom().showDialog();
+    }
+
+    @Override
+    public void friendChanged(Friend friend) {
+        if(selectedFriends.contains(friend)){
+            selectedFriends.remove(friend);
+            TextView textView = mentionTvMap.get(friend.userCode);
+            if(textView != null){
+                mentionTvMap.remove(textView);
+            }
+        }else{
+            selectedFriends.add(friend);
+
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.setMargins(5, 0, 5, 0);
+            TextView textView = new TextView(this);
+            textView.setLayoutParams(layoutParams);
+            textView.setTextColor(getResources().getColor(R.color.colorLightGray));
+            textView.setPadding(8, 4, 8, 4);
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+            textView.setText(Utils.getDisplayName(friend.name, friend.nickName));
+            textView.setBackground(getDrawable(R.drawable.bg_black_round_corner));
+            mentionContainer.addView(textView);
+
+            mentionTvMap.put(friend.userCode, textView);
+        }
+
+    }
 }

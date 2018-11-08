@@ -286,7 +286,7 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
         File image = new File(path);
         System.out.println("parameter: " + field);
         fileMap.put(field, image);
-        HashMap<String, String> valueMap = new HashMap<>(1);
+        HashMap<String, Object> valueMap = new HashMap<>(1);
         valueMap.put("token", AuthUtils.getInstance(PersonActivity.this).getApiToken());
         ApiServer.baseUploadRequest(this, Constants.UPDATE_BROADCASTPROFILE, valueMap, fileMap,
                 new TypeToken<ResponseData<TextPicture>>() {
@@ -355,5 +355,7 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                         return super.dealHttpException(code, errorMsg, e);
                     }
                 });
+
+
     }
 }

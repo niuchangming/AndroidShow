@@ -67,8 +67,8 @@
 
     <ImageView
         android:id="@+id/receipt_state_iv"
-        android:layout_width="@dimen/icon_size_16dp"
-        android:layout_height="@dimen/icon_size_16dp"
+        android:layout_width="@dimen/icon_size_12dp"
+        android:layout_height="@dimen/icon_size_12dp"
         android:layout_above="@id/chat_time_tv"
         android:layout_alignRight="@id/chat_time_tv"
         android:scaleType="fitCenter"

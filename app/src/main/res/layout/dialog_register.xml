@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="2dp"
-        android:background="@drawable/white_round_corner_bg">
+        android:background="@drawable/bg_white_round_corner">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
             android:textCursorDrawable="@null"
             android:textColor="@color/colorBlack"
             android:textSize="15sp"
-            android:background="@drawable/white_round_corner_bg"/>
+            android:background="@drawable/bg_white_round_corner"/>
     </LinearLayout>
 
     <TextView
@@ -74,7 +74,7 @@
         android:layout_marginTop="2dp"
         android:textColor="@color/colorBlack"
         android:textSize="15sp"
-        android:background="@drawable/white_round_corner_bg"/>
+        android:background="@drawable/bg_white_round_corner"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -90,7 +90,7 @@
             android:text="@string/cancel"
             android:layout_marginRight="10dp"
             android:textColor="@color/colorBlack"
-            android:background="@drawable/white_round_corner_bg"/>
+            android:background="@drawable/bg_white_round_corner"/>
 
         <RelativeLayout
             android:layout_width="0dp"

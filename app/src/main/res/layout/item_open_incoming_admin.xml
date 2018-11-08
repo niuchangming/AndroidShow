@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:padding="@dimen/item_spacing_8dp">
+
+    <TextView
+        android:id="@+id/name_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:textSize="@dimen/text_size_10sp"
+        android:textColor="@color/colorWhite"
+        android:layout_marginTop="@dimen/layout_margin_4dp"
+        android:paddingTop="@dimen/layout_padding_2dp"
+        android:paddingBottom="@dimen/layout_padding_2dp"
+        android:paddingLeft="@dimen/layout_padding_4dp"
+        android:paddingRight="@dimen/layout_padding_4dp"
+        android:shadowColor="@color/colorBlackShadow"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:text="@string/admin"
+        android:background="@drawable/bg_admin_text"/>
+
+    <TextView
+        android:id="@+id/message_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/name_tv"
+        android:textSize="@dimen/text_size_15sp"
+        android:textColor="@color/colorWhite"
+        android:shadowColor="@color/colorBlackShadow"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:layout_marginRight="@dimen/layout_margin_2dp"/>
+
+</RelativeLayout>

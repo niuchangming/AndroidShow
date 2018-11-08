@@ -8,9 +8,8 @@ import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
 import com.androidnetworking.AndroidNetworking;
-import com.baidu.mapapi.CoordType;
-import com.baidu.mapapi.SDKInitializer;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.faceunity.FURenderer;
 import com.luck.picture.lib.utils.AppManager;
 import com.orhanobut.logger.LogLevel;
 import com.orhanobut.logger.Logger;
@@ -23,6 +22,8 @@ import com.scwang.smartrefresh.layout.api.RefreshHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.sendbird.android.SendBird;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -41,10 +42,9 @@ import ekoolab.com.show.utils.Utils;
 import okhttp3.OkHttpClient;
 
 public class ShowApplication extends Application implements Thread.UncaughtExceptionHandler {
-
     public static Application application;
-
     public static String TEMP_FILE;
+    public static IWXAPI iwxapi;
 
     static {
         //设置全局的Header构建器
@@ -91,18 +91,19 @@ public class ShowApplication extends Application implements Thread.UncaughtExcep
             OkHttpClient okHttpClient = getOkHttpClient();
             AndroidNetworking.initialize(application, okHttpClient);
             AndroidNetworking.setParserFactory(new FastJsonParserFactory());
+
             Fresco.initialize(this);
             FileUtils.createOrExistsDir(Constants.VIDEO_PATH);
             FileUtils.createOrExistsDir(Constants.IMAGE_PATH);
+            FileUtils.createOrExistsDir(Constants.AUDIO_PATH);
             FileUtils.createOrExistsDir(Constants.IMAGE_CACHE_PATH);
             FileUtils.createOrExistsFile(TEMP_FILE);
-            // 在使用 SDK 各组间之前初始化 context 信息，传入 ApplicationContext
-//            SDKInitializer.initialize(this);
-            //自4.3.0起，百度地图SDK所有接口均支持百度坐标和国测局坐标，用此方法设置您使用的坐标类型.
-            //包括BD09LL和GCJ02两种坐标，默认是BD09LL坐标。
-            SDKInitializer.setCoordType(CoordType.BD09LL);
 
             SendBird.init(Constants.SBD_APP_ID, context);
+            FURenderer.initFURenderer(this);
+
+            iwxapi = WXAPIFactory.createWXAPI(this, Constants.WECHAT_APP_ID, false);
+            iwxapi.registerApp(Constants.WECHAT_APP_ID);
         }
     }
 

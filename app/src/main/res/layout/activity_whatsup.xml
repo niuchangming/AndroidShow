@@ -16,7 +16,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:background="@drawable/white_round_corner_bg"
         android:hint="@string/whatsupinput"
         android:minHeight="100dp"
         android:paddingLeft="8dp"
@@ -25,6 +24,7 @@
         android:paddingBottom="12dp"
         android:textColor="@color/colorBlack"
         android:textCursorDrawable="@null"
-        android:textSize="@dimen/text_size_15sp" />
+        android:textSize="@dimen/text_size_15sp"
+        android:background="@drawable/bg_white_round_corner"/>
 
 </LinearLayout>

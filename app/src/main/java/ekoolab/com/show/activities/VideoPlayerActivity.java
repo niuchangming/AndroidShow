@@ -39,14 +39,6 @@ public class VideoPlayerActivity extends BaseActivity {
         super.initData();
         videos = getIntent().getParcelableArrayListExtra("videos");
         currentIndex = getIntent().getIntExtra("current_index", currentIndex);
-//        if(videos != null && videos.size() > 0){
-//            List<Video> firstVideoList = new ArrayList<>(videos.subList(currentIndex, videos.size()));
-//            List<Video> secondVideoList = new ArrayList<>(videos.subList(0, currentIndex));
-//            videos = new ArrayList<>(firstVideoList);
-//            videos.addAll(secondVideoList);
-//        }
-//        IjkMediaPlayer.loadLibrariesOnce(null);
-//        IjkMediaPlayer.native_profileBegin("libijkplayer.so");
     }
 
     @Override

@@ -5,15 +5,16 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
-    <com.juziwl.ijkplayerlib.media.IjkVideoView
-        android:id="@+id/video_view"
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/player_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <ImageView
         android:id="@+id/iv_first_frame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"/>
 
     <TextView
         android:id="@+id/current_time"
@@ -47,10 +48,8 @@
                 android:id="@+id/ll_scroll"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="horizontal"/>
 
-
-            </LinearLayout>
         </ekoolab.com.show.views.MyHorizontalScrollView>
 
         <FrameLayout
@@ -92,8 +91,11 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
-        android:background="@color/red_light"
-        android:padding="16dp"
+        android:background="@color/colorPink"
+        android:paddingTop="@dimen/item_spacing_4dp"
+        android:paddingBottom="@dimen/item_spacing_4dp"
+        android:paddingLeft="@dimen/item_spacing_8dp"
+        android:paddingRight="@dimen/item_spacing_8dp"
         android:text="@string/next"
         android:textColor="@color/white"
         app:layout_constraintRight_toRightOf="parent"

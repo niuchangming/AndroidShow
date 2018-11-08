@@ -1,6 +1,7 @@
 package ekoolab.com.show.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -36,6 +37,7 @@ import java.util.logging.LoggingMXBean;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.Services.FriendService;
+import ekoolab.com.show.beans.Friend;
 import ekoolab.com.show.beans.LoginData;
 import ekoolab.com.show.dialogs.DialogViewHolder;
 import ekoolab.com.show.dialogs.XXDialog;
@@ -120,6 +122,7 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
                     if (!aBoolean) {
                         ToastUtils.showToast(getString(R.string.permission_storage));
                     }
+
                 });
 
         loginSBirdChat(null);
@@ -132,6 +135,7 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
                 if (user != null && loginData != null){
                     String displayName = Utils.getDisplayName(loginData.name, loginData.nickName);
                     ChatManager.getInstance(MainActivity.this).updateCurrentUserInfo(displayName, loginData.avatar.small);
+                    ChatManager.getInstance(MainActivity.this).registerDeviceTokenWithSBird();
                 }
             }
         });
@@ -157,6 +161,7 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
                         ToastUtils.showToast(getString(R.string.permission_contact));
                     } else {
                         bindService(new Intent(MainActivity.this, FriendService.class), friendServiceConn, Context.BIND_AUTO_CREATE);
+                        FriendService.isBinded = true;
                     }
                 });
     }
@@ -216,8 +221,8 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
                 Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
                 .subscribe(aBoolean -> {
                     if (aBoolean) {
-                        CameraActivity.navToCameraOnlyVideoThenJump(MainActivity.this,
-                                Constants.VIDEO_PATH, Constants.IMAGE_PATH, PostVideoActivity.class);
+                        Intent intent = new Intent(MainActivity.this, VideoRecordActivity.class);
+                        startActivity(intent);
                     }
                 });
     }
@@ -259,8 +264,9 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
 
     @Override
     protected void onDestroy() {
-        if (friendServiceConn != null) {
+        if (friendServiceConn != null && FriendService.isBinded) {
             unbindService(friendServiceConn);
+            FriendService.isBinded = false;
         }
         unregisterReceiver(broadcastReceiver);
         super.onDestroy();

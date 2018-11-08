@@ -10,6 +10,7 @@ import android.os.Build;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import com.orhanobut.logger.Logger;
 
@@ -23,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -1129,5 +1131,21 @@ public class FileUtils {
         } finally {
             closeStream(outputStream);
         }
+    }
+
+    public static String getFileContentType(File file) {
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        int index = file.getName().lastIndexOf('.')+1;
+        String ext = file.getName().substring(index).toLowerCase();
+        String mimeType = mime.getMimeTypeFromExtension(ext);
+        return mimeType;
+    }
+
+    public static String getFileContentType(String fileName) {
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        int index = fileName.lastIndexOf('.')+1;
+        String ext = fileName.substring(index).toLowerCase();
+        String mimeType = mime.getMimeTypeFromExtension(ext);
+        return mimeType;
     }
 }

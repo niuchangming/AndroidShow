@@ -59,6 +59,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                         .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             }
         }
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         initData();
         initViews();
@@ -73,6 +74,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void initData() {}
 
     protected void initViews() {
+        if (getLayoutId() == 0) return;
         activityContainer = findViewById(R.id.activity_container);
         activityContainer.addView(LayoutInflater.from(this).inflate(getLayoutId(), activityContainer, false));
     }

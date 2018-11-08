@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.opengl.GLSurfaceView
+        android:id="@+id/gl_surface_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@mipmap/top_background">
+        <ImageButton
+            android:id="@+id/back_btn"
+            android:layout_width="@dimen/icon_size_32dp"
+            android:layout_height="@dimen/icon_size_32dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="@dimen/layout_margin_16dp"
+            android:layout_marginTop="@dimen/layout_margin_16dp"
+            android:background="@color/transparent"
+            android:onClick="onClick"
+            android:scaleType="centerInside"
+            android:src="@mipmap/cross"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="@dimen/layout_margin_16dp"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/layout_margin_16dp"
+                android:layout_marginTop="@dimen/layout_margin_8dp"
+                android:orientation="vertical">
+                <ImageButton
+                    android:id="@+id/camera_flip_btn"
+                    android:layout_width="@dimen/icon_size_32dp"
+                    android:layout_height="@dimen/icon_size_32dp"
+                    android:background="@color/transparent"
+                    android:layout_gravity="center_horizontal"
+                    android:scaleType="centerInside"
+                    android:src="@mipmap/camera_change"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/text_size_12sp"
+                    android:text="@string/flip"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/layout_margin_16dp"
+                android:layout_marginTop="@dimen/layout_margin_16dp"
+                android:orientation="vertical">
+                <ImageButton
+                    android:id="@+id/beauty_btn"
+                    android:layout_width="@dimen/icon_size_32dp"
+                    android:layout_height="@dimen/icon_size_32dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@color/transparent"
+                    android:scaleType="centerInside"
+                    android:src="@mipmap/ic_beauty_camera"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/text_size_12sp"
+                    android:text="@string/beauty"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/beauty_bar"
+        android:layout_marginBottom="@dimen/layout_margin_16dp">
+
+        <ekoolab.com.show.beauty.ui.RecordBtn
+            android:id="@+id/record_video_btn"
+            android:layout_width="@dimen/icon_size_100dp"
+            android:layout_height="@dimen/icon_size_100dp"
+            android:layout_centerHorizontal="true"/>
+
+        <Button
+            android:id="@+id/record_cancel_btn"
+            android:layout_width="@dimen/icon_size_48dp"
+            android:layout_height="@dimen/icon_size_48dp"
+            android:layout_toLeftOf="@id/record_video_btn"
+            android:layout_marginRight="@dimen/layout_margin_32dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/selector_record_cancel"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/record_ok_btn"
+            android:layout_width="@dimen/icon_size_48dp"
+            android:layout_height="@dimen/icon_size_48dp"
+            android:layout_toRightOf="@id/record_video_btn"
+            android:layout_marginLeft="@dimen/layout_margin_32dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/selector_record_ok"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
+
+    <ekoolab.com.show.beauty.ui.BeautyControlView
+        android:id="@+id/beauty_bar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

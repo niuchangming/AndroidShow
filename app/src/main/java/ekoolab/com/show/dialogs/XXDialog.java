@@ -22,12 +22,14 @@ import ekoolab.com.show.R;
  * @modify Neil
  */
 public abstract class XXDialog {
+    private Context context;
     private Dialog mDialog;
     private Window mDialogWindow;
     private DialogViewHolder dilaogVh;
     private View mRootView;
 
     public XXDialog(Context context, int layoutId) {
+        context = context;
         dilaogVh = DialogViewHolder.get(context, layoutId);
         mRootView = dilaogVh.getConvertView();
         mDialog = new Dialog(context, R.style.common_dialog);
@@ -37,6 +39,7 @@ public abstract class XXDialog {
     }
 
     public XXDialog(Context context, int layoutId, boolean isBgTransparent) {
+        this.context = context;
         dilaogVh = DialogViewHolder.get(context, layoutId);
         mRootView = dilaogVh.getConvertView();
         mDialog = new Dialog(context, isBgTransparent ? R.style.common_dialog_bg_transparent : R.style.common_dialog);
@@ -266,22 +269,8 @@ public abstract class XXDialog {
         return this;
     }
 
+    public Context getContext() {
+        return context;
+    }
 }
 
-//使用方法
-//
-//
-//public void click(View view) {
-//        XXDialog xxDialog = new XXDialog(this, R.layout.dialog) {
-//@Override
-//public void convert(DialogViewHolder holder) {  //holder 很重要避免多次创建
-//        holder.setOnClick(R.id.tv, new View.OnClickListener() {
-//@Override
-//public void onClick(View v) {
-//        Toast.makeText(MainActivity.this, "点了", Toast.LENGTH_SHORT).show();
-//        }
-//        });
-//        }
-//        }.fromBottom().fullWidth().showDialog().setCanceledOnTouchOutside(true);
-//
-//        }

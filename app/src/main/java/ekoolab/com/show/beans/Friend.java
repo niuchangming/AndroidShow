@@ -109,6 +109,44 @@ public class Friend implements Parcelable {
 
     }
 
+    public static Friend getFriendByUserCode(Context context, String userCode){
+        SQLiteDatabase db = DataBaseManager.getInstance(context).openDatabase();
+        Friend friend = null;
+        Cursor cursor = null;
+        try{
+            cursor = db.query(Constants.FRIEND_TB, null, Constants.FriendTableColumns.userId + "=?",
+                    new String[]{userCode}, null, null, null);
+            cursor.moveToFirst();
+            if (!cursor.isAfterLast()) {
+                friend = new Friend();
+                friend.name = cursor.getString(cursor.getColumnIndexOrThrow(Constants.FriendTableColumns.name));
+                friend.nickName = cursor.getString(cursor.getColumnIndexOrThrow(Constants.FriendTableColumns.nickname));
+                friend.userCode = cursor.getString(cursor.getColumnIndexOrThrow(Constants.FriendTableColumns.userId));
+                friend.mobile = cursor.getString(cursor.getColumnIndexOrThrow(Constants.FriendTableColumns.mobile));
+                friend.countryCode = cursor.getString(cursor.getColumnIndexOrThrow(Constants.FriendTableColumns.countryCode));
+                friend.channelUrl = cursor.getString(cursor.getColumnIndexOrThrow(Constants.FriendTableColumns.channelUrl));
+
+                if(!Utils.isBlank(friend.userCode)){
+                    friend.avatar = Photo.getPhotoByUserId(context, friend.userCode);
+                }
+
+                friend.isMyFollowing = cursor.getInt(cursor.getColumnIndexOrThrow(Constants.FriendTableColumns.isMyFollowing)) == 1;
+                friend.isMyFollower = cursor.getInt(cursor.getColumnIndexOrThrow(Constants.FriendTableColumns.isMyFollower)) == 1;
+                friend.isAppUser = cursor.getInt(cursor.getColumnIndexOrThrow(Constants.FriendTableColumns.isAppUser)) == 1;
+            }
+        }catch(SQLiteException e){
+            Logger.e(e.getLocalizedMessage());
+        }finally{
+            if(cursor != null && !cursor.isClosed()){
+                cursor.close();
+            }
+            if (db != null){
+                DataBaseManager.getInstance(context).closeDatabase();
+            }
+        }
+        return friend;
+    }
+
     public static List<Friend> getAllFriends(Context context, String selection, String[] args){
         SQLiteDatabase db = DataBaseManager.getInstance(context).openDatabase();
         List<Friend> friends = new ArrayList<>();

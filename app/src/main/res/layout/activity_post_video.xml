@@ -3,19 +3,51 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBlack">
+    android:background="@color/colorDarkBlue">
 
-    <include
-        android:id="@+id/toolbar_title"
-        layout="@layout/toolbar_layout"
-        android:background="@color/colorBlack"
-        app:layout_constraintTop_toTopOf="parent" />
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
+        app:theme="@style/Theme.AppCompat"
+        android:elevation="4dp">
 
-    <Space
-        android:id="@+id/space"
+        <RelativeLayout
+            android:layout_width="@dimen/icon_size_24dp"
+            android:layout_height="@dimen/icon_size_24dp"
+            android:layout_marginRight="@dimen/layout_margin_16dp"
+            android:layout_gravity="right">
+
+            <ImageButton
+                android:id="@+id/upload_btn"
+                android:layout_width="@dimen/icon_size_24dp"
+                android:layout_height="@dimen/icon_size_24dp"
+                android:src="@mipmap/upload"
+                android:scaleType="centerInside"
+                android:background="@android:color/transparent"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"/>
+
+            <com.rey.material.widget.ProgressView
+                android:id="@+id/progress_pv"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerInParent="true"
+                android:visibility="gone"
+                app:pv_progressStyle="@style/LightCircularProgressDrawable" />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+    <View
+        android:id="@+id/separator_1"
         android:layout_width="match_parent"
         android:layout_height="1px"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_title" />
+        android:background="@color/colorBlack"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
     <EditText
         android:id="@+id/et_content"
@@ -24,43 +56,72 @@
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
+        android:textCursorDrawable="@null"
         android:background="@color/transparent"
         android:gravity="left|top"
         android:hint="@string/post_video_content_hint"
         android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/tv_at_friend"
+        android:textColorHint="@color/colorSuperLightGray"
+        android:textSize="@dimen/text_size_15sp"
+        app:layout_constraintBottom_toTopOf="@+id/at_friend_btn"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/iv_video_image"
-        app:layout_constraintTop_toBottomOf="@id/space"
+        app:layout_constraintTop_toBottomOf="@id/separator_1"
         app:layout_constraintVertical_weight="1" />
 
-    <TextView
-        android:id="@+id/tv_at_friend"
+
+    <Button
+        android:id="@+id/at_friend_btn"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/icon_size_32dp"
         android:background="@drawable/shape_post_video_friends_bg"
-        android:drawablePadding="6dp"
-        android:drawableStart="@mipmap/at_line"
+        android:drawableStart="@drawable/ic_at"
         android:gravity="center"
-        android:padding="8dp"
+        android:paddingTop="@dimen/item_spacing_2dp"
+        android:paddingBottom="@dimen/item_spacing_2dp"
+        android:paddingLeft="@dimen/item_spacing_6dp"
+        android:paddingRight="@dimen/item_spacing_6dp"
         android:text="@string/friends"
         android:textColor="@color/white"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_video_image"
+        android:textAllCaps="false"
+        android:textSize="@dimen/text_size_12sp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_video_image"
         app:layout_constraintLeft_toLeftOf="@id/et_content" />
 
     <ImageView
         android:id="@+id/iv_video_image"
         android:layout_width="100dp"
-        android:layout_height="200dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="9:16"
+        android:layout_marginLeft="@dimen/layout_margin_8dp"
+        android:layout_marginRight="@dimen/layout_margin_8dp"
         android:layout_marginTop="16dp"
         app:layout_constraintLeft_toRightOf="@id/et_content"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/space" />
+        app:layout_constraintTop_toBottomOf="@id/separator_1" />
+
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/layout_margin_8dp"
+        android:layout_marginLeft="@dimen/layout_margin_8dp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintTop_toTopOf="@+id/at_friend_btn"
+        app:layout_constraintBottom_toBottomOf="@+id/at_friend_btn"
+        app:layout_constraintRight_toLeftOf="@+id/iv_video_image"
+        app:layout_constraintLeft_toRightOf="@+id/at_friend_btn">
+
+        <LinearLayout
+            android:id="@+id/mention_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left|center_vertical"
+            android:orientation="horizontal">
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
 
     <Space
         android:id="@+id/space2"
@@ -74,24 +135,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:layout_marginRight="@dimen/layout_margin_8dp"
         android:drawableLeft="@mipmap/pin_camera"
         android:gravity="center"
-        android:text="@string/add_location"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        app:layout_constraintLeft_toLeftOf="@id/tv_at_friend"
+        android:text="@string/place"
+        android:textColor="@color/colorSuperLightGray"
+        android:textSize="@dimen/text_size_15sp"
+        app:layout_constraintLeft_toLeftOf="@id/at_friend_btn"
         app:layout_constraintTop_toBottomOf="@id/space2" />
 
     <TextView
         android:id="@+id/tv_location"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:drawableRight="@mipmap/right_arrow_icon"
+        android:drawableRight="@drawable/ic_next_arrow"
         android:gravity="right|center_vertical"
+        android:drawablePadding="@dimen/item_spacing_8dp"
+        android:layout_marginRight="@dimen/icon_size_16dp"
         android:singleLine="true"
         android:text="Singapore"
         android:textColor="@color/white"
-        android:textSize="20sp"
+        android:textSize="@dimen/text_size_15sp"
         app:layout_constraintBottom_toBottomOf="@id/tv_location_label"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintLeft_toRightOf="@id/tv_location_label"
@@ -113,21 +177,23 @@
         android:drawableLeft="@mipmap/unlock"
         android:gravity="center"
         android:text="@string/who_can_view_my_video"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        app:layout_constraintLeft_toLeftOf="@id/tv_at_friend"
+        android:textColor="@color/colorSuperLightGray"
+        android:textSize="@dimen/text_size_15sp"
+        app:layout_constraintLeft_toLeftOf="@id/at_friend_btn"
         app:layout_constraintTop_toBottomOf="@id/space3" />
 
     <TextView
         android:id="@+id/tv_permission"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:drawableRight="@mipmap/right_arrow_icon"
+        android:drawableRight="@drawable/ic_next_arrow"
+        android:drawablePadding="@dimen/item_spacing_8dp"
+        android:layout_marginRight="@dimen/icon_size_16dp"
         android:gravity="right|center_vertical"
         android:hint="public"
         android:text="Public"
         android:textColor="@color/white"
-        android:textSize="20sp"
+        android:textSize="@dimen/text_size_15sp"
         app:layout_constraintBottom_toBottomOf="@id/tv_permission_label"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintLeft_toRightOf="@id/tv_permission_label"

@@ -14,19 +14,24 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.Manifest.permission.READ_PHONE_STATE" />
     <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-
-    <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位-->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <!-- SD卡读取权限，用户写入离线定位数据-->
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
-
     <uses-permission android:name="android.permission.READ_LOGS" />
+
+    <uses-permission android:name="android.permission.INTERNAL_SYSTEM_WINDOW" />
+    <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
+
+
+    <uses-feature android:name="android.hardware.location.network" android:required="false" />
+    <uses-feature android:name="android.hardware.location.gps" android:required="false"  />
+    <uses-feature android:name="android.hardware.camera"/>
+    <uses-feature android:glEsVersion="0x00020000" android:required="true"/>
 
     <supports-screens
         android:anyDensity="true"
@@ -34,11 +39,6 @@
         android:normalScreens="false"
         android:resizeable="true"
         android:smallScreens="true" />
-
-    <!-- OpenGLES 2.0 -->
-    <uses-feature
-        android:glEsVersion="0x00020000"
-        android:required="true" />
 
     <application
         android:name=".application.ShowApplication"
@@ -55,10 +55,12 @@
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name="com.facebook.CustomTabActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -85,17 +87,39 @@
             android:name=".activities.LoginActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity android:name=".activities.NameActivity" />
-        <activity android:name=".activities.NicknameActivity" />
-        <activity android:name=".activities.GenderActivity" />
-        <activity android:name=".activities.BirthdayActivity" />
-        <activity android:name=".activities.WhatsupActivity" />
-        <activity android:name=".activities.RegionActivity" />
-        <activity android:name=".activities.PersonActivity" />
-        <activity android:name=".activities.VideoPlayerActivity" />
-        <activity android:name=".activities.MySingleMomentActivity" />
-        <activity android:name=".activities.FollowersActivity" />
-        <activity android:name=".activities.FollowingActivity" />
+        <activity
+            android:name=".activities.NameActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activities.NicknameActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activities.GenderActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activities.BirthdayActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activities.WhatsupActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activities.RegionActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activities.PersonActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activities.VideoPlayerActivity"
+            android:screenOrientation="portrait"/>
+        <activity 
+            android:name=".activities.MySingleMomentActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activities.FollowersActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activities.FollowingActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activities.PostVideoActivity"
             android:screenOrientation="portrait"
@@ -122,16 +146,38 @@
             android:name=".activities.LivePlayerActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.ChatActivity"
+            android:name=".activities.AnchorRegisterActivity"
             android:screenOrientation="portrait" />
-        <meta-data
-            android:name="com.baidu.lbsapi.API_KEY"
-            android:value="GBuYGx8g4NBGXKICknq2dAu4gR7KorI6" />
+        <activity
+            android:name=".activities.BroadcastActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.ChatActivity"
+            android:alwaysRetainTaskState="true"
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activities.VideoRecordActivity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:screenOrientation="portrait"
+            android:exported="true">
+        </activity>
 
-        <service
-            android:name="com.baidu.location.f"
-            android:enabled="true"
-            android:process=":remote" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key"/>
+
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <service android:name=".Services.ShowFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
         <service android:name=".Services.FriendService" >
         </service>

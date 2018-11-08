@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 import java.util.List;
 
 import ekoolab.com.show.activities.BaseActivity;
+import ekoolab.com.show.fragments.subhomes.WebFragment;
 import ekoolab.com.show.views.BorderShape;
 import ekoolab.com.show.R;
 import ekoolab.com.show.views.TabButton;
@@ -62,7 +63,7 @@ public class TabFragment extends BaseFragment implements View.OnClickListener {
         root.setBackground(layerDrawable);
 
         tabHome.init(R.drawable.tab_icon_home, getContext().getResources().getString(R.string.home), HomeFragment.class);
-        tabZSC.init(R.drawable.tab_icon_zsc, getContext().getResources().getString(R.string.zsc), HomeFragment.class);
+        tabZSC.init(R.drawable.tab_icon_zsc, getContext().getResources().getString(R.string.zsc), WebFragment.class);
         tabChat.init(R.drawable.tab_icon_chat, getContext().getResources().getString(R.string.chat), ChatListFragment.class);
         tabProfile.init(R.drawable.tab_icon_profile, getContext().getResources().getString(R.string.profile), ProfileFragment.class);
 
@@ -167,6 +168,8 @@ public class TabFragment extends BaseFragment implements View.OnClickListener {
             return this.tabHome.getFragment();
         } else if (clz.isInstance(ProfileFragment.class)) {
             return this.tabProfile.getFragment();
+        } else if (clz.isInstance(WebFragment.class)){
+            return this.tabZSC.getFragment();
         }
         return null;
     }

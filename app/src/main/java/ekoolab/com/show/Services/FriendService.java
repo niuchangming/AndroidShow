@@ -43,6 +43,7 @@ public class FriendService extends Service {
     public static final String CONTACT_LAST_SYNC_TIME = "ekoolab.com.show.contact_last_sync_time";
     private Map<String, Friend> localFriendMap;
     private long lastQueryTime;
+    public static boolean isBinded = false;
 
     private Handler handler = new Handler(){
         @Override

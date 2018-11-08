@@ -6,31 +6,48 @@ import android.animation.FloatEvaluator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.ArrayMap;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.reflect.TypeToken;
+import com.liyi.viewer.ViewData;
+import com.liyi.viewer.dragger.ImageDraggerType;
+import com.liyi.viewer.widget.ImageViewer;
+import com.liyi.viewer.widget.ScaleImageView;
 import com.luck.picture.lib.utils.ThreadExecutorManager;
 import com.orhanobut.logger.Logger;
 import com.santalu.emptyview.EmptyView;
@@ -50,7 +67,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import ekoolab.com.show.R;
-import ekoolab.com.show.activities.WatchImageActivity;
 import ekoolab.com.show.adapters.DialogGiftPagerAdapter;
 import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
@@ -77,11 +93,14 @@ import ekoolab.com.show.views.nestlistview.NestFullListView;
 import ekoolab.com.show.views.nestlistview.NestFullListViewAdapter;
 import ekoolab.com.show.views.nestlistview.NestFullViewHolder;
 import ekoolab.com.show.views.ninegridview.NewNineGridlayout;
+import ekoolab.com.show.views.ninegridview.NineGridlayout;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+
+import static android.content.Context.WINDOW_SERVICE;
 
 public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreListener {
     public static final long TIPS_LIVE_TIME = 3000;
@@ -91,6 +110,7 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
     private SmartRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
     private LinearLayout llTipsContainer;
+    private ImageViewer imagePreview;
     private BaseQuickAdapter<Moment, BaseViewHolder> mAdapter = null;
     private List<Moment> moments = new ArrayList<>(20);
     private ArrayMap<String, String> zanMap = new ArrayMap<>(10);
@@ -142,6 +162,7 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
     @Override
     protected void initViews(ViewHolder holder, View root) {
         mEmptyView = holder.get(R.id.empty_view);
+
         recyclerView = holder.get(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         recyclerView.addItemDecoration(new LinearItemDecoration(mContext,
@@ -151,6 +172,54 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
         initAdapter();
         recyclerView.setAdapter(mAdapter);
         llTipsContainer = holder.get(R.id.ll_tips_container);
+
+        imagePreview = new ImageViewer(getActivity());
+        imagePreview.doDrag(true);
+        imagePreview.setDragType(ImageDraggerType.DRAG_TYPE_WX);
+        imagePreview.setBackgroundColor(Color.BLACK);
+        imagePreview.setVisibility(View.GONE);
+        imagePreview.setImageLoader(new com.liyi.viewer.ImageLoader<String>() {
+
+            @Override
+            public void displayImage(final int position, String src, final ImageView imageView) {
+                final ScaleImageView scaleImageView= (ScaleImageView) imageView.getParent();
+                ImageLoader.loadImage(getActivity(), src, new SimpleTarget<Drawable>() {
+
+                    @Override
+                    public void onLoadStarted(@Nullable Drawable placeholder) {
+                        super.onLoadStarted(placeholder);
+                        scaleImageView.showProgess();
+                        imageView.setImageDrawable(placeholder);
+                    }
+
+                    @Override
+                    public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                        super.onLoadFailed(errorDrawable);
+                        scaleImageView.removeProgressView();
+                        imageView.setImageDrawable(errorDrawable);
+                    }
+
+                    @Override
+                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                        scaleImageView.removeProgressView();
+                        imageView.setImageDrawable(resource);
+                    }
+                });
+            }
+        });
+
+        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.TYPE_APPLICATION,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
+                        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+                PixelFormat.TRANSLUCENT);
+
+        params.gravity = Gravity.RIGHT | Gravity.TOP;
+        WindowManager wm = (WindowManager) getActivity().getSystemService(WINDOW_SERVICE);
+        wm.addView(imagePreview, params);
+
     }
 
     private void initRefreshLayout() {
@@ -168,8 +237,7 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
 
     private void initAdapter() {
         mAdapter = new BaseQuickAdapter<Moment, BaseViewHolder>(R.layout.item_moment_list, moments) {
-
-            private int nineTotalWidth = DisplayUtils.getScreenWidth() - DisplayUtils.dip2px(60 * 2);
+            private int nineTotalWidth = DisplayUtils.getScreenWidth() - DisplayUtils.dip2px(15 * 2 + 32 + 16);
 
             @Override
             protected void convert(BaseViewHolder helper, Moment item) {
@@ -181,9 +249,36 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
                 helper.setGone(R.id.nine_grid_layout, Utils.isNotEmpty(item.photoArray));
                 NewNineGridlayout newNineGridlayout = helper.getView(R.id.nine_grid_layout);
                 newNineGridlayout.showPic(nineTotalWidth, item.photoArray,
-                        position -> WatchImageActivity.navToWatchImage(mContext, item.photoArray, position),
-                        NewNineGridlayout.PHOTO_QUALITY_SMALL);
-                ImageView ivHeart = helper.getView(R.id.iv_heart);
+                        new NineGridlayout.onNineGirdItemClickListener() {
+
+                            protected List<ViewData> mViewList;
+                            protected List<String> mImageList;
+
+                            @Override
+                            public void onItemClick(int position) {
+                                mViewList = new ArrayList<>();
+                                mImageList = new ArrayList<>();
+
+                                ViewGroup viewGroup = (ViewGroup) newNineGridlayout.getChildAt(0);
+                                for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                                    int[] location = new int[2];
+                                    viewGroup.getChildAt(i).getLocationOnScreen(location);
+                                    ViewData viewData = new ViewData();
+                                    viewData.setTargetX(location[0]);
+                                    viewData.setTargetY(location[1]);
+                                    viewData.setTargetWidth(viewGroup.getChildAt(i).getMeasuredWidth());
+                                    viewData.setTargetHeight(viewGroup.getChildAt(i).getMeasuredHeight());
+                                    mViewList.add(i, viewData);
+                                    mImageList.add(i, item.photoArray.get(i).origin);
+                                }
+                                imagePreview.setImageData(mImageList);
+                                imagePreview.setStartPosition(position);
+                                imagePreview.setViewData(mViewList);
+                                imagePreview.watch();
+                            }
+                        }, NewNineGridlayout.PHOTO_QUALITY_SMALL);
+
+                ImageButton ivHeart = helper.getView(R.id.iv_heart);
                 ivHeart.setSelected(item.isMyLike);
                 ivHeart.setOnClickListener(view -> {
                     if (zanMap.containsKey(item.resourceId)) {
@@ -191,16 +286,21 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
                     }
                     zanOrCancelMoment(item);
                 });
-                helper.setText(R.id.tv_zan_num, String.valueOf(item.likeCount));
-                helper.getView(R.id.iv_comment).setOnClickListener(view -> {
+                helper.setText(R.id.tv_like_count, String.valueOf(item.likeCount));
+
+                ImageButton commentBtn =  helper.getView(R.id.iv_comment);
+                commentBtn.setOnClickListener(view -> {
                     curMoment = item;
                     curCommentBean = null;
                     showCommentDialog();
                 });
-                helper.getView(R.id.iv_reward).setOnClickListener(view -> {
+
+                ImageButton awardIv = helper.getView(R.id.iv_reward);
+                awardIv.setOnClickListener(view -> {
                     curMoment = item;
                     showGiftDialog();
                 });
+
                 boolean notEmpty = Utils.isNotEmpty(item.comments);
                 helper.setGone(R.id.nest_full_listview, notEmpty);
                 if (notEmpty) {
@@ -439,7 +539,6 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
             pageIndex = 0;
         }
         HashMap<String, String> map = new HashMap<>(3);
-        map.put("pageSize", Constants.PAGE_SIZE + "");
         map.put("pageSize", Constants.PAGE_SIZE + "");
         map.put("pageIndex", pageIndex + "");
         map.put("token", AuthUtils.getInstance(getContext()).getApiToken());

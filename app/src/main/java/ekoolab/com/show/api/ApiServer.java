@@ -3,6 +3,9 @@ package ekoolab.com.show.api;
 import android.content.Context;
 
 import com.androidnetworking.common.Priority;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.DownloadListener;
+import com.androidnetworking.interfaces.DownloadProgressListener;
 import com.google.gson.reflect.TypeToken;
 import com.rx2androidnetworking.Rx2AndroidNetworking;
 import com.uber.autodispose.FlowableSubscribeProxy;
@@ -12,8 +15,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ekoolab.com.show.R;
 import ekoolab.com.show.activities.BaseActivity;
 import ekoolab.com.show.fragments.BaseFragment;
+import ekoolab.com.show.utils.Constants;
+import ekoolab.com.show.utils.FileUtils;
 import ekoolab.com.show.utils.RxUtils;
 import io.reactivex.Flowable;
 
@@ -29,8 +35,17 @@ public class ApiServer {
                                                                 String url,
                                                                 HashMap<String, String> map,
                                                                 TypeToken<T> typeToken) {
+        return basePostRequest(activity, url, null, map, typeToken);
+    }
+
+    public static <T> FlowableSubscribeProxy<T> basePostRequest(BaseActivity activity,
+                                                                String url,
+                                                                HashMap<String, String> headers,
+                                                                HashMap<String, String> map,
+                                                                TypeToken<T> typeToken) {
         return Rx2AndroidNetworking
                 .post(url)
+                .addHeaders(headers)
                 .addBodyParameter(map)
                 .setPriority(Priority.MEDIUM)
                 .build()
@@ -67,7 +82,7 @@ public class ApiServer {
 
     public static <T> FlowableSubscribeProxy<T> baseUploadRequest(BaseActivity activity,
                                                                   String url,
-                                                                  Map<String, String> valueMap,
+                                                                  Map<String, Object> valueMap,
                                                                   Map<String, File> fileMap,
                                                                   TypeToken<T> typeToken) {
         return Rx2AndroidNetworking
@@ -96,5 +111,59 @@ public class ApiServer {
                 .getParseFlowable(typeToken)
                 .compose(RxUtils.rxSchedulerHelper())
                 .as(activity.autoDisposable());
+    }
+
+    public static void baseDownloadFilesRequest(Context context, String url,
+                                                String dirPath,
+                                                String fileName,
+                                                FileDownloadListener listener) {
+        Rx2AndroidNetworking
+                .download(url, dirPath, fileName)
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .setDownloadProgressListener(new DownloadProgressListener() {
+                    @Override
+                    public void onProgress(long bytesDownloaded, long totalBytes) {
+                        if (listener != null){
+                            float percentage = bytesDownloaded / totalBytes;
+                            listener.onProgressing(percentage);
+                        }
+                    }
+                })
+                .startDownload(new DownloadListener() {
+                    @Override
+                    public void onDownloadComplete() {
+                        if (listener != null) {
+                            File file = new File(dirPath + fileName);
+                            if(FileUtils.isFile(file)) {
+                                listener.onSucceeded(file);
+                            }else{
+                                listener.onFailed(context.getString(R.string.file_not_exist));
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        listener.onFailed(anError.getLocalizedMessage());
+                    }
+                });
+
+    }
+
+    public static <T> FlowableSubscribeProxy<T> baseGetRequest(BaseActivity activity, String url, TypeToken<T> typeToken){
+        return Rx2AndroidNetworking
+                .get(url)
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getParseFlowable(typeToken)
+                .compose(RxUtils.rxSchedulerHelper())
+                .as(activity.autoDisposable());
+    }
+
+    public interface FileDownloadListener{
+        void onSucceeded(File file);
+        void onProgressing(float percentage);
+        void onFailed(String errorMessage);
     }
 }
