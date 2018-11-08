@@ -35,7 +35,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/item_spacing_15dp"
         android:layout_centerVertical="true"
-        android:src="@mipmap/tick"
+        android:src="@mipmap/record_ok"
         android:scaleType="centerInside"/>
 
 

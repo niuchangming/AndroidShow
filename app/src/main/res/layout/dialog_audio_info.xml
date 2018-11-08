@@ -9,7 +9,6 @@
         android:layout_width="186dp"
         android:layout_height="186dp"
         android:layout_gravity="center"
-        android:background="@mipmap/bg_voice_popup"
         android:gravity="center"
         android:orientation="vertical">
 
