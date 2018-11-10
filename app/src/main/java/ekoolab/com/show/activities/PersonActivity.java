@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -68,6 +69,7 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
     private UserInfo userInfo;
     private int screenWidth, screenHeight;
     protected String birthday;
+    private Toolbar mToolbar;
 
     @Override
     protected int getLayoutId() {
@@ -100,6 +102,11 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void initViews() {
         super.initViews();
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         name_rl = findViewById(R.id.name_rl);
         name_rl.setOnClickListener(this);
         nickname_rl = findViewById(R.id.nickname_rl);
@@ -112,8 +119,8 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
         whatsup_rl.setOnClickListener(this);
         region_rl = findViewById(R.id.region_rl);
         region_rl.setOnClickListener(this);
-        title_rl = findViewById(R.id.title_rl);
-        title_rl.setOnClickListener(this);
+//        title_rl = findViewById(R.id.title_rl);
+//        title_rl.setOnClickListener(this);
         btn_logout = findViewById(R.id.btn_logout);
         btn_logout.setOnClickListener(this);
         tv_name = findViewById(R.id.tv_name);
@@ -126,8 +133,9 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
         avatar = findViewById(R.id.avatar);
         avatar.setOnClickListener(this);
         cover_image = findViewById(R.id.cover_image);
-        ViewGroup.LayoutParams params = header_rl.getLayoutParams();
+        ViewGroup.LayoutParams params = cover_image.getLayoutParams();
         params.height = DisplayUtils.getScreenWidth()*9/16;
+        cover_image.setLayoutParams(params);
     }
 
     private void loadData(){
@@ -357,5 +365,12 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                 });
 
 
+    }
+
+    //go back when press the backButton in toolbar
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }

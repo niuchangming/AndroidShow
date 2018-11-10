@@ -121,7 +121,7 @@ public class MyVideoFragment extends BaseFragment implements JSONParser.ParserLi
                                     recyclerView.loadMoreNoData();
                                 }
                                 emptyView.content().show();
-                            } else if(videos.size()!=0){
+                            } else if(videos.size()!=0 && flag == 2){
                                 recyclerView.loadMoreNoData();
                             } else{
                                 emptyView.showEmpty();
