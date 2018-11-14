@@ -131,8 +131,6 @@ public class VideoRecordActivity extends BaseActivity implements View.OnClickLis
                 .build();
     }
 
-
-
     @Override
     protected void initViews() {
         super.initViews();

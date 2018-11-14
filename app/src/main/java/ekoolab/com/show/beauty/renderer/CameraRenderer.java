@@ -159,7 +159,6 @@ public class CameraRenderer implements Camera.PreviewCallback, GLSurfaceView.Ren
         }
 
         mFPSUtil.limit();
-        mGLSurfaceView.requestRender();
     }
 
     private void onSurfaceDestroy() {

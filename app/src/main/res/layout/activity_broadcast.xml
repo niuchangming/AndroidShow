@@ -1,37 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.santalu.emptyview.EmptyView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/empty_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:ev_empty_button="@string/try_again"
-    app:ev_empty_buttonTextColor="@color/colorPrimaryDark"
-    app:ev_empty_drawable="@drawable/ic_sentiment_dissatisfied"
-    app:ev_empty_drawableTint="@color/colorPrimary"
-    app:ev_empty_text="@string/empty"
-    app:ev_empty_backgroundColor="@color/colorSuperLightGray"
-    app:ev_error_backgroundColor="@color/colorRed"
-    app:ev_error_button="@string/try_again"
-    app:ev_error_buttonTextColor="@color/white"
-    app:ev_error_drawable="@drawable/ic_sentiment_very_dissatisfied"
-    app:ev_error_drawableTint="@color/white"
-    app:ev_error_text="@string/error_unknown"
-    app:ev_error_textColor="@color/white"
-    app:ev_error_title="@string/error_unknown_title"
-    app:ev_error_titleTextColor="@color/white"
-    app:ev_gravity="center"
-    app:ev_loading_drawable="@drawable/ic_sentiment_satisfied"
-    app:ev_loading_drawableTint="@color/colorGray"
-    app:ev_loading_textColor="@color/colorGray"
-    app:ev_loading_title="@string/loading"
-    app:ev_loading_type="circular"
-    app:ev_transition="auto">
+    android:layout_height="match_parent">
 
-
-    <FrameLayout
-        android:id="@+id/publisher_container"
+    <com.santalu.emptyview.EmptyView
+        android:id="@+id/empty_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:ev_empty_button="@string/try_again"
+        app:ev_empty_buttonTextColor="@color/colorPrimaryDark"
+        app:ev_empty_drawable="@drawable/ic_sentiment_dissatisfied"
+        app:ev_empty_drawableTint="@color/colorPrimary"
+        app:ev_empty_text="@string/empty"
+        app:ev_empty_backgroundColor="@color/colorSuperLightGray"
+        app:ev_error_backgroundColor="@color/colorRed"
+        app:ev_error_button="@string/try_again"
+        app:ev_error_buttonTextColor="@color/white"
+        app:ev_error_drawable="@drawable/ic_sentiment_very_dissatisfied"
+        app:ev_error_drawableTint="@color/white"
+        app:ev_error_text="@string/error_unknown"
+        app:ev_error_textColor="@color/white"
+        app:ev_error_title="@string/error_unknown_title"
+        app:ev_error_titleTextColor="@color/white"
+        app:ev_gravity="center"
+        app:ev_loading_drawable="@drawable/ic_sentiment_satisfied"
+        app:ev_loading_drawableTint="@color/colorGray"
+        app:ev_loading_textColor="@color/colorGray"
+        app:ev_loading_title="@string/loading"
+        app:ev_loading_type="circular"
+        app:ev_transition="auto">
 
+        <FrameLayout
+            android:id="@+id/publisher_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-</com.santalu.emptyview.EmptyView>
+        <android.opengl.GLSurfaceView
+            android:id="@+id/gl_surface_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </com.santalu.emptyview.EmptyView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottom_bar"
+        android:weightSum="5"
+        android:gravity="bottom"
+        android:orientation="vertical">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:layout_marginRight="@dimen/layout_margin_100dp"
+            android:layout_marginBottom="@dimen/layout_margin_8dp"
+            android:layout_marginLeft="@dimen/layout_margin_8dp"
+            android:scrollbars="none"/>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/x98"
+        android:layout_alignParentBottom="true">
+
+        <ImageButton
+            android:id="@+id/comment_btn"
+            android:layout_width="@dimen/icon_size_32dp"
+            android:layout_height="@dimen/icon_size_32dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="@dimen/layout_margin_16dp"
+            android:layout_marginBottom="@dimen/layout_margin_8dp"
+            android:background="@color/transparent"
+            android:scaleType="centerInside"
+            android:src="@mipmap/live_comment"/>
+
+        <ImageButton
+            android:id="@+id/camera_flip_btn"
+            android:layout_width="@dimen/icon_size_32dp"
+            android:layout_height="@dimen/icon_size_32dp"
+            android:layout_toRightOf="@id/comment_btn"
+            android:layout_marginLeft="@dimen/layout_margin_16dp"
+            android:layout_marginBottom="@dimen/layout_margin_8dp"
+            android:background="@color/transparent"
+            android:scaleType="centerInside"
+            android:src="@mipmap/camera_change"/>
+
+        <ImageButton
+            android:id="@+id/beauty_btn"
+            android:layout_width="@dimen/icon_size_32dp"
+            android:layout_height="@dimen/icon_size_32dp"
+            android:layout_toRightOf="@id/camera_flip_btn"
+            android:layout_marginLeft="@dimen/layout_margin_16dp"
+            android:layout_marginBottom="@dimen/layout_margin_8dp"
+            android:background="@color/transparent"
+            android:scaleType="centerInside"
+            android:src="@mipmap/brush"/>
+
+        <ImageButton
+            android:id="@+id/dismiss_btn"
+            android:layout_width="@dimen/icon_size_32dp"
+            android:layout_height="@dimen/icon_size_32dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/layout_margin_16dp"
+            android:layout_marginBottom="@dimen/layout_margin_8dp"
+            android:background="@color/transparent"
+            android:scaleType="centerInside"
+            android:src="@mipmap/cross"/>
+
+    </RelativeLayout>
+
+    <ekoolab.com.show.beauty.ui.BeautyControlView
+        android:id="@+id/fu_beauty_control"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/x98"/>
+
+</RelativeLayout>
