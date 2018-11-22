@@ -356,7 +356,7 @@ public class ShowVideoRender extends BaseVideoRenderer {
     public ShowVideoRender(Context context, GLSurfaceView glSurfaceView) {
         this.context = context;
         this.glSurfaceView = glSurfaceView;
-        this.glSurfaceView .setEGLContextClientVersion(2);
+        this.glSurfaceView.setEGLContextClientVersion(2);
         mRenderer = new MyRenderer();
         this.glSurfaceView.setRenderer(mRenderer);
         this.glSurfaceView .setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);

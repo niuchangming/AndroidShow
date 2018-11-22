@@ -2,38 +2,24 @@ package ekoolab.com.show.beauty.renderer;
 
 import android.app.Activity;
 import android.graphics.ImageFormat;
-import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
-import android.opengl.GLSurfaceView;
 import android.os.Build;
-import android.util.Log;
 
-import com.faceunity.FURenderer;
-import com.faceunity.gles.core.GlUtil;
 import com.opentok.android.BaseVideoCapturer;
-import com.opentok.android.VideoUtils;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.logging.Logger;
 
 import ekoolab.com.show.beauty.utils.CameraUtils;
-import ekoolab.com.show.beauty.utils.FPSUtil;
-
-import static com.opentok.android.Publisher.CameraCaptureFrameRate.FPS_1;
-import static com.opentok.android.Publisher.CameraCaptureFrameRate.FPS_15;
-import static com.opentok.android.Publisher.CameraCaptureFrameRate.FPS_30;
-import static com.opentok.android.Publisher.CameraCaptureFrameRate.FPS_7;
 
 public class LiveCapture extends BaseVideoCapturer implements Camera.PreviewCallback{
     private Activity mActivity;
     private Camera mCamera;
     private Camera.CameraInfo currentDeviceInfo = null;
+    private LiveCaptureListener listener;
 
     private static final int PREVIEW_BUFFER_COUNT = 3;
-    private int mViewWidth = 1280;
-    private int mViewHeight = 720;
     private boolean isCaptureStarted = false;
     private boolean isCapturePaused = false;
 
@@ -44,19 +30,15 @@ public class LiveCapture extends BaseVideoCapturer implements Camera.PreviewCall
     private int mCameraWidth = 1280;
     private int mCameraHeight = 720;
 
-    private float[] mvp = new float[16];
     private byte[][] previewCallbackBuffer;
     private int[] captureFpsRange;
 
-    private int mCameraTextureId = 1;
-    private byte[] mCameraNV21Byte;
-    private SurfaceTexture mSurfaceTexture;
-
-    private FURenderer mFURenderer;
-
-    public LiveCapture(Activity activity, FURenderer fuRenderer) {
+    public LiveCapture(Activity activity) {
         mActivity = activity;
-        mFURenderer = fuRenderer;
+    }
+
+    public void setListener(LiveCaptureListener listener) {
+        this.listener = listener;
     }
 
     @Override
@@ -86,14 +68,7 @@ public class LiveCapture extends BaseVideoCapturer implements Camera.PreviewCall
         parameters.setPreviewFpsRange(captureFpsRange[0], captureFpsRange[1]);
         CameraUtils.setFocusModes(parameters);
 
-        int[] size = CameraUtils.choosePreviewSize(parameters, mCameraWidth, mCameraHeight);
-        mCameraWidth = size[0];
-        mCameraHeight = size[1];
-        mvp = GlUtil.changeMVPMatrix(GlUtil.IDENTITY_MATRIX, mViewWidth, mViewHeight, mCameraHeight, mCameraWidth);
-
         mCamera.setParameters(parameters);
-
-        mFURenderer.onSurfaceCreated();
     }
 
     @Override
@@ -102,27 +77,18 @@ public class LiveCapture extends BaseVideoCapturer implements Camera.PreviewCall
             return -1;
         }
 
-        try{
-            synchronized (mCameraLock) {
-                if (previewCallbackBuffer == null) {
-                    previewCallbackBuffer = new byte[PREVIEW_BUFFER_COUNT][mCameraWidth * mCameraHeight * 3 / 2];
-                }
-                for (int i = 0; i < PREVIEW_BUFFER_COUNT; i++) {
-                    mCamera.addCallbackBuffer(previewCallbackBuffer[i]);
-                }
-                mCamera.setPreviewCallbackWithBuffer(this);
-
-
-                if (mSurfaceTexture != null) {
-                    mSurfaceTexture.release();
-                }
-
-                mSurfaceTexture = new SurfaceTexture(mCameraTextureId);
-                mCamera.setPreviewTexture(mSurfaceTexture);
-                mCamera.startPreview();
+        synchronized (mCameraLock) {
+            if (previewCallbackBuffer == null) {
+                previewCallbackBuffer = new byte[PREVIEW_BUFFER_COUNT][mCameraWidth * mCameraHeight * 3 / 2];
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            for (int i = 0; i < PREVIEW_BUFFER_COUNT; i++) {
+                mCamera.addCallbackBuffer(previewCallbackBuffer[i]);
+            }
+            mCamera.setPreviewCallbackWithBuffer(this);
+
+            if(listener != null){
+                listener.cameraStart(mCamera);
+            }
         }
 
         isCaptureStarted = true;
@@ -132,8 +98,11 @@ public class LiveCapture extends BaseVideoCapturer implements Camera.PreviewCall
     @Override
     public int stopCapture() {
         try {
+            if (listener != null) {
+                listener.cameraStop();
+            }
+
             synchronized (mCameraLock) {
-                mCameraNV21Byte = null;
                 if (mCamera != null) {
                     mCamera.stopPreview();
                     mCamera.setPreviewTexture(null);
@@ -151,7 +120,6 @@ public class LiveCapture extends BaseVideoCapturer implements Camera.PreviewCall
 
     @Override
     public void destroy() {
-        mFURenderer.onSurfaceDestroyed();
     }
 
     @Override
@@ -199,12 +167,12 @@ public class LiveCapture extends BaseVideoCapturer implements Camera.PreviewCall
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
-        mCameraNV21Byte = data;
-        int fuTextureId = mFURenderer.onDrawFrame(mCameraNV21Byte, mCameraTextureId, mCameraWidth, mCameraHeight);
-
-        Log.i("LiveCapture", "===========> " + fuTextureId);
+        if(listener != null){
+            listener.onDrawFrame(data);
+        }
 
         provideByteArrayFrame(data, NV21, mCameraWidth, mCameraHeight, mCameraOrientation, isFrontCamera());
+
         mCamera.addCallbackBuffer(data);
     }
 
@@ -262,6 +230,11 @@ public class LiveCapture extends BaseVideoCapturer implements Camera.PreviewCall
         return closestRange;
     }
 
+    public interface LiveCaptureListener {
+        void cameraStart(Camera camera);
+        void cameraStop();
+        void onDrawFrame(byte[] data);
+    }
 
 }
 

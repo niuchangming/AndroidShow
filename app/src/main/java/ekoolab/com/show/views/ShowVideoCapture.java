@@ -61,18 +61,8 @@ public class ShowVideoCapture extends BaseVideoCapturer implements Camera.Previe
     private Publisher.CameraCaptureResolution preferredResolution = MEDIUM;
     private Publisher.CameraCaptureFrameRate preferredFramerate = FPS_30;
 
-    //default case
-    int fps = 1;
-    int width = 0;
-    int height = 0;
-    int[] frame;
-    Handler handler = new Handler();
-
     public ShowVideoCapture(Context context, Publisher.CameraCaptureResolution resolution,
                             Publisher.CameraCaptureFrameRate fps) {
-        if (ShowVideoCaptureListener.class.isAssignableFrom(context.getClass())){
-            setShowVideoCaptureListener((ShowVideoCaptureListener)context);
-        }
         this.context = context;
         this.cameraIndex = getCameraIndexUsingFront(true);
 
@@ -84,13 +74,6 @@ public class ShowVideoCapture extends BaseVideoCapturer implements Camera.Previe
         this.preferredResolution = resolution;
     }
 
-    private int mCurrentCameraType = Camera.CameraInfo.CAMERA_FACING_FRONT;
-    private int mCameraOrientation;
-    private int mCameraWidth = 1280;
-    private int mCameraHeight = 720;
-    private int mViewWidth = 1280;
-    private int mViewHeight = 720;
-    private float[] mvp = new float[16];
     public synchronized void init() {
         try {
             camera = Camera.open(cameraIndex);
@@ -347,11 +330,6 @@ public class ShowVideoCapture extends BaseVideoCapturer implements Camera.Previe
         void handleFrame(byte[] data, int cameraWidth, int cameraHeight);
     }
 
-    private ShowVideoCaptureListener showVideoCaptureListener;
-    public void setShowVideoCaptureListener(ShowVideoCaptureListener showVideoCaptureListener) {
-        this.showVideoCaptureListener = showVideoCaptureListener;
-    }
-
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
         previewBufferLock.lock();
@@ -361,10 +339,6 @@ public class ShowVideoCapture extends BaseVideoCapturer implements Camera.Previe
 
                 int currentRotation = compensateCameraRotation(currentDisplay
                         .getRotation());
-
-                if (showVideoCaptureListener != null){
-                    showVideoCaptureListener.handleFrame(data, captureWidth, captureHeight);
-                }
 
                 provideByteArrayFrame(data, NV21, captureWidth, captureHeight, currentRotation, isFrontCamera());
 

@@ -8,7 +8,6 @@ import android.provider.Settings;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
 import com.androidnetworking.AndroidNetworking;
@@ -48,8 +47,8 @@ import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
 import ekoolab.com.show.beans.ChatMessage;
 import ekoolab.com.show.beans.enums.MessageType;
-import ekoolab.com.show.beauty.renderer.CameraRenderer;
 import ekoolab.com.show.beauty.renderer.LiveCapture;
+import ekoolab.com.show.beauty.renderer.LiveRenderer;
 import ekoolab.com.show.beauty.ui.BeautyControlView;
 import ekoolab.com.show.dialogs.CommentDialog;
 import ekoolab.com.show.utils.AuthUtils;
@@ -57,8 +56,6 @@ import ekoolab.com.show.utils.Chat.ChatManager;
 import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.UIHandler;
 import ekoolab.com.show.utils.Utils;
-import ekoolab.com.show.views.ShowVideoCapture;
-import ekoolab.com.show.views.ShowVideoRender;
 import ekoolab.com.show.views.itemdecoration.LinearItemDecoration;
 
 import static com.sendbird.android.SendBird.ConnectionState.OPEN;
@@ -67,20 +64,16 @@ public class BroadcastActivity extends BaseActivity implements
         View.OnClickListener,
         Session.SessionListener,
         PublisherKit.PublisherListener,
-        ShowVideoCapture.ShowVideoCaptureListener,
         ChatManager.ChatManagerListener {
 
     protected EmptyView emptyView;
     protected GLSurfaceView glSurfaceView;
-    protected FrameLayout publisherContainer;
     protected ImageButton flipBtn;
     protected ImageButton dismissBtn;
     protected ImageButton beautyBtn;
     protected ImageButton commentBtn;
 
     private BeautyControlView mBeautyControlView;
-    private FURenderer mFURenderer;
-    private CameraRenderer cameraRenderer;
     private boolean isPermissionAllowed = false;
 
     private String sessionId;
@@ -89,12 +82,14 @@ public class BroadcastActivity extends BaseActivity implements
     private Session mSession;
     private Publisher mPublisher;
     private LiveCapture liveCapture;
-    private ShowVideoRender showVideoRender;
+    private LiveRenderer liveRenderer;
 
     private OpenChannel openChannel;
     private List<BaseMessage> openMessages = null;
     private RecyclerView chatRecyclerView;
     private CommentDialog commentDialog = null;
+
+    private FURenderer mFURenderer;
 
     @Override
     protected int getLayoutId() {
@@ -105,6 +100,15 @@ public class BroadcastActivity extends BaseActivity implements
     protected void initData() {
         super.initData();
         openMessages = new ArrayList<>();
+
+        mFURenderer = new FURenderer
+                .Builder(this)
+                .maxFaces(4)
+                .inputTextureType(FURenderer.FU_ADM_FLAG_EXTERNAL_OES_TEXTURE)
+                .createEGLContext(false)
+                .needReadBackImage(false)
+                .defaultEffect(null)
+                .build();
 
         ChatManager.getInstance(this).register(this);
         if(SendBird.getConnectionState() == OPEN){
@@ -133,18 +137,9 @@ public class BroadcastActivity extends BaseActivity implements
     @Override
     protected void initViews() {
         super.initViews();
-        mFURenderer = new FURenderer
-                .Builder(this)
-                .maxFaces(4)
-                .inputTextureType(FURenderer.FU_ADM_FLAG_EXTERNAL_OES_TEXTURE)
-                .createEGLContext(true)
-                .needReadBackImage(false)
-                .defaultEffect(null)
-                .build();
-
         emptyView = findViewById(R.id.empty_view);
         glSurfaceView = findViewById(R.id.gl_surface_view);
-        publisherContainer = findViewById(R.id.publisher_container);
+        glSurfaceView.setOnClickListener(this);
 
         flipBtn = findViewById(R.id.camera_flip_btn);
         flipBtn.setOnClickListener(this);
@@ -159,13 +154,13 @@ public class BroadcastActivity extends BaseActivity implements
         commentBtn.setOnClickListener(this);
 
         mBeautyControlView = findViewById(R.id.fu_beauty_control);
-        mBeautyControlView.setOnFUControlListener(mFURenderer);
         mBeautyControlView.setOnBottomAnimatorChangeListener(new BeautyControlView.OnBottomAnimatorChangeListener() {
             @Override
             public void onBottomAnimatorChangeListener(float showRate) {
 
             }
         });
+        mBeautyControlView.setOnFUControlListener(this.mFURenderer);
 
         chatRecyclerView = findViewById(R.id.recycler_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -196,13 +191,11 @@ public class BroadcastActivity extends BaseActivity implements
     }
 
     @Override
-    public void handleFrame(byte[] data, int cameraWidth, int cameraHeight) {
-    }
-
-
-    @Override
     protected void onPause() {
         super.onPause();
+        if(liveRenderer != null){
+            liveRenderer.onDestroy();
+        }
     }
 
     // Start TokBox
@@ -239,16 +232,17 @@ public class BroadcastActivity extends BaseActivity implements
     }
 
     private void doPublish(){
-        liveCapture = new LiveCapture(this, mFURenderer);
-        showVideoRender = new ShowVideoRender(this, glSurfaceView);
+        liveRenderer = new LiveRenderer(glSurfaceView, mFURenderer);
+        liveCapture = new LiveCapture(this);
+        liveCapture.setListener(liveRenderer);
+
         mPublisher = new Publisher.Builder(this)
                 .capturer(liveCapture)
-                .renderer(showVideoRender)
+                .renderer(liveRenderer)
                 .build();
         mPublisher.setPublisherListener(this);
         mPublisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
 
-//        publisherContainer.addView(mPublisher.getView());
         mSession.publish(mPublisher);
     }
 
@@ -311,6 +305,9 @@ public class BroadcastActivity extends BaseActivity implements
                 break;
             case R.id.beauty_btn:
                 mBeautyControlView.show();
+                break;
+            case R.id.gl_surface_view:
+                mBeautyControlView.hide();
                 break;
         }
     }

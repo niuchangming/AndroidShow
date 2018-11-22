@@ -134,13 +134,13 @@ public class VideoRecordActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected void initViews() {
         super.initViews();
-
         mGLSurfaceView = findViewById(R.id.gl_surface_view);
         mGLSurfaceView.setEGLContextClientVersion(2);
         mGLSurfaceView.setOnClickListener(this);
         mCameraRenderer = new CameraRenderer(this, mGLSurfaceView, this);
         mGLSurfaceView.setRenderer(mCameraRenderer);
         mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+
         beautyBar = findViewById(R.id.beauty_bar);
 
         flipBtn = findViewById(R.id.camera_flip_btn);

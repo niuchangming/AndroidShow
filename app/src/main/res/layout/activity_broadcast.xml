@@ -32,11 +32,6 @@
         app:ev_loading_type="circular"
         app:ev_transition="auto">
 
-        <FrameLayout
-            android:id="@+id/publisher_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
         <android.opengl.GLSurfaceView
             android:id="@+id/gl_surface_view"
             android:layout_width="match_parent"
