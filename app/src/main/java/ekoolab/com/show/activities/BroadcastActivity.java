@@ -160,7 +160,7 @@ public class BroadcastActivity extends BaseActivity implements
 
             }
         });
-        mBeautyControlView.setOnFUControlListener(this.mFURenderer);
+        mBeautyControlView.setOnFUControlListener(mFURenderer);
 
         chatRecyclerView = findViewById(R.id.recycler_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -232,7 +232,7 @@ public class BroadcastActivity extends BaseActivity implements
     }
 
     private void doPublish(){
-        liveRenderer = new LiveRenderer(glSurfaceView, mFURenderer);
+        liveRenderer = new LiveRenderer(this, glSurfaceView, mFURenderer);
         liveCapture = new LiveCapture(this);
         liveCapture.setListener(liveRenderer);
 
@@ -244,6 +244,10 @@ public class BroadcastActivity extends BaseActivity implements
         mPublisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
 
         mSession.publish(mPublisher);
+    }
+
+    public void postData(byte[] data){
+//        liveCapture.sendData(data);
     }
 
     private void startBroadcast() throws JSONException {
@@ -433,6 +437,7 @@ public class BroadcastActivity extends BaseActivity implements
 
     private void obtainChannelUrl(){
         OpenChannel.createChannel(new OpenChannel.OpenChannelCreateHandler() {
+
             @Override
             public void onResult(OpenChannel openChannel, SendBirdException e) {
                 if(e == null){
@@ -442,16 +447,19 @@ public class BroadcastActivity extends BaseActivity implements
                     enterChannel();
                 }
             }
+
         });
     }
 
     private void enterChannel(){
         if (this.openChannel != null) {
             this.openChannel.enter(new OpenChannel.OpenChannelEnterHandler() {
+
                 @Override
                 public void onResult(SendBirdException e) {
                     Logger.i("Enter Open Channel Failed");
                 }
+
             });
         }
     }

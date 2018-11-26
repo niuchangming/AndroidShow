@@ -12,13 +12,17 @@ import com.faceunity.gles.ProgramTexture2d;
 import com.faceunity.gles.ProgramTextureOES;
 import com.faceunity.gles.core.GlUtil;
 import com.opentok.android.BaseVideoRenderer;
+import com.orhanobut.logger.Logger;
 
 import java.io.IOException;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import ekoolab.com.show.activities.BroadcastActivity;
+
 public class LiveRenderer extends BaseVideoRenderer implements GLSurfaceView.Renderer, LiveCapture.LiveCaptureListener{
+    private BroadcastActivity broadcastActivity;
     private GLSurfaceView mGLSurfaceView;
     private FURenderer mFURenderer;
 
@@ -37,7 +41,8 @@ public class LiveRenderer extends BaseVideoRenderer implements GLSurfaceView.Ren
     private ProgramTexture2d mFullFrameRectTexture2D;
     private ProgramTextureOES mTextureOES;
 
-    public LiveRenderer(GLSurfaceView glSurfaceView, FURenderer fuRenderer) {
+    public LiveRenderer(BroadcastActivity broadcastActivity, GLSurfaceView glSurfaceView, FURenderer fuRenderer) {
+        this.broadcastActivity = broadcastActivity;
         this.mGLSurfaceView = glSurfaceView;
         this.mGLSurfaceView.setEGLContextClientVersion(2);
         this.mGLSurfaceView.setRenderer(this);
@@ -69,11 +74,18 @@ public class LiveRenderer extends BaseVideoRenderer implements GLSurfaceView.Ren
         } catch (Exception e) {
             return;
         }
+
         if (mCameraNV21Byte == null) {
             mFullFrameRectTexture2D.drawFrame(mFuTextureId, mtx, mvp);
             return;
         }
+
         mFuTextureId = mFURenderer.onDrawFrame(mCameraNV21Byte, mCameraTextureId, mCameraWidth, mCameraHeight);
+
+//        if (this.broadcastActivity != null) {
+//            this.broadcastActivity.postData(mCameraNV21Byte);
+//        }
+
         //用于屏蔽切换调用SDK处理数据方法导致的绿屏（切换SDK处理数据方法是用于展示，实际使用中无需切换，故无需调用做这个判断,直接使用else分支绘制即可）
         if (mFuTextureId <= 0) {
             mTextureOES.drawFrame(mCameraTextureId, mtx, mvp);

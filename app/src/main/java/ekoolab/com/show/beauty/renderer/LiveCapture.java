@@ -10,6 +10,7 @@ import com.opentok.android.BaseVideoCapturer;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import ekoolab.com.show.beauty.utils.CameraUtils;
 
@@ -170,10 +171,12 @@ public class LiveCapture extends BaseVideoCapturer implements Camera.PreviewCall
         if(listener != null){
             listener.onDrawFrame(data);
         }
-
         provideByteArrayFrame(data, NV21, mCameraWidth, mCameraHeight, mCameraOrientation, isFrontCamera());
-
         mCamera.addCallbackBuffer(data);
+    }
+
+    public void sendData(byte[] data){
+//        provideByteArrayFrame(data, NV21, mCameraWidth, mCameraHeight, mCameraOrientation, isFrontCamera());
     }
 
     public boolean isFrontCamera() {
