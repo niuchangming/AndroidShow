@@ -74,14 +74,14 @@ public class VideoAdapter extends RecyclerView.Adapter <VideoAdapter.VideoHolder
             locationTv.setText("大连");
             ImageLoader.displayImageAsCircle(video.creator.avatar.small, avatarIv);
             if (video.preview != null) {
-                Glide.with(activity).load(video.preview.origin).into(coverIv);
+                Glide.with(activity).load(video.preview.medium).into(coverIv);
             }
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
-                if(listener != null) {
-                    listener.onItemClick(video);
-                }
+                    if(listener != null) {
+                        listener.onItemClick(video);
+                    }
                 }
             });
         }

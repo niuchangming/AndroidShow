@@ -35,6 +35,7 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
     private EmptyView emptyView;
     private XRecyclerView recyclerView;
     private VideoAdapter adapter;
+    private long requestTime = 0;
     private ArrayList<Video> videos = new ArrayList<Video>();
 
     @Override
@@ -50,7 +51,7 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
         adapter.setListener(this);
         adapter.setHasStableIds(false);
         recyclerView.setAdapter(adapter);
-        loadVideoData(0);
+        loadVideoData();
     }
 
     @Override
@@ -66,22 +67,26 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
             @Override
             public void onRefresh() {
                 pageIndex = 0;
-                loadVideoData(1);
+                requestTime = 0;
+                videos.clear();
+                loadVideoData();
             }
 
             @Override
             public void onLoadMore() {
-                loadVideoData(2);
+                loadVideoData();
             }
         });
     }
 
-    private void loadVideoData(int flag) {
-        if (flag == 0) {
+    private void loadVideoData() {
+        if(requestTime == 0){
+            requestTime = System.currentTimeMillis();
             emptyView.showLoading();
         }
-        HashMap<String, String> map = new HashMap<>(3);
-//        map.put("timestamp", System.currentTimeMillis() + "");
+
+        HashMap<String, String> map = new HashMap<>();
+        map.put("timestamp", requestTime + "");
         map.put("pageSize", Constants.PAGE_SIZE + "");
         map.put("pageIndex", pageIndex + "");
         map.put("token", AuthUtils.getInstance(getContext()).getApiToken());
@@ -93,31 +98,22 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
                     protected void onSuccess(List<Video> videoList) {
                         try {
                             if (Utils.isNotEmpty(videoList)) {
-                                if (flag == 2) {
-                                    videos.addAll(videoList);
-                                    adapter.notifyItemRangeChanged(videos.size() - videoList.size(), videos.size());
-                                } else if (flag == 1) {
-                                    adapter.notifyItemRangeRemoved(videoList.size(), videos.size());
-                                    videos.clear();
-                                    videos.addAll(videoList);
-                                    adapter.notifyItemRangeChanged(0, videos.size());
-                                } else {
-                                    videos.clear();
+                                if(videos.size() <= 50){
                                     videos.addAll(videoList);
                                     adapter.notifyDataSetChanged();
+                                }else{
+                                    adapter.notifyItemRangeChanged(videos.size() - videoList.size(), videos.size());
                                 }
-                                recyclerView.refreshComlete();
-                                if (videoList.size() == 20) {
-                                    pageIndex++;
-                                } else {
+                                if (videoList.size() < Constants.PAGE_SIZE) {
                                     recyclerView.loadMoreNoData();
+                                } else {
+                                    pageIndex++;
                                 }
                                 emptyView.content().show();
-                            } else if(videos.size()!=0){
-                                recyclerView.loadMoreNoData();
                             } else{
                                 emptyView.showEmpty();
                             }
+                            recyclerView.refreshComlete();
                         } catch (Exception e) {
                             recyclerView.refreshComlete();
                             e.printStackTrace();

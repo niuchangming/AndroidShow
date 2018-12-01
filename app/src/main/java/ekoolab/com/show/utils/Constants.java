@@ -5,7 +5,7 @@ import android.os.Environment;
 import java.io.File;
 
 public class Constants {
-    public static final int PAGE_SIZE = 20;
+    public static final int PAGE_SIZE = 50;
     public static final int CHAT_LIMIT = 20;
     public static final String SBD_APP_ID = "9FFC187F-1F31-46B3-A77D-BB96008A8EED";
     public static final String SBD_TOKEN = "ea52b46dfb6f05f404fc15735557b321c85efd6d";
@@ -37,8 +37,8 @@ public class Constants {
 
     public static final String LIKE = HOST + "likes/like";
     public static final String UNLIKE = HOST + "likes/unlike";
-    public static final String FOLLOW = HOST + "follows/add";
-    public static final String FOLLOWCANCEL = HOST + "follows/cancel";
+    public static final String FOLLOW = HOST + "follows/follow";
+    public static final String FOLLOWCANCEL = HOST + "follows/unfollow";
     public static final String MY_FOllOWER =  HOST + "follows/followerlist";
     public static final String MY_FOllOWING =  HOST + "follows/followinglist";
     public static final String IS_FOLLOWED = HOST + "follows/isfollow";

@@ -92,7 +92,7 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
         }
 
         public void bind(final Video video, final int position) {
-            Glide.with(activity).load(video.preview.origin).into(previewIv);
+            Glide.with(activity).load(video.preview.medium).into(previewIv);
             videoView.setVideoPath(video.resourceUri);
             tv_like.setText(video.favouriteCount + "");
             tv_zan.setText(video.likeCount + "");
@@ -169,7 +169,7 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
 
     private void getFollow(ViewHolder viewHolder, Video video, boolean flag) {
         HashMap<String, String> map = new HashMap<>(2);
-        map.put("resourceId", video.resourceId);
+        map.put("userCode", video.creator.userCode);
         map.put("token", AuthUtils.getInstance(activity).getApiToken());
         ApiServer.basePostRequest((BaseActivity) activity, flag ? Constants.FOLLOW : Constants.FOLLOWCANCEL, map,
                 new TypeToken<ResponseData<String>>() {

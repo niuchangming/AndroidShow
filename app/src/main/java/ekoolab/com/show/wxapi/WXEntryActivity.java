@@ -8,6 +8,7 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.facebook.login.LoginResult;
 import com.google.gson.reflect.TypeToken;
+import com.luck.picture.lib.tools.Constant;
 import com.orhanobut.logger.Logger;
 import com.rx2androidnetworking.Rx2AndroidNetworking;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
@@ -100,14 +101,14 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler{
     }
 
     private void afterWeChatLogin(final String accessToken, String openId, String unionId, long expiredIn, String refreshToken) {
-        HashMap<String, String> map = new HashMap<>(4);
+        HashMap<String, Object> map = new HashMap<>(4);
         map.put("type", "wechat");
         map.put("access_token", accessToken);
         map.put("expired", expiredIn + "");
         map.put("union_id", unionId);
         map.put("open_id", openId);
         map.put("refresh_token", refreshToken);
-        ApiServer.basePostRequest(this, Constants.LOGIN, map, new TypeToken<ResponseData<LoginData>>(){})
+        ApiServer.basePostRequestNoDisposable(Constants.LOGIN, map, new TypeToken<ResponseData<LoginData>>(){})
                 .subscribe(new NetworkSubscriber<LoginData>() {
                     @Override
                     protected void onSuccess(LoginData loginData) {
