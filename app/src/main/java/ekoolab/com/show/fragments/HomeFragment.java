@@ -49,7 +49,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener{
         return R.layout.fragment_home;
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -59,6 +58,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener{
         }else{
             loginBtn.setVisibility(View.VISIBLE);
         }
+
     }
 
     @Override

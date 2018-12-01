@@ -28,6 +28,7 @@ import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -59,6 +60,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import at.blogc.android.views.ExpandableTextView;
 import ekoolab.com.show.R;
 import ekoolab.com.show.adapters.DialogGiftPagerAdapter;
 import ekoolab.com.show.api.ApiServer;
@@ -243,7 +245,36 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
                 helper.setText(R.id.tv_name, item.creator.name);
                 helper.setText(R.id.tv_time, TimeUtils.formatTime(item.uploadTime));
                 helper.setGone(R.id.tv_content, !TextUtils.isEmpty(item.body));
-                helper.setText(R.id.tv_content, item.body);
+
+                ExpandableTextView expandableTextView = helper.getView(R.id.tv_content);
+                expandableTextView.setText(item.body);
+                expandableTextView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        expandableTextView.setMaxLines(Integer.MAX_VALUE);
+                        expandableTextView.measure
+                                (
+                                        View.MeasureSpec.makeMeasureSpec(expandableTextView.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
+                                        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+                                );
+
+                        if(expandableTextView.getLineCount() > 5){
+                            expandableTextView.setMaxLines(5);
+                            helper.setGone(R.id.expand_btn, true);
+                        }else{
+                            helper.setGone(R.id.expand_btn, false);
+                        }
+                    }
+                });
+
+                Button expandBtn = helper.getView(R.id.expand_btn);
+                expandBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        expandableTextView.toggle();
+                    }
+                });
+
                 helper.setGone(R.id.nine_grid_layout, Utils.isNotEmpty(item.photoArray));
                 NewNineGridlayout newNineGridlayout = helper.getView(R.id.nine_grid_layout);
                 newNineGridlayout.showPic(nineTotalWidth, item.photoArray,

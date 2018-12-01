@@ -100,6 +100,8 @@
     <string name="hot">热点</string>
     <string name="settings">设置</string>
     <string name="google_maps_key">AIzaSyCYmhhrugJPiHFGya0ueF3jLsCDeMGXdBE</string>
+    <string name="expand">展开</string>
+    <string name="collapse">收起</string>
 
     <!-- Region -->
     <string name="country_china">中国大陆</string>

@@ -22,14 +22,12 @@ import ekoolab.com.show.beans.Video;
 import ekoolab.com.show.fragments.BaseFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
-import ekoolab.com.show.utils.JsonParser.JSONParser.ParserListener;
 import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.utils.ViewHolder;
 import ekoolab.com.show.views.itemdecoration.GridSpacingItemDecoration;
 import me.shihao.library.XRecyclerView;
-import okhttp3.Response;
 
-public class VideoFragment extends BaseFragment implements ParserListener, VideoAdapter.OnItemClickListener {
+public class VideoFragment extends BaseFragment implements VideoAdapter.OnItemClickListener {
     private final String TAG = "VideoFragment";
     private int pageIndex;
     private EmptyView emptyView;
@@ -51,7 +49,6 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
         adapter.setListener(this);
         adapter.setHasStableIds(false);
         recyclerView.setAdapter(adapter);
-        loadVideoData();
     }
 
     @Override
@@ -77,12 +74,14 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
                 loadVideoData();
             }
         });
+
+        emptyView.showLoading();
+        loadVideoData();
     }
 
     private void loadVideoData() {
         if(requestTime == 0){
             requestTime = System.currentTimeMillis();
-            emptyView.showLoading();
         }
 
         HashMap<String, String> map = new HashMap<>();
@@ -98,12 +97,14 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
                     protected void onSuccess(List<Video> videoList) {
                         try {
                             if (Utils.isNotEmpty(videoList)) {
-                                if(videos.size() <= 50){
-                                    videos.addAll(videoList);
+                                videos.addAll(videoList);
+
+                                if(videos.size() <= Constants.PAGE_SIZE){
                                     adapter.notifyDataSetChanged();
                                 }else{
                                     adapter.notifyItemRangeChanged(videos.size() - videoList.size(), videos.size());
                                 }
+
                                 if (videoList.size() < Constants.PAGE_SIZE) {
                                     recyclerView.loadMoreNoData();
                                 } else {
@@ -113,41 +114,19 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
                             } else{
                                 emptyView.showEmpty();
                             }
-                            recyclerView.refreshComlete();
                         } catch (Exception e) {
-                            recyclerView.refreshComlete();
                             e.printStackTrace();
                         }
+                        recyclerView.refreshComlete();
                     }
 
                     @Override
                     protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
                         emptyView.error(e).show();
+                        recyclerView.refreshComlete();
                         return super.dealHttpException(code, errorMsg, e);
                     }
                 });
-    }
-
-    @Override
-    public void onParseSuccess(Object obj) {
-        if (obj instanceof List) {
-            videos.clear();
-            List<Video> fetchedVideos = (ArrayList<Video>) obj;
-            if (fetchedVideos != null && fetchedVideos.size() > 0) {
-                videos.addAll(fetchedVideos);
-                adapter.notifyDataSetChanged();
-                emptyView.content().show();
-            } else {
-                emptyView.showEmpty();
-            }
-        } else {
-            emptyView.error().setErrorText(R.string.format_error).show();
-        }
-    }
-
-    @Override
-    public void onParseError(String err) {
-        emptyView.error().setErrorText(err).show();
     }
 
     @Override
