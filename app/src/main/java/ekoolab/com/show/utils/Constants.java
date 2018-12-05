@@ -11,8 +11,8 @@ public class Constants {
     public static final String SBD_TOKEN = "ea52b46dfb6f05f404fc15735557b321c85efd6d";
     public static final String TOKBOX_APP_ID = "46182032";
     public static final String TOKBOX_APP_SECRET = "60af838781cb8441b88f1434ed213f09a4b6a72d";
-    public static final String WECHAT_APP_ID = "wxeda3982509da49ac";
-    public static final String WECHAT_SECRET = "715b77b4345364d97659f34cb74a9d7b";
+    public static final String WECHAT_APP_ID = "wx9e7fcabf7ab1f075"; //"wxeda3982509da49ac";
+    public static final String WECHAT_SECRET = "4cea9cbcf1285e419b97f8e555770ed6"; //"715b77b4345364d97659f34cb74a9d7b";
 
     public static final String HOST = "http://api.ccmsshow.com:8081/api/";
     public static final String LOGIN = HOST + "user/login";

@@ -1,6 +1,7 @@
 package ekoolab.com.show.views;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.ImageFormat;
 import android.graphics.PixelFormat;
@@ -13,6 +14,7 @@ import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
 
+import com.faceunity.gles.core.GlUtil;
 import com.opentok.android.BaseVideoCapturer;
 import com.opentok.android.Publisher;
 import com.opentok.android.VideoUtils;
@@ -22,13 +24,16 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
+import ekoolab.com.show.beauty.utils.CameraUtils;
+
 import static com.opentok.android.Publisher.CameraCaptureFrameRate.FPS_30;
 import static com.opentok.android.Publisher.CameraCaptureResolution.MEDIUM;
 
-public class ShowVideoCapturer extends BaseVideoCapturer implements Camera.PreviewCallback,
+public class ShowVideoCapture extends BaseVideoCapturer implements Camera.PreviewCallback,
         BaseVideoCapturer.CaptureSwitch{
 
-    private static final String LOG_TAG = ShowVideoCapturer.class.getSimpleName();
+    private Context context;
+    private static final String LOG_TAG = ShowVideoCapture.class.getSimpleName();
     private int cameraIndex = 0;
     private Camera camera;
     private Camera.CameraInfo currentDeviceInfo = null;
@@ -51,45 +56,14 @@ public class ShowVideoCapturer extends BaseVideoCapturer implements Camera.Previ
     private Display currentDisplay;
 
     private SurfaceTexture surfaceTexture;
-
-    private boolean blackFrames = false;
     private boolean isCapturePaused = false;
 
     private Publisher.CameraCaptureResolution preferredResolution = MEDIUM;
     private Publisher.CameraCaptureFrameRate preferredFramerate = FPS_30;
 
-    //default case
-    int fps = 1;
-    int width = 0;
-    int height = 0;
-    int[] frame;
-    Handler handler = new Handler();
-
-    Runnable newFrame = new Runnable() {
-        @Override
-        public void run() {
-            if (isCaptureRunning) {
-                if (frame == null) {
-                    VideoUtils.Size resolution = new VideoUtils.Size();
-                    resolution = getPreferredResolution();
-                    fps = getPreferredFramerate();
-                    width = resolution.width;
-                    height = resolution.height;
-                    frame = new int[width * height];
-                }
-
-                provideIntArrayFrame(frame, ARGB, width, height, 0, false);
-                handler.postDelayed(newFrame, 1000 / fps);
-            }
-        }
-    };
-
-    public ShowVideoCapturer(Context context, Publisher.CameraCaptureResolution resolution,
-                               Publisher.CameraCaptureFrameRate fps) {
-        if (ShowVideoCaptureListener.class.isAssignableFrom(context.getClass())){
-            setShowVideoCaptureListener((ShowVideoCaptureListener)context);
-        }
-
+    public ShowVideoCapture(Context context, Publisher.CameraCaptureResolution resolution,
+                            Publisher.CameraCaptureFrameRate fps) {
+        this.context = context;
         this.cameraIndex = getCameraIndexUsingFront(true);
 
         // Get current display to query UI orientation
@@ -101,13 +75,11 @@ public class ShowVideoCapturer extends BaseVideoCapturer implements Camera.Previ
     }
 
     public synchronized void init() {
-        Log.d(LOG_TAG, "init() enetered");
         try {
             camera = Camera.open(cameraIndex);
         } catch (RuntimeException exp) {
             Log.e(LOG_TAG, "The camera is in use by another app");
         }
-
         currentDeviceInfo = new Camera.CameraInfo();
         Camera.getCameraInfo(cameraIndex, currentDeviceInfo);
         Log.d(LOG_TAG, "init() exit");
@@ -121,19 +93,15 @@ public class ShowVideoCapturer extends BaseVideoCapturer implements Camera.Previ
         }
 
         if (camera != null) {
-            //check preferredResolution and preferredFramerate values
             VideoUtils.Size resolution = getPreferredResolution();
             configureCaptureSize(resolution.width, resolution.height);
 
             Camera.Parameters parameters = camera.getParameters();
-            parameters.setPreviewSize(captureWidth, captureHeight);
+            parameters.setPreviewSize(1280, 720);
             parameters.setPreviewFormat(PIXEL_FORMAT);
             parameters.setPreviewFpsRange(captureFpsRange[0], captureFpsRange[1]);
 
-            List<String> focusModes = parameters.getSupportedFocusModes();
-            if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
-                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
-            }
+            CameraUtils.setFocusModes(parameters);
 
             try {
                 camera.setParameters(parameters);
@@ -169,9 +137,6 @@ public class ShowVideoCapturer extends BaseVideoCapturer implements Camera.Previ
 
             previewBufferLock.unlock();
 
-        } else {
-            blackFrames = true;
-            handler.postDelayed(newFrame, 1000 / fps);
         }
 
         isCaptureRunning = true;
@@ -199,11 +164,6 @@ public class ShowVideoCapturer extends BaseVideoCapturer implements Camera.Previ
             previewBufferLock.unlock();
         }
         isCaptureStarted = false;
-
-        if (blackFrames) {
-            handler.removeCallbacks(newFrame);
-        }
-
         return 0;
     }
 
@@ -230,8 +190,8 @@ public class ShowVideoCapturer extends BaseVideoCapturer implements Camera.Previ
             settings = new CaptureSettings();
             configureCaptureSize(resolution.width, resolution.height);
             settings.fps = framerate;
-            settings.width = captureWidth;
-            settings.height = captureHeight;
+            settings.width = 1280;
+            settings.height = 720;
             settings.format = NV21;
             settings.expectedDelay = 0;
         } else {
@@ -370,31 +330,18 @@ public class ShowVideoCapturer extends BaseVideoCapturer implements Camera.Previ
         void handleFrame(byte[] data, int cameraWidth, int cameraHeight);
     }
 
-    private ShowVideoCaptureListener showVideoCaptureListener;
-    public void setShowVideoCaptureListener(ShowVideoCaptureListener showVideoCaptureListener) {
-        this.showVideoCaptureListener = showVideoCaptureListener;
-    }
-
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
         previewBufferLock.lock();
 
         if (isCaptureRunning) {
-            // If StartCapture has been called but not StopCapture
-            // Call the C++ layer with the captured frame
             if (data.length == expectedFrameSize) {
 
                 int currentRotation = compensateCameraRotation(currentDisplay
                         .getRotation());
 
-                if (showVideoCaptureListener != null){
-                    showVideoCaptureListener.handleFrame(data, captureWidth, captureHeight);
-                }
-                // Send buffer
-                provideByteArrayFrame(data, NV21, captureWidth,
-                        captureHeight, currentRotation, isFrontCamera());
+                provideByteArrayFrame(data, NV21, captureWidth, captureHeight, currentRotation, isFrontCamera());
 
-                // Give the video buffer to the camera service again.
                 camera.addCallbackBuffer(data);
             }
         }

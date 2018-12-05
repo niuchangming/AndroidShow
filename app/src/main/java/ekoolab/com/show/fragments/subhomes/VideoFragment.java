@@ -23,19 +23,18 @@ import ekoolab.com.show.beans.Video;
 import ekoolab.com.show.fragments.BaseFragment;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
-import ekoolab.com.show.utils.JsonParser.JSONParser.ParserListener;
 import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.utils.ViewHolder;
 import ekoolab.com.show.views.itemdecoration.GridSpacingItemDecoration;
 import me.shihao.library.XRecyclerView;
-import okhttp3.Response;
 
-public class VideoFragment extends BaseFragment implements ParserListener, VideoAdapter.OnItemClickListener {
+public class VideoFragment extends BaseFragment implements VideoAdapter.OnItemClickListener {
     private final String TAG = "VideoFragment";
     private int pageIndex;
     private EmptyView emptyView;
     private XRecyclerView recyclerView;
     private VideoAdapter adapter;
+    private long requestTime = 0;
     private ArrayList<Video> videos = new ArrayList<Video>();
 
     @Override
@@ -51,7 +50,6 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
         adapter.setListener(this);
         adapter.setHasStableIds(false);
         recyclerView.setAdapter(adapter);
-        loadVideoData(0);
     }
 
     @Override
@@ -67,22 +65,28 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
             @Override
             public void onRefresh() {
                 pageIndex = 0;
-                loadVideoData(1);
+                requestTime = 0;
+                videos.clear();
+                loadVideoData();
             }
 
             @Override
             public void onLoadMore() {
-                loadVideoData(2);
+                loadVideoData();
             }
         });
+
+        emptyView.showLoading();
+        loadVideoData();
     }
 
-    private void loadVideoData(int flag) {
-        if (flag == 0) {
-            emptyView.showLoading();
+    private void loadVideoData() {
+        if(requestTime == 0){
+            requestTime = System.currentTimeMillis();
         }
-        HashMap<String, String> map = new HashMap<>(3);
-//        map.put("timestamp", System.currentTimeMillis() + "");
+
+        HashMap<String, String> map = new HashMap<>();
+        map.put("timestamp", requestTime + "");
         map.put("pageSize", Constants.PAGE_SIZE + "");
         map.put("pageIndex", pageIndex + "");
         map.put("token", AuthUtils.getInstance(getContext()).getApiToken());
@@ -94,65 +98,36 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
                     protected void onSuccess(List<Video> videoList) {
                         try {
                             if (Utils.isNotEmpty(videoList)) {
-                                if (flag == 2) {
-                                    videos.addAll(videoList);
-                                    adapter.notifyItemRangeChanged(videos.size() - videoList.size(), videos.size());
-                                } else if (flag == 1) {
-                                    adapter.notifyItemRangeRemoved(videoList.size(), videos.size());
-                                    videos.clear();
-                                    videos.addAll(videoList);
-                                    adapter.notifyItemRangeChanged(0, videos.size());
-                                } else {
-                                    videos.clear();
-                                    videos.addAll(videoList);
+                                videos.addAll(videoList);
+
+                                if(videos.size() <= Constants.PAGE_SIZE){
                                     adapter.notifyDataSetChanged();
+                                }else{
+                                    adapter.notifyItemRangeChanged(videos.size() - videoList.size(), videos.size());
                                 }
-                                recyclerView.refreshComlete();
-                                if (videoList.size() == 20) {
-                                    pageIndex++;
-                                } else {
+
+                                if (videoList.size() < Constants.PAGE_SIZE) {
                                     recyclerView.loadMoreNoData();
+                                } else {
+                                    pageIndex++;
                                 }
                                 emptyView.content().show();
-                            } else if(videos.size()!=0){
-                                recyclerView.loadMoreNoData();
                             } else{
                                 emptyView.showEmpty();
                             }
                         } catch (Exception e) {
-                            recyclerView.refreshComlete();
                             e.printStackTrace();
                         }
+                        recyclerView.refreshComlete();
                     }
 
                     @Override
                     protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
                         emptyView.error(e).show();
+                        recyclerView.refreshComlete();
                         return super.dealHttpException(code, errorMsg, e);
                     }
                 });
-    }
-
-    @Override
-    public void onParseSuccess(Object obj) {
-        if (obj instanceof List) {
-            videos.clear();
-            List<Video> fetchedVideos = (ArrayList<Video>) obj;
-            if (fetchedVideos != null && fetchedVideos.size() > 0) {
-                videos.addAll(fetchedVideos);
-                adapter.notifyDataSetChanged();
-                emptyView.content().show();
-            } else {
-                emptyView.showEmpty();
-            }
-        } else {
-            emptyView.error().setErrorText(R.string.format_error).show();
-        }
-    }
-
-    @Override
-    public void onParseError(String err) {
-        emptyView.error().setErrorText(err).show();
     }
 
     @Override

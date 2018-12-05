@@ -107,7 +107,7 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
         }
 
         public void bind(final Video video, final int position) {
-            Glide.with(activity).load(video.preview.origin).into(previewIv);
+            Glide.with(activity).load(video.preview.medium).into(previewIv);
             videoView.setVideoPath(video.resourceUri);
             tv_like.setText(video.favouriteCount + "");
             tv_zan.setText(video.likeCount + "");

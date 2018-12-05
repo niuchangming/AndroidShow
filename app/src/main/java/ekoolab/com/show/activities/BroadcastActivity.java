@@ -3,10 +3,12 @@ package ekoolab.com.show.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.net.Uri;
+import android.opengl.GLSurfaceView;
 import android.provider.Settings;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageButton;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
@@ -21,6 +23,7 @@ import com.opentok.android.PublisherKit;
 import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.orhanobut.logger.Logger;
+import com.santalu.emptyview.EmptyView;
 import com.sendbird.android.BaseChannel;
 import com.sendbird.android.BaseMessage;
 import com.sendbird.android.OpenChannel;
@@ -37,36 +40,40 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-
 import ekoolab.com.show.R;
-import ekoolab.com.show.adapters.ChatMessageAdapter;
 import ekoolab.com.show.adapters.OpenMessageAdapter;
 import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
 import ekoolab.com.show.beans.ChatMessage;
-import ekoolab.com.show.beans.Live;
 import ekoolab.com.show.beans.enums.MessageType;
-import ekoolab.com.show.beauty.FUBaseUIActivity;
+import ekoolab.com.show.beauty.renderer.LiveCapture;
+import ekoolab.com.show.beauty.renderer.LiveRenderer;
 import ekoolab.com.show.beauty.ui.BeautyControlView;
 import ekoolab.com.show.dialogs.CommentDialog;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Chat.ChatManager;
 import ekoolab.com.show.utils.Constants;
-import ekoolab.com.show.utils.ToastUtils;
 import ekoolab.com.show.utils.UIHandler;
 import ekoolab.com.show.utils.Utils;
-import ekoolab.com.show.views.ShowVideoCapturer;
 import ekoolab.com.show.views.itemdecoration.LinearItemDecoration;
 
 import static com.sendbird.android.SendBird.ConnectionState.OPEN;
 
-public class BroadcastActivity extends FUBaseUIActivity implements View.OnClickListener, Session.SessionListener, PublisherKit.PublisherListener,
-        ShowVideoCapturer.ShowVideoCaptureListener, ChatManager.ChatManagerListener {
+public class BroadcastActivity extends BaseActivity implements
+        View.OnClickListener,
+        Session.SessionListener,
+        PublisherKit.PublisherListener,
+        ChatManager.ChatManagerListener {
+
+    protected EmptyView emptyView;
+    protected GLSurfaceView glSurfaceView;
+    protected ImageButton flipBtn;
+    protected ImageButton dismissBtn;
+    protected ImageButton beautyBtn;
+    protected ImageButton commentBtn;
+
     private BeautyControlView mBeautyControlView;
-    private FURenderer mFURenderer;
     private boolean isPermissionAllowed = false;
 
     private String sessionId;
@@ -74,17 +81,34 @@ public class BroadcastActivity extends FUBaseUIActivity implements View.OnClickL
     private String broadcastId;
     private Session mSession;
     private Publisher mPublisher;
-    private ShowVideoCapturer showVideoCapturer;
+    private LiveCapture liveCapture;
+    private LiveRenderer liveRenderer;
 
     private OpenChannel openChannel;
     private List<BaseMessage> openMessages = null;
     private RecyclerView chatRecyclerView;
     private CommentDialog commentDialog = null;
 
+    private FURenderer mFURenderer;
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_broadcast;
+    }
+
     @Override
     protected void initData() {
         super.initData();
         openMessages = new ArrayList<>();
+
+        mFURenderer = new FURenderer
+                .Builder(this)
+                .maxFaces(4)
+                .inputTextureType(FURenderer.FU_ADM_FLAG_EXTERNAL_OES_TEXTURE)
+                .createEGLContext(false)
+                .needReadBackImage(false)
+                .defaultEffect(null)
+                .build();
 
         ChatManager.getInstance(this).register(this);
         if(SendBird.getConnectionState() == OPEN){
@@ -113,29 +137,30 @@ public class BroadcastActivity extends FUBaseUIActivity implements View.OnClickL
     @Override
     protected void initViews() {
         super.initViews();
-        mFURenderer = new FURenderer
-                .Builder(this)
-                .maxFaces(4)
-                .inputTextureType(FURenderer.FU_ADM_FLAG_EXTERNAL_OES_TEXTURE)
-                .createEGLContext(false)
-                .needReadBackImage(false)
-                .defaultEffect(null)
-                .build();
+        emptyView = findViewById(R.id.empty_view);
+        glSurfaceView = findViewById(R.id.gl_surface_view);
+        glSurfaceView.setOnClickListener(this);
+
+        flipBtn = findViewById(R.id.camera_flip_btn);
+        flipBtn.setOnClickListener(this);
+
+        dismissBtn = findViewById(R.id.dismiss_btn);
+        dismissBtn.setOnClickListener(this);
+
+        beautyBtn = findViewById(R.id.beauty_btn);
+        beautyBtn.setOnClickListener(this);
+
+        commentBtn = findViewById(R.id.comment_btn);
+        commentBtn.setOnClickListener(this);
 
         mBeautyControlView = findViewById(R.id.fu_beauty_control);
-        mBeautyControlView.setOnFUControlListener(mFURenderer);
         mBeautyControlView.setOnBottomAnimatorChangeListener(new BeautyControlView.OnBottomAnimatorChangeListener() {
             @Override
             public void onBottomAnimatorChangeListener(float showRate) {
 
             }
         });
-//        mGLSurfaceView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mBeautyControlView.hideBottomLayoutAnimator();
-//            }
-//        });
+        mBeautyControlView.setOnFUControlListener(mFURenderer);
 
         chatRecyclerView = findViewById(R.id.recycler_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -160,47 +185,20 @@ public class BroadcastActivity extends FUBaseUIActivity implements View.OnClickL
     @Override
     protected void onResume() {
         super.onResume();
-        if (mBeautyControlView != null)
+        if (mBeautyControlView != null) {
             mBeautyControlView.onResume();
+        }
     }
 
     @Override
-    protected void onSensorChanged(int rotation) {
-        mFURenderer.setTrackOrientation(rotation);
+    protected void onPause() {
+        super.onPause();
+        if(liveRenderer != null){
+            liveRenderer.onDestroy();
+        }
     }
 
-    @Override
-    public void onCameraChange(int currentCameraType, int cameraOrientation) {
-        mFURenderer.onCameraChange(currentCameraType, cameraOrientation);
-    }
-
-    @Override
-    public int onDrawFrame(byte[] cameraNV21Byte, int cameraTextureId, int cameraWidth, int cameraHeight, float[] mtx, long timeStamp) {
-        int fuTextureId = mFURenderer.onDrawFrame(cameraNV21Byte, cameraTextureId, cameraWidth, cameraHeight);
-        return fuTextureId;
-    }
-
-    @Override
-    public void handleFrame(byte[] data, int cameraWidth, int cameraHeight) {
-        int textureId = mFURenderer.onDrawFrame(data, cameraWidth, cameraHeight);
-        Logger.i("Texture Id: " + textureId);
-    }
-
-    @Override
-    public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        mFURenderer.onSurfaceCreated();
-    }
-
-    @Override
-    public void onSurfaceChanged(GL10 gl, int width, int height) {
-
-    }
-
-    @Override
-    public void onSurfaceDestroy() {
-        mFURenderer.onSurfaceDestroyed();
-    }
-
+    // Start TokBox
     private void requestBroadcastInfo(){
         emptyView.showLoading();
 
@@ -234,14 +232,22 @@ public class BroadcastActivity extends FUBaseUIActivity implements View.OnClickL
     }
 
     private void doPublish(){
-        showVideoCapturer = new ShowVideoCapturer(this, Publisher.CameraCaptureResolution.MEDIUM, Publisher.CameraCaptureFrameRate.FPS_30);
-        mPublisher = new Publisher.Builder(this).build();
-        mPublisher = new Publisher.Builder(this).capturer(showVideoCapturer).build();
-        mPublisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
-        mPublisher.setPublisherListener(this);
+        liveRenderer = new LiveRenderer(this, glSurfaceView, mFURenderer);
+        liveCapture = new LiveCapture(this);
+        liveCapture.setListener(liveRenderer);
 
-        publisherContainer.addView(mPublisher.getView());
+        mPublisher = new Publisher.Builder(this)
+                .capturer(liveCapture)
+                .renderer(liveRenderer)
+                .build();
+        mPublisher.setPublisherListener(this);
+        mPublisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
+
         mSession.publish(mPublisher);
+    }
+
+    public void postData(byte[] data){
+//        liveCapture.sendData(data);
     }
 
     private void startBroadcast() throws JSONException {
@@ -270,6 +276,7 @@ public class BroadcastActivity extends FUBaseUIActivity implements View.OnClickL
                             String hls = broadcastObj.getString("hls");
                             broadcastId = response.getString("id");
                             afterBroadcast(broadcastId, hls);
+                            Logger.i("Hls------> " + hls);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -292,15 +299,19 @@ public class BroadcastActivity extends FUBaseUIActivity implements View.OnClickL
                 }
                 break;
             case R.id.camera_flip_btn:;
-                if(showVideoCapturer != null){
-                    showVideoCapturer.cycleCamera();
-                }
+
                 break;
             case R.id.dismiss_btn:
                 finish();
                 break;
             case R.id.comment_btn:
                 showCommentDialog();
+                break;
+            case R.id.beauty_btn:
+                mBeautyControlView.show();
+                break;
+            case R.id.gl_surface_view:
+                mBeautyControlView.hide();
                 break;
         }
     }
@@ -353,12 +364,12 @@ public class BroadcastActivity extends FUBaseUIActivity implements View.OnClickL
 
     @Override
     public void onStreamDestroyed(PublisherKit publisherKit, Stream stream) {
-
+        Logger.i("Publish destroy");
     }
 
     @Override
     public void onError(PublisherKit publisherKit, OpentokError opentokError) {
-
+        Logger.i("Publish error: " + opentokError.getMessage());
     }
 
     @Override
@@ -426,6 +437,7 @@ public class BroadcastActivity extends FUBaseUIActivity implements View.OnClickL
 
     private void obtainChannelUrl(){
         OpenChannel.createChannel(new OpenChannel.OpenChannelCreateHandler() {
+
             @Override
             public void onResult(OpenChannel openChannel, SendBirdException e) {
                 if(e == null){
@@ -435,16 +447,19 @@ public class BroadcastActivity extends FUBaseUIActivity implements View.OnClickL
                     enterChannel();
                 }
             }
+
         });
     }
 
     private void enterChannel(){
         if (this.openChannel != null) {
             this.openChannel.enter(new OpenChannel.OpenChannelEnterHandler() {
+
                 @Override
                 public void onResult(SendBirdException e) {
                     Logger.i("Enter Open Channel Failed");
                 }
+
             });
         }
     }
@@ -532,6 +547,7 @@ public class BroadcastActivity extends FUBaseUIActivity implements View.OnClickL
             chatRecyclerView.getAdapter().notifyDataSetChanged();
         }
     }
+
 }
 
 

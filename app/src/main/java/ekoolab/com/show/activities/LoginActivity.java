@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.VideoView;
 
 import com.facebook.CallbackManager;
@@ -78,6 +79,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
                 if(loginData != null){
                     broadcastLoggedIn(loginData);
+                    LoginActivity.this.finish();
                 }
             }
         }
@@ -160,7 +162,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         LoginManager.getInstance().registerCallback(facebookCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                afterFacebookLogin(loginResult);
+                //afterFacebookLogin(loginResult);
             }
 
             @Override
@@ -364,8 +366,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
         facebookCallbackManager.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

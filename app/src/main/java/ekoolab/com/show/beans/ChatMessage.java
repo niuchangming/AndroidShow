@@ -79,7 +79,6 @@ public class ChatMessage {
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.messageId = fileMessage.getMessageId();
         chatMessage.requestId = fileMessage.getRequestId();
-        Logger.i("-------> " + fileMessage.getCustomType());
         chatMessage.messageType = MessageType.getMessageType(fileMessage.getCustomType());
         chatMessage.sendState = SendState.SENT;
         chatMessage.createAt = fileMessage.getCreatedAt();

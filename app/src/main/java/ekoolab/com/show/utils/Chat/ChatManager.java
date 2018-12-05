@@ -287,6 +287,8 @@ public class ChatManager extends SendBird.ChannelHandler implements SendBird.Con
             @Override
             public void onDisconnected() {
                 if (handler != null) {
+                    chatManagerListenerSet.clear();
+                    channelMap.clear();
                     handler.onDisconnected();
                 }
             }

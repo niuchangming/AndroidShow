@@ -1,9 +1,8 @@
 <resources>
     <string name="app_name">Show</string>
     <string name="action_settings">Settings</string>
-    <string name="facebook_app_id">448548218982781</string>
-    <string name="fb_login_protocol_scheme">fb448548218982781</string>
-
+    <string name="facebook_app_id" translatable="false">448548218982781</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb448548218982781</string>
     <string name="home">Home</string>
     <string name="zsc">ZSC</string>
     <string name="create">Create</string>
@@ -110,6 +109,8 @@
     <string name="settings">Settings</string>
     <string name="google_maps_key">AIzaSyCYmhhrugJPiHFGya0ueF3jLsCDeMGXdBE</string>
     <string name="comments">Comments</string>
+    <string name="expand">Expand</string>
+    <string name="collapse">Collapse</string>
 
     <!-- Region -->
     <string name="country_china">China</string>
@@ -137,10 +138,6 @@
     <string name="me">:Me</string>
     <string name="admin">Admin</string>
 
-
-    <string name="default_notification_channel_id" translatable="false">show_fire_base_messaging_channel</string>
-
-
     <!-- Permission -->
     <string name="permission_storage">If not allowed, you will not take photos, videos and sending voice messages</string>
     <string name="permission_contact">Show will upload your address book to its server to help you find out which mobile contacts are using Show. Your uploaded data is only used for matching contacts and won\'t be saved for other purposes.</string>
@@ -148,8 +145,10 @@
 
     <!-- Error -->
     <string name="file_not_exist">File Path doesn\'t exist.</string>
-    <string name="url_thumbnails">https://bitdash-a.akamaihd.net/content/MI201109210084_1/thumbnails/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.jpg</string>
+    <string name="login_failed">Login failed.</string>
 
+
+    <string name="url_thumbnails">https://bitdash-a.akamaihd.net/content/MI201109210084_1/thumbnails/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.jpg</string>
 </resources>
 
 

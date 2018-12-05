@@ -127,6 +127,7 @@ public class LivePlayerActivity extends BaseActivity implements View.OnClickList
     protected void initData() {
         super.initData();
 
+        openMessages = new ArrayList<>();
         live = getIntent().getParcelableExtra(LIVE_DATA);
         getGifts();
 

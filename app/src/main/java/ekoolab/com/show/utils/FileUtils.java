@@ -4,6 +4,7 @@ package ekoolab.com.show.utils;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.orhanobut.logger.Logger;
+import com.sendbird.android.SendBird;
 
 import java.io.BufferedInputStream;
 import java.io.Closeable;
@@ -30,6 +32,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+
+import ekoolab.com.show.utils.Chat.ChatManager;
 
 /**
  * @author Army
@@ -1148,4 +1152,31 @@ public class FileUtils {
         String mimeType = mime.getMimeTypeFromExtension(ext);
         return mimeType;
     }
+
+    public static void clearApplicationData(Context context) {
+        File cacheDirectory = context.getCacheDir();
+
+        File applicationDirectory = new File(cacheDirectory.getParent());
+        if (applicationDirectory.exists()) {
+            String[] fileNames = applicationDirectory.list();
+            for (String fileName : fileNames) {
+                File file = new File(applicationDirectory, fileName);
+                if (file.isDirectory()) {
+                    deleteAllInDir(file);
+                } else {
+                    deleteFile(file);
+                }
+            }
+        }
+
+        File applicationExternalDir = new File(Constants.ROOT_PATH);
+        if (applicationExternalDir.exists()) {
+            deleteAllInDir(applicationExternalDir);
+        }
+
+        SharedPreferences.Editor spEditor = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE).edit();
+        spEditor.clear();
+        spEditor.apply();
+    }
+
 }
