@@ -13,6 +13,7 @@ import java.util.List;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.activities.BaseActivity;
+import ekoolab.com.show.activities.OthersInfoActivity;
 import ekoolab.com.show.activities.VideoPlayerActivity;
 import ekoolab.com.show.adapters.VideoAdapter;
 import ekoolab.com.show.api.ApiServer;
@@ -168,6 +169,13 @@ public class VideoFragment extends BaseFragment implements ParserListener, Video
         }
 
         startActivityForResult(intent, 0);
+    }
+
+    @Override
+    public void onAvatarClick(Video video) {
+        Intent intent = new Intent(getActivity(), OthersInfoActivity.class);
+        intent.putExtra("userCode", video.creator.userCode);
+        this.startActivity(intent);
     }
 
     @Override

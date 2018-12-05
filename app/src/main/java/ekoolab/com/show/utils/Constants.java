@@ -26,6 +26,7 @@ public class Constants {
     public static final String GET_USERPROFILE = HOST + "user/getUserprofile";
     public static final String UPDATE_USERPROFILE = HOST + "user/updateUserprofile";
     public static final String UPDATE_BROADCASTPROFILE = HOST + "broadcast/infoUpdate";
+    public static final String SIGNUP_BROADCASTPROFILE = HOST + "broadcast/signup";
 
     public static final String VIDEO_LIST = HOST + "video/listall";
     public static final String MY_VIDEO_LIST = HOST + "video/list";
@@ -37,11 +38,13 @@ public class Constants {
 
     public static final String LIKE = HOST + "likes/like";
     public static final String UNLIKE = HOST + "likes/unlike";
-    public static final String FOLLOW = HOST + "follows/add";
-    public static final String FOLLOWCANCEL = HOST + "follows/cancel";
+    public static final String FOLLOW = HOST + "follows/follow";
+    public static final String UN_FOLLOW = HOST + "follows/unfollow";
     public static final String MY_FOllOWER =  HOST + "follows/followerlist";
     public static final String MY_FOllOWING =  HOST + "follows/followinglist";
     public static final String IS_FOLLOWED = HOST + "follows/isfollow";
+    public static final String BLOCK = HOST + "follows/blocking";
+    public static final String UNBLOCK = HOST + "follows/unblocking";
     public static final String FRIENDS = HOST + "user/getfriends";
     public static final String UPLOAD_CONTACT_BOOK = HOST + "user/addressbook";
     public static final String COMMENT = HOST + "comments/comment";

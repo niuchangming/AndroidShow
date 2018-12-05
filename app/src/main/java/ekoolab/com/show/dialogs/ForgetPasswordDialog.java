@@ -25,7 +25,6 @@ import ekoolab.com.show.utils.Constants;
 import ekoolab.com.show.utils.Utils;
 
 public class ForgetPasswordDialog extends SimpleDialog implements View.OnClickListener {
-    private final String TAG = "RegisterDialog";;
 
     private EditText mobile_et;
     private EditText verify_code_et;
@@ -116,25 +115,21 @@ public class ForgetPasswordDialog extends SimpleDialog implements View.OnClickLi
     }
 
     private void verify(){
-//        System.out.println("mobile number is: " + loginData.mobile);
         String mobile = mobile_et.getText().toString().trim();
         String verify_code = verify_code_et.getText().toString().trim();
 
-        System.out.println("befor emobile blank");
         if (Utils.isBlank(mobile) || loginData == null || !mobile.equals(loginData.mobile)) {
             mobile_et.setHint(R.string.mobile_hint);
             mobile_et.setHintTextColor(ContextCompat.getColor(getContext(), R.color.colorRed));
             return;
         }
 
-        System.out.println("beforeVerify blank， verify_code: " + verify_code + ", token: " + loginData.token);
         if(Utils.isBlank(verify_code)){
             verify_code_et.setHint(R.string.password_hint);
             verify_code_et.setHintTextColor(ContextCompat.getColor(getContext(), R.color.colorRed));
             return;
         }
 
-        System.out.println("beforeVerify");
         beforeVerify();
 
         HashMap<String, Object> map = new HashMap<>();
@@ -145,7 +140,6 @@ public class ForgetPasswordDialog extends SimpleDialog implements View.OnClickLi
         }).subscribe(new NetworkSubscriber<LoginData>() {
             @Override
             protected void onSuccess(LoginData loginData) {
-                System.out.println("Verify successful: ");
                 if (listener != null){
                     loginData.mobile = mobile;
                     listener.didVerifyMobile(loginData);
@@ -156,7 +150,6 @@ public class ForgetPasswordDialog extends SimpleDialog implements View.OnClickLi
 
             @Override
             protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
-                System.out.println("Verify failed");
                 afterVerify();
                 return super.dealHttpException(code, errorMsg, e);
             }
@@ -180,7 +173,6 @@ public class ForgetPasswordDialog extends SimpleDialog implements View.OnClickLi
 
         beforeSend();
 
-        System.out.println("mobile number is: " + String.valueOf(mobile));
         HashMap<String, Object> map = new HashMap<>();
 //        map.put("resetpwd", "?resetpwd=true");
 //        map.put("countryCode", "65");
@@ -192,7 +184,6 @@ public class ForgetPasswordDialog extends SimpleDialog implements View.OnClickLi
             @Override
             protected void onSuccess(LoginData loginData) {
                 loginData.mobile = mobile;
-                System.out.println("token received: " + loginData.token);
                 verify_btn.setOnClickListener(ForgetPasswordDialog.this);
                 afterSend(loginData);
             }

@@ -52,6 +52,7 @@ public class MymomentsFragment extends BaseFragment implements OnRefreshLoadMore
     private LinearLayout llTipsContainer;
     private BaseQuickAdapter<Moment, BaseViewHolder> mAdapter = null;
     private List<Moment> moments = new ArrayList<>(20);
+    private String userCode = null;
 
     @Override
     public void onAttach(Context context) {
@@ -67,6 +68,10 @@ public class MymomentsFragment extends BaseFragment implements OnRefreshLoadMore
     @Override
     protected void initData() {
         mEmptyView.showLoading();
+        Bundle bundle = this.getArguments();
+        if(bundle != null){
+            userCode = bundle.getString("userCode");
+        }
         loadMyMoment(true);
     }
 
@@ -127,6 +132,9 @@ public class MymomentsFragment extends BaseFragment implements OnRefreshLoadMore
             pageIndex = 0;
         }
         HashMap<String, String> map = new HashMap<>(4);
+        if(userCode!=null){
+            map.put("userCode", userCode);
+        }
         map.put("pageSize", Constants.PAGE_SIZE + "");
         map.put("pageIndex", pageIndex + "");
         map.put("token", AuthUtils.getInstance(getContext()).getApiToken());

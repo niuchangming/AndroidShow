@@ -2,6 +2,8 @@ package ekoolab.com.show.activities;
 
 import android.os.Bundle;
 import android.text.Html;
+import android.text.TextUtils;
+import android.util.ArrayMap;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,10 +34,12 @@ import ekoolab.com.show.views.ninegridview.NewNineGridlayout;
 public class MySingleMomentActivity extends BaseActivity implements View.OnClickListener {
 
     private TextView tv_name, tv_content, tv_time, tv_zan_num, delete_moment;
-    private ImageView iv_icon;
+    private ImageView iv_icon, iv_heart;
     private NestFullListView comments;
     private Moment moment;
     private int nineTotalWidth = DisplayUtils.getScreenWidth() - DisplayUtils.dip2px(60 * 2);
+    private ArrayMap<String, String> zanMap = new ArrayMap<>(10);
+
     @Override
     protected int getLayoutId() {
         return R.layout.item_moment;
@@ -55,6 +59,7 @@ public class MySingleMomentActivity extends BaseActivity implements View.OnClick
         tv_zan_num = findViewById(R.id.tv_zan_num);
         iv_icon = findViewById(R.id.iv_icon);
         comments = findViewById(R.id.nest_full_listview);
+        iv_heart = findViewById(R.id.iv_heart);
         delete_moment = findViewById(R.id.delete_moment);
         delete_moment.setOnClickListener(this);
     }
@@ -66,20 +71,34 @@ public class MySingleMomentActivity extends BaseActivity implements View.OnClick
     public void onStart() {
         super.onStart();
         Bundle info  = getIntent().getExtras();
-        moment = info.getParcelable("moment");
-        showMoment(moment);
+        if(info != null) {
+            moment = info.getParcelable("moment");
+            showMoment(moment);
+        }
     }
 
     private void showMoment(Moment item){
         tv_name.setText(item.creator.nickName);
         tv_content.setText(item.body);
-        tv_time.setText(TimeUtils.stringDateToStringDate(TimeUtils.getDateStringByTimeStamp(item.uploadTime), TimeUtils.MMMM_dd, TimeUtils.YYYYMMDDHHMMSSZero));
+        tv_time.setText(TimeUtils.stringDateToStringDate(TimeUtils.getDateStringByTimeStamp(item.uploadTime), TimeUtils.MMMM_dd, TimeUtils.YYYYmmDDHHMM));
         tv_zan_num.setText(Integer.toString(item.likeCount));
+        iv_heart.setSelected(item.isMyLike);
+        iv_heart.setOnClickListener(view -> {
+            if (zanMap.containsKey(item.resourceId)) {
+                return;
+            }
+            zanOrCancelMoment(item);
+        });
+        if(!item.creator.userCode.equals(AuthUtils.getInstance(this).getUserCode())){
+            delete_moment.setVisibility(View.INVISIBLE);
+        }
         ImageLoader.displayImageAsCircle(item.creator.avatar.small, iv_icon);
-        NewNineGridlayout newNineGridlayout = findViewById(R.id.nine_grid_layout);
-        newNineGridlayout.showPic(nineTotalWidth, item.photoArray,
-                null,
-                NewNineGridlayout.PHOTO_QUALITY_SMALL);
+        if(item.photoArray.size() != 0) {
+            NewNineGridlayout newNineGridlayout = findViewById(R.id.nine_grid_layout);
+            newNineGridlayout.showPic(nineTotalWidth, item.photoArray,
+                    null,
+                    NewNineGridlayout.PHOTO_QUALITY_SMALL);
+        }
         boolean notEmpty = Utils.isNotEmpty(item.comments);
         if (notEmpty) {
             comments.setAdapter(new NestFullListViewAdapter<Moment.CommentsBean>(R.layout.item_moment_comment, item.comments) {
@@ -126,5 +145,39 @@ public class MySingleMomentActivity extends BaseActivity implements View.OnClick
                 return super.dealHttpException(code, errorMsg, e);
             }
         });
+    }
+
+    private void zanOrCancelMoment(Moment item) {
+        String apiToken = AuthUtils.getInstance(this).getApiToken();
+        if (TextUtils.isEmpty(apiToken)) {
+            ToastUtils.showToast(R.string.login_first);
+            return;
+        }
+        HashMap<String, String> map = new HashMap<>(2);
+        map.put("resourceId", item.resourceId);
+        map.put("token", apiToken);
+        ApiServer.basePostRequest(this, item.isMyLike ? Constants.UNLIKE : Constants.LIKE,
+                map, new TypeToken<ResponseData<String>>() {
+                })
+                .subscribe(new NetworkSubscriber<String>() {
+                    @Override
+                    protected void onSuccess(String s) {
+                        item.isMyLike = !item.isMyLike;
+                        if(item.isMyLike){
+                            item.likeCount++;
+                        } else {
+                            item.likeCount--;
+                        }
+                        tv_zan_num.setText(Integer.toString(item.likeCount));
+                        iv_heart.setSelected(item.isMyLike);
+                        zanMap.remove(item.resourceId);
+                    }
+
+                    @Override
+                    protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
+                        zanMap.remove(item.resourceId);
+                        return super.dealHttpException(code, errorMsg, e);
+                    }
+                });
     }
 }

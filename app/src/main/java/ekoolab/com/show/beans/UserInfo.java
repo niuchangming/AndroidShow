@@ -18,6 +18,8 @@ public class UserInfo implements Parcelable {
     public int gender;
     public int followerCount;
     public int followingCount;
+    public int followship;
+    public boolean blocking;
 
     public String region;
     public Long birthday;
@@ -66,6 +68,8 @@ public class UserInfo implements Parcelable {
         dest.writeParcelable(this.coverImage, flags);
         dest.writeInt(this.followerCount);
         dest.writeInt(this.followingCount);
+        dest.writeInt(this.followship);
+        dest.writeByte((byte) (this.blocking ? 1 : 0));
     }
 
     public UserInfo(){
@@ -89,6 +93,8 @@ public class UserInfo implements Parcelable {
         this.coverImage = in.readParcelable(Photo.class.getClassLoader());
         this.followerCount = in.readInt();
         this.followingCount = in.readInt();
+        this.followship = in.readInt();
+        this.blocking = in.readByte() != 0;
     }
 
     public static final Creator<UserInfo> CREATOR = new Creator<UserInfo>() {

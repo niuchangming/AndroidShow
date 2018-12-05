@@ -5,6 +5,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.auth0.jwt.internal.org.apache.commons.lang3.ArrayUtils;
+
 import java.util.List;
 
 import ekoolab.com.show.R;
@@ -18,10 +20,13 @@ public class ProfileAdapter extends FragmentPagerAdapter {
     private Context context;
 
 
-    public ProfileAdapter(Context context, FragmentManager fm, List<BaseFragment> fragments) {
+    public ProfileAdapter(Context context, FragmentManager fm, List<BaseFragment> fragments, boolean accessOthersProfile) {
         super(fm);
         this.fragments = fragments;
         this.context = context;
+        if(accessOthersProfile){
+            titleIds = ArrayUtils.removeElement(titleIds, R.string.my_favorite);
+        }
     }
 
     @Override

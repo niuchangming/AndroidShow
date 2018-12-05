@@ -87,6 +87,7 @@
     <dimen name="item_spacing_10dp">10dp</dimen>
     <dimen name="item_spacing_15dp">15dp</dimen>
     <dimen name="item_spacing_20dp">20dp</dimen>
+    <dimen name="item_spacing_40dp">40dp</dimen>
     <!-- Button高度 -->
     <dimen name="button_height_40dp">40dp</dimen>
 
@@ -94,4 +95,5 @@
     <dimen name="corner_radius_small">4dp</dimen>
     <dimen name="corner_radius_medium">6dp</dimen>
     <dimen name="corner_radius_large">8dp</dimen>
+    <dimen name="corner_radius_extra_large">15dp</dimen>
 </resources>

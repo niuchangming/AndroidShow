@@ -28,6 +28,7 @@ public class Friend implements Parcelable {
     public String channelUrl;
     public Photo avatar;
     public int followingCount;
+    public int followship;
     public boolean isMyFollowing;
     public boolean isMyFollower;
     public boolean isAppUser;
@@ -203,6 +204,7 @@ public class Friend implements Parcelable {
         dest.writeString(this.channelUrl);
         dest.writeParcelable(this.avatar, flags);
         dest.writeInt(this.followingCount);
+        dest.writeInt(this.followship);
         dest.writeByte(this.isMyFollowing ? (byte) 1 : (byte) 0);
         dest.writeByte(this.isMyFollower ? (byte) 1 : (byte) 0);
         dest.writeByte((byte) (isAppUser ? 1 : 0));
@@ -219,6 +221,7 @@ public class Friend implements Parcelable {
         this.channelUrl = in.readString();
         this.avatar = in.readParcelable(Photo.class.getClassLoader());
         this.followingCount = in.readInt();
+        this.followship = in.readInt();
         this.isMyFollowing = in.readByte() != 0;
         this.isMyFollower = in.readByte() != 0;
         this.isAppUser = in.readByte() != 0;

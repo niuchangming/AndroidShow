@@ -1,6 +1,8 @@
 package ekoolab.com.show.fragments.submyvideos;
 
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.util.Log;
 import android.view.View;
@@ -44,6 +46,7 @@ public class MyVideoFragment extends BaseFragment implements JSONParser.ParserLi
     private XRecyclerView recyclerView;
     private VideoAdapter adapter;
     private ArrayList<Video> videos = new ArrayList<Video>();
+    private String userCode = null;
 
     @Override
     protected int getLayoutId() {
@@ -54,6 +57,10 @@ public class MyVideoFragment extends BaseFragment implements JSONParser.ParserLi
     @Override
     protected void initData() {
         pageIndex = 0;
+        Bundle bundle = this.getArguments();
+        if(bundle != null){
+            userCode = bundle.getString("userCode");
+        }
         adapter = new VideoAdapter(getActivity(), videos);
         adapter.setListener(this);
         adapter.setHasStableIds(false);
@@ -88,8 +95,10 @@ public class MyVideoFragment extends BaseFragment implements JSONParser.ParserLi
         if (flag == 0) {
             emptyView.showLoading();
         }
-        HashMap<String, String> map = new HashMap<>(3);
-//        map.put("timestamp", System.currentTimeMillis() + "");
+        HashMap<String, String> map = new HashMap<>(4);
+        if(userCode!=null){
+            map.put("userCode", userCode);
+        }
         map.put("pageSize", Constants.PAGE_SIZE + "");
         map.put("pageIndex", pageIndex + "");
         map.put("token", AuthUtils.getInstance(getContext()).getApiToken());
@@ -176,6 +185,10 @@ public class MyVideoFragment extends BaseFragment implements JSONParser.ParserLi
         }
 
         startActivityForResult(intent, 0);
+    }
+
+    @Override
+    public void onAvatarClick(Video video) {
     }
 
     @Override

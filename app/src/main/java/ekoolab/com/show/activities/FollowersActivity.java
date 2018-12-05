@@ -10,6 +10,7 @@ import android.support.v7.widget.SimpleItemAnimator;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -72,8 +73,6 @@ public class FollowersActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onStart() {
         super.onStart();
-        mEmptyView.showLoading();
-        getFollowers(0);
     }
 
     @Override
@@ -93,6 +92,7 @@ public class FollowersActivity extends BaseActivity implements View.OnClickListe
         back_ll.setOnClickListener(this);
 
         mEmptyView = findViewById(R.id.empty_view);
+        mEmptyView.showLoading();
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new LinearItemDecoration(this,
@@ -101,6 +101,7 @@ public class FollowersActivity extends BaseActivity implements View.OnClickListe
         initRefreshLayout();
         initAdapter();
         recyclerView.setAdapter(mAdapter);
+        getFollowers(0);
     }
 
     @Override
@@ -119,8 +120,14 @@ public class FollowersActivity extends BaseActivity implements View.OnClickListe
 
             @Override
             protected void convert(BaseViewHolder helper, UserInfo item) {
-                ImageLoader.displayImage(item.avatar.small, helper.getView(R.id.iv_avatar));
-                if(item.nickname!=null){
+                ImageLoader.displayImageAsCircle(item.avatar.small, helper.getView(R.id.iv_avatar));
+                ImageView iv_avatar = helper.getView(R.id.iv_avatar);
+                iv_avatar.setOnClickListener(view->{
+                    Intent intent = new Intent(mContext, OthersInfoActivity.class);
+                    intent.putExtra("userCode", item.userCode);
+                    mContext.startActivity(intent);
+                });
+                if(item.nickname!=null && item.nickname.trim().length()>0){
                     helper.setText(R.id.tv_name, item.nickname);
                 } else {
                     helper.setText(R.id.tv_name, item.name);

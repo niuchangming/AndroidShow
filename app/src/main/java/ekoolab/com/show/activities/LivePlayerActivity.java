@@ -30,6 +30,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.gson.reflect.TypeToken;
+import com.luck.picture.lib.tools.Constant;
 import com.luck.picture.lib.utils.ThreadExecutorManager;
 import com.orhanobut.logger.Logger;
 import com.rey.material.widget.ProgressView;
@@ -339,7 +340,7 @@ public class LivePlayerActivity extends BaseActivity implements View.OnClickList
         HashMap<String, String> map = new HashMap<>(2);
         map.put("userCode", live.userCode);
         map.put("token", AuthUtils.getInstance(this).getApiToken());
-        ApiServer.basePostRequest(this, isFollowed ? Constants.FOLLOWCANCEL : Constants.FOLLOW, map,
+        ApiServer.basePostRequest(this, isFollowed ? Constants.UN_FOLLOW: Constants.FOLLOW, map,
                 new TypeToken<ResponseData<String>>() {
                 })
                 .subscribe(new NetworkSubscriber<String>() {

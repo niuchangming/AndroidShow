@@ -81,7 +81,7 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
         super.onStart();
         EventBus.getDefault().register(this);
         Bundle info = getIntent().getExtras();
-        if(userInfo == null){
+        if(userInfo == null && info != null){
             userInfo = info.getParcelable("userInfo");
             loadData();
 
@@ -251,14 +251,11 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                 case UserInfo.REQUEST_AVATAR:
                     localMedias = PictureSelector.obtainMultipleResult(data);
                     userInfo.avatar.small = localMedias.get(0).getCutPath();
-                    ImageLoader.displayImageAsCircle(userInfo.avatar.small, avatar);
-                    if(userInfo.roleType != 2) { ImageLoader.displayImage(userInfo.avatar.small, cover_image, 20); }
                     updateImage(userInfo.avatar.small, "avatar");
                     break;
                 case UserInfo.REQUEST_COVER:
                     localMedias = PictureSelector.obtainMultipleResult(data);
                     userInfo.coverImage.small = localMedias.get(0).getCutPath();
-                    ImageLoader.displayImage(userInfo.coverImage.small, cover_image, 20);
                     updateImage(userInfo.coverImage.small, "coverImage");
                     break;
             }
@@ -296,12 +293,20 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
         fileMap.put(field, image);
         HashMap<String, Object> valueMap = new HashMap<>(1);
         valueMap.put("token", AuthUtils.getInstance(PersonActivity.this).getApiToken());
-        ApiServer.baseUploadRequest(this, Constants.UPDATE_BROADCASTPROFILE, valueMap, fileMap,
+        ApiServer.baseUploadRequest(this, (field.equals("coverImage"))?Constants.SIGNUP_BROADCASTPROFILE: Constants.UPDATE_USERPROFILE, valueMap, fileMap,
                 new TypeToken<ResponseData<TextPicture>>() {
                 })
                 .subscribe(new NetworkSubscriber<TextPicture>() {
                     @Override
                     protected void onSuccess(TextPicture textPicture) {
+                        if(field.equals("coverImage")){
+                            ImageLoader.displayImage(userInfo.coverImage.small, cover_image, 20);
+                        } else {
+                            if(userInfo.roleType!=2){
+                                ImageLoader.displayImage(userInfo.coverImage.small, cover_image, 20);
+                            }
+                            ImageLoader.displayImageAsCircle(userInfo.avatar.small, avatar);
+                        }
                         ToastUtils.showToast("Saved");
                     }
 
@@ -326,7 +331,6 @@ public class PersonActivity extends BaseActivity implements View.OnClickListener
                                 .previewImage(true)
                                 .compressGrade(Luban.THIRD_GEAR)
                                 .enableCrop(true)
-                                .withAspectRatio(5,3)
                                 .isCamera(true)
                                 .compress(false)
                                 .selectionMedia(localMedias)

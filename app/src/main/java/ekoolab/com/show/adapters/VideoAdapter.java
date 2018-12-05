@@ -76,7 +76,13 @@ public class VideoAdapter extends RecyclerView.Adapter <VideoAdapter.VideoHolder
             if (video.preview != null) {
                 Glide.with(activity).load(video.preview.origin).into(coverIv);
             }
-
+            avatarIv.setOnClickListener(new View.OnClickListener(){
+                @Override public void onClick(View v) {
+                    if(listener != null) {
+                        listener.onAvatarClick(video);
+                    }
+                }
+            });
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
                 if(listener != null) {
@@ -89,6 +95,7 @@ public class VideoAdapter extends RecyclerView.Adapter <VideoAdapter.VideoHolder
 
     public interface OnItemClickListener {
         void onItemClick(Video video);
+        void onAvatarClick(Video video);
     }
 }
 

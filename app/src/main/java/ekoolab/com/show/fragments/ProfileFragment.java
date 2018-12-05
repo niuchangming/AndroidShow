@@ -149,7 +149,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         fragments.add(new MyVideoFragment());
         fragments.add(new MyCollectsFragment());
         fragments.add(new MymomentsFragment());
-        pagerAdapter =  new ProfileAdapter(getContext(), getChildFragmentManager(), fragments);
+        pagerAdapter =  new ProfileAdapter(getContext(), getChildFragmentManager(), fragments, false);
         viewPager.setAdapter(pagerAdapter);
         indicatorTabLayout.setupWithViewPager(viewPager);
         indicatorTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -201,7 +201,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
                 if(AuthUtils.getInstance(getContext()).loginState() == LOGGED){
                     intent = new Intent(getContext(), PersonActivity.class);
                     intent.putExtra("userInfo",userInfo);
-                    getContext().startActivity(intent);
+                    activity.startActivityForResult(intent, Constants.PersonActResult);
                 } else {
                     login();
                 }

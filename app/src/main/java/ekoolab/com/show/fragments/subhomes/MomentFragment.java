@@ -67,6 +67,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import ekoolab.com.show.R;
+import ekoolab.com.show.activities.OthersInfoActivity;
 import ekoolab.com.show.adapters.DialogGiftPagerAdapter;
 import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
@@ -287,6 +288,13 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
                     zanOrCancelMoment(item);
                 });
                 helper.setText(R.id.tv_like_count, String.valueOf(item.likeCount));
+
+                ImageView iv_avatar = helper.getView(R.id.iv_icon);
+                iv_avatar.setOnClickListener(view -> {
+                    Intent intent = new Intent(getActivity(), OthersInfoActivity.class);
+                    intent.putExtra("userCode", item.creator.userCode);
+                    mContext.startActivity(intent);
+                });
 
                 ImageButton commentBtn =  helper.getView(R.id.iv_comment);
                 commentBtn.setOnClickListener(view -> {
@@ -522,6 +530,7 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
                     @Override
                     protected void onSuccess(String s) {
                         item.isMyLike = !item.isMyLike;
+                        item.likeCount++;
                         mAdapter.notifyItemChanged(moments.indexOf(item));
                         zanMap.remove(item.resourceId);
                     }

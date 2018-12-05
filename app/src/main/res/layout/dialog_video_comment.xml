@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:color="@color/grayColorBg"
+    android:background="#D9000000"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="#00000000"
+        android:text="@string/comments"
+        android:textSize="@dimen/text_size_18sp"
+        android:textColor="@color/colorWhite" />
+
+    <com.santalu.emptyview.EmptyView
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:ev_empty_button="@string/try_again"
+        app:ev_empty_buttonTextColor="@color/colorPrimaryDark"
+        app:ev_empty_drawable="@drawable/ic_sentiment_dissatisfied"
+        app:ev_empty_drawableTint="@color/colorPrimary"
+        app:ev_empty_text="@string/empty"
+        app:ev_error_backgroundColor="@color/colorRed"
+        app:ev_error_button="@string/try_again"
+        app:ev_error_buttonTextColor="@color/white"
+        app:ev_error_drawable="@drawable/ic_sentiment_very_dissatisfied"
+        app:ev_error_drawableTint="@color/white"
+        app:ev_error_text="@string/error_unknown"
+        app:ev_error_textColor="@color/white"
+        app:ev_error_title="@string/error_unknown_title"
+        app:ev_error_titleTextColor="@color/white"
+        app:ev_gravity="center"
+        app:ev_loading_drawable="@drawable/ic_sentiment_satisfied"
+        app:ev_loading_drawableTint="@color/colorPrimary"
+        app:ev_loading_title="@string/loading"
+        app:ev_loading_type="circular"
+        app:ev_transition="auto">
+
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            android:id="@+id/refreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="never" />
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+    </com.santalu.emptyview.EmptyView>
+
+    <LinearLayout
+        android:id="@+id/ll_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#50000000"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/item_spacing_40dp"
+        android:paddingRight="@dimen/item_spacing_40dp"
+        tools:layout_editor_absoluteX="4dp">
+
+        <TextView
+            android:id="@+id/tv_comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_transparent_round_corner"
+            android:gravity="center"
+            android:minHeight="@dimen/item_height_30dp"
+            android:text="@string/comment_video"
+            android:textColor="@color/colorWhite"/>
+    </LinearLayout>
+</LinearLayout>

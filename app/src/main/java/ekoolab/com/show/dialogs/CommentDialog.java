@@ -20,6 +20,7 @@ public class CommentDialog extends Dialog {
     private OnClickListener onClickListener;
 
     private EditText etComment;
+    private String textHint;
 
     public void setOnClickListener(OnClickListener onClickListener) {
         this.onClickListener = onClickListener;
@@ -30,10 +31,20 @@ public class CommentDialog extends Dialog {
         init();
     }
 
+    public CommentDialog(Context activity, String hint) {
+        this(activity);
+        textHint = hint;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(textHint != null){
+            etComment.setHint(textHint);
+        } else {
+            etComment.setHint(R.string.comment_video);
+        }
         WindowManager.LayoutParams lp = getWindow().getAttributes();
         //设置宽度
         lp.width = DisplayUtils.getScreenWidth();
@@ -68,6 +79,7 @@ public class CommentDialog extends Dialog {
 
     @Override
     public void dismiss() {
+        textHint = null;
         Utils.hideInput(etComment);
         super.dismiss();
     }

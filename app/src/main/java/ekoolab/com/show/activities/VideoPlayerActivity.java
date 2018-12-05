@@ -19,9 +19,10 @@ import java.util.ArrayList;
 import ekoolab.com.show.R;
 import ekoolab.com.show.adapters.VideoPlayerAdapter;
 import ekoolab.com.show.beans.Video;
+import ekoolab.com.show.dialogs.VideoCommentDialog;
 import ekoolab.com.show.views.FixedTextureVideoView;
 
-public class VideoPlayerActivity extends BaseActivity {
+public class VideoPlayerActivity extends BaseActivity implements VideoPlayerAdapter.ShowCommentListener, VideoPlayerAdapter.OtherInfoListener{
     private final String TAG = "VideoPlayerActivity";
     private ArrayList<Video> videos;
     private int currentIndex;
@@ -62,6 +63,19 @@ public class VideoPlayerActivity extends BaseActivity {
 
         initListener();
         layoutManager.scrollToPosition(centerPos + currentIndex);
+    }
+
+    @Override
+    public void showOthersInfo(Video video){
+        Intent intent = new Intent(this, OthersInfoActivity.class);
+        intent.putExtra("userCode", video.creator.userCode);
+        this.startActivity(intent);
+    }
+
+    @Override
+    public void showComment(String resourceId){
+        VideoCommentDialog videoCommentDialog = new VideoCommentDialog(this, resourceId);
+        videoCommentDialog.show();
     }
 
     private void initListener() {

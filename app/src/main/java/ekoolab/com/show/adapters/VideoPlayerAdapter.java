@@ -1,6 +1,8 @@
 package ekoolab.com.show.adapters;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +22,8 @@ import java.util.List;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.activities.BaseActivity;
+import ekoolab.com.show.activities.OthersInfoActivity;
+import ekoolab.com.show.activities.PersonActivity;
 import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
@@ -32,10 +36,21 @@ import ekoolab.com.show.views.FixedTextureVideoView;
 public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.ViewHolder> {
     private Activity activity;
     private List<Video> videos;
+    private VideoPlayerAdapter.ShowCommentListener showCommentListener;
+    private VideoPlayerAdapter.OtherInfoListener otherInfoListener;
 
     public VideoPlayerAdapter(Activity activity, List<Video> videos) {
         this.activity = activity;
         this.videos = videos;
+
+
+        if(VideoPlayerAdapter.ShowCommentListener.class.isAssignableFrom(activity.getClass())){
+            showCommentListener = (VideoPlayerAdapter.ShowCommentListener)activity;
+        }
+
+        if(VideoPlayerAdapter.OtherInfoListener.class.isAssignableFrom(activity.getClass())){
+            otherInfoListener = (VideoPlayerAdapter.OtherInfoListener)activity;
+        }
     }
 
     @NonNull
@@ -110,12 +125,14 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
             } else {
                 iv_like.setBackgroundResource(R.mipmap.star);
             }
-            if (video.creator.isMyFollowing) {
-                followBtn.setText(activity.getString(R.string.un_follow));
-            } else {
-                followBtn.setText(activity.getString(R.string.follow));
-            }
+            followBtn.setText(((video.creator.followship==1)||(video.creator.followship==3))? activity.getString(R.string.un_follow): activity.getString(R.string.follow));
             ImageLoader.displayImageAsCircle(video.creator.avatar.small, avatar_iv);
+            avatar_iv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view){
+                    otherInfoListener.showOthersInfo(video);
+                }
+            });
             ll_zan.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -145,7 +162,7 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
             ll_comment.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    showCommentListener.showComment(video.resourceId);
                 }
             });
             iv_del.setOnClickListener(new View.OnClickListener() {
@@ -157,58 +174,30 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
             followBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (video.creator.isMyFollowing) {
-                        getFollow(ViewHolder.this, video, false);
-                    } else {
-                        getFollow(ViewHolder.this, video, false);
-                    }
+                    getFollow(ViewHolder.this, video);
                 }
             });
         }
     }
 
-    private void getFollow(ViewHolder viewHolder, Video video, boolean flag) {
+    private void getFollow(ViewHolder viewHolder, Video video) {
         HashMap<String, String> map = new HashMap<>(2);
-        map.put("resourceId", video.resourceId);
+        map.put("userCode", video.creator.userCode);
         map.put("token", AuthUtils.getInstance(activity).getApiToken());
-        ApiServer.basePostRequest((BaseActivity) activity, flag ? Constants.FOLLOW : Constants.FOLLOWCANCEL, map,
+        ApiServer.basePostRequest((BaseActivity) activity, ((video.creator.followship%2==1)? Constants.UN_FOLLOW: Constants.FOLLOW), map,
                 new TypeToken<ResponseData<String>>() {
                 })
                 .subscribe(new NetworkSubscriber<String>() {
                     @Override
                     protected void onSuccess(String s) {
                         try {
-                            video.creator.isMyFollowing = !video.creator.isMyFollowing;
-                            if (video.creator.isMyFollowing) {
+                            if((video.creator.followship==1)||(video.creator.followship==3)){
+                                video.creator.followship -= 1;
                                 viewHolder.followBtn.setText(activity.getString(R.string.follow));
                             } else {
+                                video.creator.followship += 1;
                                 viewHolder.followBtn.setText(activity.getString(R.string.un_follow));
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    protected boolean dealHttpException(int code, String errorMsg, Throwable e) {
-                        return super.dealHttpException(code, errorMsg, e);
-                    }
-                });
-    }
-
-    private void saveComment(ViewHolder viewHolder, Video video, String comment) {
-        HashMap<String, String> map = new HashMap<>(3);
-        map.put("body", comment);
-        map.put("resourceId", video.resourceId);
-        map.put("token", AuthUtils.getInstance(activity).getApiToken());
-        ApiServer.basePostRequest((BaseActivity) activity, Constants.COMMENT, map,
-                new TypeToken<ResponseData<String>>() {
-                })
-                .subscribe(new NetworkSubscriber<String>() {
-                    @Override
-                    protected void onSuccess(String s) {
-                        try {
-
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -294,6 +283,14 @@ public class VideoPlayerAdapter extends RecyclerView.Adapter<VideoPlayerAdapter.
 
     public interface OnItemClickListener {
         void onClick(int position);
+    }
+
+    public interface ShowCommentListener {
+        void showComment(String resourceId);
+    }
+
+    public interface OtherInfoListener {
+        void showOthersInfo(Video video);
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {

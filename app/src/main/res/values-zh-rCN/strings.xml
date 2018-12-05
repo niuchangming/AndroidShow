@@ -53,6 +53,9 @@
     <string name="description">描述</string>
     <string name="edit_cover">编辑背景</string>
     <string name="edit">编辑</string>
+    <string name="report">报告</string>
+    <string name="block">屏蔽</string>
+    <string name="unblock">解禁</string>
     <string name="save">保存</string>
     <string name="post">发布</string>
     <string name="nameinput">输入名字</string>
@@ -86,7 +89,10 @@
     <string name="permission_private">私密</string>
     <string name="choose_place">选择地址</string>
     <string name="next">下一步</string>
+    <string name="comment_video">评论点什么吧</string>
     <string name="send_comment">发送</string>
+    <string name="reply_to">回复</string>
+    <string name="video_reply1"><Data><![CDATA[回复<font color="#03ABE3">%1$s</font>：%2$s]]></Data></string>
     <string name="moment_reply1"><Data><![CDATA[<font color="#03ABE3">%1$s</font>：%2$s]]></Data></string>
     <string name="moment_reply2"><Data><![CDATA[<font color="#03ABE3">%1$s</font>回复<font color="#03ABE3">%2$s</font>：%3$s]]></Data></string>
     <string name="login_first">请先登录</string>
@@ -102,6 +108,7 @@
     <string name="hot">热点</string>
     <string name="settings">设置</string>
     <string name="google_maps_key">AIzaSyCYmhhrugJPiHFGya0ueF3jLsCDeMGXdBE</string>
+    <string name="comments">评论</string>
 
     <!-- Region -->
     <string name="country_china">中国大陆</string>
