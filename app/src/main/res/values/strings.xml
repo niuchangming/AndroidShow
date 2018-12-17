@@ -26,6 +26,7 @@
     <string name="new_password">New Password</string>
     <string name="confirm_new_password">Confirm New Password</string>
     <string name="reset_password">Reset Password</string>
+    <string name="login_with_pwd">Login With Password</string>
     <string name="other_login">Or Login With</string>
     <string name="mobile_hint">Your mobile number</string>
     <string name="password_hint">Your password</string>
@@ -74,6 +75,7 @@
     <string name="post_a_text">Post A Text</string>
     <string name="post_pictures">Post Pictures</string>
     <string name="post_a_video">Post A Video</string>
+    <string name="start_live">Start Live Broadcast</string>
     <string name="friends">Friends</string>
     <string name="post_video_content_hint">What are you going to say</string>
     <string name="place">Place</string>
@@ -103,6 +105,8 @@
     <string name="google_maps_key">AIzaSyCYmhhrugJPiHFGya0ueF3jLsCDeMGXdBE</string>
     <string name="expand">Expand</string>
     <string name="collapse">Collapse</string>
+    <string name="loading_gift">Gift Loading...</string>
+    <string name="request_code">Request Code</string>
 
     <!-- Region -->
     <string name="country_china">China</string>

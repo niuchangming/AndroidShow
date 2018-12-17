@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="11"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:background="@drawable/bg_up_login">
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_centerInParent="true"
+            android:src="@mipmap/logo_color"
+            android:scaleType="centerCrop"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:background="@drawable/bg_white_round_corner"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="12dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="12dp"
+                android:text="@string/plus_65" />
+
+            <EditText
+                android:id="@+id/log_mobile_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_white_round_corner"
+                android:digits="0123456789"
+                android:hint="@string/mobile_hint"
+                android:inputType="number"
+                android:paddingBottom="12dp"
+                android:paddingRight="8dp"
+                android:paddingTop="12dp"
+                android:textColor="@color/colorBlack"
+                android:textCursorDrawable="@null"
+                android:textSize="15sp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/password_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="8dp"
+            android:layout_alignParentTop="true"
+            android:hint="@string/verify_code"
+            android:paddingBottom="12dp"
+            android:inputType="textPassword"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="12dp"
+            android:textColor="@color/colorBlack"
+            android:textCursorDrawable="@null"
+            android:textSize="15sp"
+            android:background="@drawable/bg_white_round_corner_with_border"/>
+
+        <Button
+            android:id="@+id/forget_pwd_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/icon_size_20dp"
+            android:layout_below="@id/password_et"
+            android:layout_alignRight="@id/password_et"
+            android:layout_marginTop="@dimen/layout_margin_8dp"
+            android:background="@android:color/transparent"
+            android:gravity="right|center_vertical"
+            android:text="@string/forget_password"
+            android:textAllCaps="false" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/forget_pwd_btn"
+            android:layout_marginTop="@dimen/layout_margin_32dp">
+
+            <Button
+                android:id="@+id/login_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/icon_size_32dp"
+                android:paddingLeft="@dimen/layout_margin_8dp"
+                android:paddingRight="@dimen/layout_margin_8dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/bg_login"
+                android:text="@string/login"
+                android:textColor="@color/colorWhite" />
+
+            <com.rey.material.widget.ProgressView
+                android:id="@+id/login_pv"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                app:v_styleId="@array/pv_circular" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/layout_margin_80dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="@string/other_login"
+                android:textAlignment="center"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/text_size_18sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_alignParentBottom="true"
+                android:gravity="center">
+
+                <RelativeLayout
+                    android:id="@+id/wx_login_gp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginRight="10dp">
+
+                    <ImageButton
+                        android:id="@+id/wx_login_btn"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@android:color/transparent"
+                        android:scaleType="centerInside"
+                        android:src="@mipmap/wechat_circle" />
+
+                    <com.rey.material.widget.ProgressView
+                        android:id="@+id/wx_login_pv"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_centerInParent="true"
+                        android:layout_gravity="center"
+                        app:v_styleId="@array/pv_circular" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@id/wx_login_gp">
+
+                    <ImageButton
+                        android:id="@+id/fb_login_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/transparent"
+                        android:scaleType="centerInside"
+                        android:src="@mipmap/facebook_circle" />
+
+                    <com.rey.material.widget.ProgressView
+                        android:id="@+id/fb_login_pv"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_centerInParent="true"
+                        android:layout_gravity="center"
+                        app:v_styleId="@array/pv_circular" />
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+
+</LinearLayout>

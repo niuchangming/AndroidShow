@@ -9,12 +9,11 @@ import java.util.List;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.fragments.BaseFragment;
-import ekoolab.com.show.utils.Constants;
 
 public class HomeAdapter extends FragmentPagerAdapter {
 
     private List<BaseFragment> fragments;
-    private int[] titleIds = {R.string.moment, R.string.video, R.string.live};
+    private int[] subTitleIds = {R.string.moment, R.string.video, R.string.live};
     private Context context;
 
 
@@ -36,6 +35,6 @@ public class HomeAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return context.getString(titleIds[position]);
+        return context.getString(subTitleIds[position]);
     }
 }

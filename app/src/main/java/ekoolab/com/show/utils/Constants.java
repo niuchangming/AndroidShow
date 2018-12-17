@@ -56,7 +56,7 @@ public class Constants {
     public static final String TextPost = HOST + "moment/publish";
     public static final String BROADCAST_INFO = HOST + "broadcast/session";
     public static final String UPLOAD_BROADCAST_INFO = HOST + "broadcast/broadcastId";
-    public static final String UPLOAD_CHANNEL_URL = HOST + "broadc7ast/uploadChannelId";
+    public static final String UPLOAD_CHANNEL_URL = HOST + "broadcast/uploadChannelId";
 
     public static final int PersonActResult = 11;
 

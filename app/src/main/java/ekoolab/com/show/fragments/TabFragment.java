@@ -77,7 +77,7 @@ public class TabFragment extends BaseFragment implements View.OnClickListener {
             TabButton nav = (TabButton) v;
             doSelect(nav);
         } else if (v.getId() == R.id.tab_item_camera) {
-            mOnNavigationReselectListener.onCenterCameraClick();
+            mOnNavigationReselectListener.onCenterCameraClick(mCurrentNavButton);
         }
 
     }
@@ -89,11 +89,6 @@ public class TabFragment extends BaseFragment implements View.OnClickListener {
 
     public void backHome(){
         doSelect(tabHome);
-    }
-
-    public void select(int index) {
-        if (tabProfile != null)
-            doSelect(tabProfile);
     }
 
     private void clearOldFragment() {
@@ -161,23 +156,10 @@ public class TabFragment extends BaseFragment implements View.OnClickListener {
         }
     }
 
-    public Fragment getFragment(Class<?> clz){
-        if (clz.isInstance(ChatListFragment.class)) {
-            return this.tabChat.getFragment();
-        } else if (clz.isInstance(HomeFragment.class)) {
-            return this.tabHome.getFragment();
-        } else if (clz.isInstance(ProfileFragment.class)) {
-            return this.tabProfile.getFragment();
-        } else if (clz.isInstance(WebFragment.class)){
-            return this.tabZSC.getFragment();
-        }
-        return null;
-    }
-
     public interface OnTabBarSelectedListener {
         void onReselect(TabButton navigationButton);
 
-        void onCenterCameraClick();
+        void onCenterCameraClick(TabButton currentTabButton);
     }
 
     public TabButton getTabChat() {

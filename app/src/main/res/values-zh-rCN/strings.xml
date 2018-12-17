@@ -25,6 +25,7 @@
     <string name="new_password">新密码</string>
     <string name="confirm_new_password">确认新密码</string>
     <string name="reset_password">重置密码</string>
+    <string name="login_with_pwd">密码登录</string>
     <string name="other_login">其他方式登录</string>
     <string name="mobile_hint">您的手机号码</string>
     <string name="password_hint">您的密码</string>
@@ -73,6 +74,7 @@
     <string name="post_a_text">发布文字</string>
     <string name="post_pictures">发布图片</string>
     <string name="post_a_video">发布视频</string>
+    <string name="start_live">开始直播</string>
     <string name="friends">我的好友</string>
     <string name="post_video_content_hint">说点什么吧</string>
     <string name="place">地点</string>
@@ -102,6 +104,8 @@
     <string name="google_maps_key">AIzaSyCYmhhrugJPiHFGya0ueF3jLsCDeMGXdBE</string>
     <string name="expand">展开</string>
     <string name="collapse">收起</string>
+    <string name="loading_gift">正在加载礼物，请稍后...</string>
+    <string name="request_code">获取验证码</string>
 
     <!-- Region -->
     <string name="country_china">中国大陆</string>

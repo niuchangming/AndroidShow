@@ -16,11 +16,12 @@
     <color name="colorDarkPink">#CC1B5D</color>
     <color name="colorRed">#D50065</color>
     <color name="lock_bg">#cc000000</color>
-    <color name="colorBlue">#35A3FB</color>
+    <color name="colorBlue">#3771D3</color>
     <color name="colorBlueLight">#71BAF2</color>
     <color name="colorPrimaryBlue">#161723</color>
     <color name="colorDarkBlue">#161824</color>
     <color name="colorPurple">#774df2</color>
+    <color name="colorPurpleLight">#8FA1F1</color>
     <color name="colorBlackShadow">#7F333333</color>
 
 

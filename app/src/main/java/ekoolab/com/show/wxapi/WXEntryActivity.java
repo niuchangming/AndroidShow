@@ -3,14 +3,9 @@ package ekoolab.com.show.wxapi;
 import android.content.Intent;
 
 import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
-import com.facebook.login.LoginResult;
 import com.google.gson.reflect.TypeToken;
-import com.luck.picture.lib.tools.Constant;
-import com.orhanobut.logger.Logger;
-import com.rx2androidnetworking.Rx2AndroidNetworking;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
@@ -20,11 +15,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.activities.BaseActivity;
-import ekoolab.com.show.activities.LoginActivity;
+import ekoolab.com.show.activities.SMSLoginActivity;
 import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
@@ -32,7 +26,6 @@ import ekoolab.com.show.application.ShowApplication;
 import ekoolab.com.show.beans.LoginData;
 import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.utils.Constants;
-import ekoolab.com.show.utils.RxUtils;
 
 public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler{
     public static final String WX_LOGIN_STARTED = "ekoolab.com.show.wx.login.started";
@@ -127,7 +120,7 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler{
     private void sendBroadcast(String identifier, LoginData loginData){
         Intent msgIntent = new Intent();
         if(loginData != null){
-            msgIntent.putExtra(LoginActivity.LOGIN_DATA, loginData);
+            msgIntent.putExtra(SMSLoginActivity.LOGIN_DATA, loginData);
         }
         msgIntent.setAction(identifier);
         this.sendBroadcast(msgIntent);

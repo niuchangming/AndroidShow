@@ -2,11 +2,8 @@ package ekoolab.com.show.fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -19,35 +16,21 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.reflect.TypeToken;
-import com.luck.picture.lib.tools.Constant;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.activities.BaseActivity;
-import ekoolab.com.show.activities.BirthdayActivity;
 import ekoolab.com.show.activities.FollowersActivity;
 import ekoolab.com.show.activities.FollowingActivity;
-import ekoolab.com.show.activities.GenderActivity;
-import ekoolab.com.show.activities.LoginActivity;
-import ekoolab.com.show.activities.NameActivity;
-import ekoolab.com.show.activities.NicknameActivity;
+import ekoolab.com.show.activities.SMSLoginActivity;
 import ekoolab.com.show.activities.PersonActivity;
-import ekoolab.com.show.activities.RegionActivity;
-import ekoolab.com.show.activities.WhatsupActivity;
 import ekoolab.com.show.adapters.ProfileAdapter;
 import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
 import ekoolab.com.show.api.ResponseData;
-import ekoolab.com.show.beans.LoginData;
-import ekoolab.com.show.beans.Photo;
 import ekoolab.com.show.beans.UserInfo;
 import ekoolab.com.show.fragments.submyvideos.MyCollectsFragment;
 import ekoolab.com.show.fragments.submyvideos.MyVideoFragment;
@@ -267,7 +250,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
     }
 
     private void login(){
-        Intent intent = new Intent(getContext(), LoginActivity.class);
+        Intent intent = new Intent(getContext(), SMSLoginActivity.class);
         getContext().startActivity(intent);
     }
 

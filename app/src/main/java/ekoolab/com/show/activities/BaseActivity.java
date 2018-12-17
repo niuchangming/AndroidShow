@@ -20,7 +20,7 @@ import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.uber.autodispose.AutoDispose;
 import com.uber.autodispose.AutoDisposeConverter;
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider;
-import com.orhanobut.logger.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,7 +105,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         String apiToken = AuthUtils.getInstance(this).getApiToken();
         if (authType != LOGGED || Utils.isBlank(apiToken)) {
             if (showLogin){
-                Intent intent = new Intent(this, LoginActivity.class);
+                Intent intent = new Intent(this, SMSLoginActivity.class);
                 startActivity(intent);
             }
             return false;

@@ -1,7 +1,6 @@
 package ekoolab.com.show.activities;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -16,12 +15,12 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.army.gifdemo.GifHandler;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomViewTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.luck.picture.lib.CameraActivity;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.entity.LocalMedia;
@@ -33,15 +32,14 @@ import com.sendbird.android.User;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.logging.LoggingMXBean;
 
 import ekoolab.com.show.R;
 import ekoolab.com.show.Services.FriendService;
-import ekoolab.com.show.beans.Friend;
 import ekoolab.com.show.beans.LoginData;
 import ekoolab.com.show.dialogs.DialogViewHolder;
 import ekoolab.com.show.dialogs.XXDialog;
 import ekoolab.com.show.fragments.ChatListFragment;
+import ekoolab.com.show.fragments.HomeFragment;
 import ekoolab.com.show.fragments.TabFragment;
 import ekoolab.com.show.fragments.subhomes.MomentFragment;
 import ekoolab.com.show.utils.AuthUtils;
@@ -62,7 +60,6 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
 
     public static final String BUNDLE_ERROR_MSG = "bundle_error_msg";
     private TabFragment tabFragment;
-    private XXDialog xxDialog = null;
     private GifImageView ivPlayGif;
     private LinkedList<String> animImages = new LinkedList<>();
     private ArrayList<LocalMedia> localMedias = new ArrayList<>();
@@ -84,7 +81,7 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(AuthUtils.LOGGED_IN)) {
-                LoginData loginData = intent.getParcelableExtra(LoginActivity.LOGIN_DATA);
+                LoginData loginData = intent.getParcelableExtra(SMSLoginActivity.LOGIN_DATA);
                 loginSBirdChat(loginData);
             }else if (intent.getAction().equals(FriendService.CONTACT_UPLOADED)) {
                 ChatListFragment chatFragment = (ChatListFragment) tabFragment.getTabChat().getFragment();
@@ -172,13 +169,48 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
     }
 
     @Override
-    public void onCenterCameraClick() {
+    public void onCenterCameraClick(TabButton currentTabButton) {
         if (!authorized(true)){ return; }
 
-        if (xxDialog == null) {
-            xxDialog = new XXDialog(this, R.layout.dialog_choose_content) {
+        if (currentTabButton.getFragment() instanceof HomeFragment) {
+            HomeFragment homeFragment = (HomeFragment)currentTabButton.getFragment();
+            XXDialog xxDialog = new XXDialog(this, R.layout.dialog_choose_content) {
                 @Override
                 public void convert(DialogViewHolder holder) {
+                    TextView postTextView = holder.getView(R.id.tv_text);
+                    View separator1 = holder.getView(R.id.separator_1);
+                    TextView postPictureView =  holder.getView(R.id.tv_pictures);
+                    View separator2 = holder.getView(R.id.separator_2);
+                    TextView postVideoView = holder.getView(R.id.tv_video);
+                    View separator3 = holder.getView(R.id.separator_3);
+                    TextView startLiveView = holder.getView(R.id.tv_live);
+
+                    if (homeFragment.getCurrentPagerIndex() == 0) {
+                        postTextView.setVisibility(View.VISIBLE);
+                        separator1.setVisibility(View.VISIBLE);
+                        postPictureView.setVisibility(View.VISIBLE);
+                        separator2.setVisibility(View.GONE);
+                        postVideoView.setVisibility(View.GONE);
+                        separator3.setVisibility(View.GONE);
+                        startLiveView.setVisibility(View.GONE);
+                    } else if(homeFragment.getCurrentPagerIndex() == 1){
+                        postTextView.setVisibility(View.GONE);
+                        separator1.setVisibility(View.GONE);
+                        postPictureView.setVisibility(View.GONE);
+                        separator2.setVisibility(View.GONE);
+                        postVideoView.setVisibility(View.VISIBLE);
+                        separator3.setVisibility(View.GONE);
+                        startLiveView.setVisibility(View.GONE);
+                    } else if(homeFragment.getCurrentPagerIndex() == 2){
+                        postTextView.setVisibility(View.GONE);
+                        separator1.setVisibility(View.GONE);
+                        postPictureView.setVisibility(View.GONE);
+                        separator2.setVisibility(View.GONE);
+                        postVideoView.setVisibility(View.GONE);
+                        separator3.setVisibility(View.GONE);
+                        startLiveView.setVisibility(View.VISIBLE);
+                    }
+
                     holder.setOnClick(R.id.tv_video, view -> {
                         cancelDialog();
                         gotoTakeVideo();
@@ -191,11 +223,16 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
                         cancelDialog();
                         gotoTakePicture();
                     });
+                    holder.setOnClick(R.id.tv_live, view -> {
+                        cancelDialog();
+                        startLiveBroadcast();
+                    });
                     holder.setOnClick(R.id.tv_cancel, view -> cancelDialog());
                 }
             }.fromBottom().fullWidth();
+            xxDialog.showDialog();
         }
-        xxDialog.showDialog();
+
     }
 
     private void gotoTakeText() {
@@ -225,6 +262,22 @@ public class MainActivity extends BaseActivity implements TabFragment.OnTabBarSe
                         startActivity(intent);
                     }
                 });
+    }
+
+    private void startLiveBroadcast(){
+        if (!authorized(true)){
+            return;
+        }
+
+        if (AuthUtils.getInstance(this).getRole() != 2) {
+            Intent registerAnchorIntent = new Intent(this, AnchorRegisterActivity.class);
+            startActivity(registerAnchorIntent);
+            return;
+        }
+
+        Intent broadcastIntent = new Intent(this, BroadcastActivity.class);
+        broadcastIntent.putExtra(IS_FULL_SCREEN, true);
+        startActivity(broadcastIntent);
     }
 
     @Override

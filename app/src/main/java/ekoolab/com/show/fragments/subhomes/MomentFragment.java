@@ -62,6 +62,7 @@ import java.util.Map;
 
 import at.blogc.android.views.ExpandableTextView;
 import ekoolab.com.show.R;
+import ekoolab.com.show.activities.MainActivity;
 import ekoolab.com.show.adapters.DialogGiftPagerAdapter;
 import ekoolab.com.show.api.ApiServer;
 import ekoolab.com.show.api.NetworkSubscriber;
@@ -101,6 +102,7 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 import static android.content.Context.WINDOW_SERVICE;
+import static ekoolab.com.show.utils.AuthUtils.AuthType.LOGGED;
 
 public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreListener {
     public static final long TIPS_LIVE_TIME = 3000;
@@ -368,8 +370,13 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
     }
 
     private void showGiftDialog() {
+        MainActivity mainActivity = (MainActivity) this.getActivity();
+        if(!mainActivity.authorized(true)){
+            return;
+        }
+
         if (!Utils.isNotEmpty(gifts)) {
-            ToastUtils.showToast("gift is loading");
+            ToastUtils.showToast(getString(R.string.loading_gift));
             return;
         }
         XXDialog xxDialog = new XXDialog(mContext, R.layout.dialog_moment_gift, true) {
@@ -447,11 +454,12 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
     }
 
     private void showCommentDialog() {
-        String apiToken = AuthUtils.getInstance(getContext()).getApiToken();
-        if (TextUtils.isEmpty(apiToken)) {
-            ToastUtils.showToast(R.string.login_first);
+        MainActivity mainActivity = (MainActivity) this.getActivity();
+        if(!mainActivity.authorized(true)){
             return;
         }
+
+        String apiToken = AuthUtils.getInstance(getContext()).getApiToken();
         if (commentDialog == null) {
             commentDialog = new CommentDialog(mContext);
             commentDialog.setOnClickListener(content -> {
@@ -536,11 +544,12 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
     }
 
     private void zanOrCancelMoment(Moment item) {
-        String apiToken = AuthUtils.getInstance(getContext()).getApiToken();
-        if (TextUtils.isEmpty(apiToken)) {
-            ToastUtils.showToast(R.string.login_first);
+        MainActivity mainActivity = (MainActivity) this.getActivity();
+        if(!mainActivity.authorized(true)){
             return;
         }
+
+        String apiToken = AuthUtils.getInstance(getContext()).getApiToken();
         HashMap<String, String> map = new HashMap<>(2);
         map.put("resourceId", item.resourceId);
         map.put("token", apiToken);

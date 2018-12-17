@@ -86,7 +86,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.LoginActivity"
+            android:name=".activities.SMSLoginActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
@@ -153,6 +153,11 @@
         <activity
             android:name=".activities.VideoRecordActivity"
             android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".activities.PwdLoginActivity"
+            android:screenOrientation="portrait"
+            android:exported="true">
         </activity>
         <activity
             android:name=".wxapi.WXEntryActivity"

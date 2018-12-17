@@ -14,20 +14,6 @@
         android:orientation="vertical">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:gravity="center"
-            android:padding="10dp"
-            android:text="@string/choose_your_content" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@color/divider_color" />
-
-        <TextView
             android:id="@+id/tv_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,6 +24,7 @@
             android:text="@string/post_a_text" />
 
         <View
+            android:id="@+id/separator_1"
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:background="@color/divider_color" />
@@ -53,6 +40,7 @@
             android:text="@string/post_pictures" />
 
         <View
+            android:id="@+id/separator_2"
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:background="@color/divider_color" />
@@ -66,6 +54,22 @@
             android:gravity="center"
             android:padding="16dp"
             android:text="@string/post_a_video" />
+
+        <View
+            android:id="@+id/separator_3"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/divider_color" />
+
+        <TextView
+            android:id="@+id/tv_live"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:gravity="center"
+            android:padding="16dp"
+            android:text="@string/start_live" />
     </LinearLayout>
 
     <TextView

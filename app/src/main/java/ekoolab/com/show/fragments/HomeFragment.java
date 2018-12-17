@@ -1,41 +1,29 @@
 package ekoolab.com.show.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import ekoolab.com.show.activities.AnchorRegisterActivity;
-import ekoolab.com.show.activities.BroadcastActivity;
-import ekoolab.com.show.activities.LoginActivity;
 import ekoolab.com.show.adapters.HomeAdapter;
 import ekoolab.com.show.fragments.subhomes.LiveFragment;
 import ekoolab.com.show.fragments.subhomes.MomentFragment;
 import ekoolab.com.show.fragments.subhomes.VideoFragment;
-import ekoolab.com.show.fragments.subhomes.WebFragment;
-import ekoolab.com.show.utils.AuthUtils;
 import ekoolab.com.show.R;
-import ekoolab.com.show.utils.Utils;
 import ekoolab.com.show.utils.ViewHolder;
 
-import static ekoolab.com.show.activities.BaseActivity.IS_FULL_SCREEN;
-import static ekoolab.com.show.utils.AuthUtils.AuthType.LOGGED;
-
-public class HomeFragment extends BaseFragment implements View.OnClickListener{
+public class HomeFragment extends BaseFragment{
     private TabLayout indicatorTabLayout;
     private ViewPager viewPager;
     private HomeAdapter pagerAdapter;
-    private Button liveBtn;
-    private Button loginBtn;
 
     private List<BaseFragment> fragments;
 
@@ -53,21 +41,10 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener{
     public void onStart() {
         super.onStart();
 
-        if(AuthUtils.getInstance(getContext()).loginState() == LOGGED){
-            loginBtn.setVisibility(View.GONE);
-        }else{
-            loginBtn.setVisibility(View.VISIBLE);
-        }
-
     }
 
     @Override
     protected void initViews(ViewHolder holder, View root) {
-        liveBtn = holder.get(R.id.live_btn);
-        liveBtn.setOnClickListener(this);
-        loginBtn = holder.get(R.id.login_btn);
-        loginBtn.setOnClickListener(this);
-
         fragments = new ArrayList<>();
         fragments.add(new MomentFragment());
         fragments.add(new VideoFragment());
@@ -101,6 +78,31 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener{
             }
         });
 
+        createTabIcons();
+
+    }
+
+    private void createTabIcons() {
+        LinearLayout tab1Layout = (LinearLayout) LayoutInflater.from(getActivity()).inflate(R.layout.tab_titleview, null);
+        TextView title1Tv = tab1Layout.findViewById(R.id.title_tv);
+        TextView subTitle1Tv = tab1Layout.findViewById(R.id.sub_title_tv);
+        title1Tv.setText("社交");
+        subTitle1Tv.setText(getString(R.string.moment));
+        indicatorTabLayout.getTabAt(0).setCustomView(tab1Layout);
+
+        LinearLayout tab2Layout = (LinearLayout) LayoutInflater.from(getActivity()).inflate(R.layout.tab_titleview, null);
+        TextView title2Tv = tab2Layout.findViewById(R.id.title_tv);
+        TextView subTitle2Tv = tab2Layout.findViewById(R.id.sub_title_tv);
+        title2Tv.setText("秀");
+        subTitle2Tv.setText(getString(R.string.video));
+        indicatorTabLayout.getTabAt(1).setCustomView(tab2Layout);
+
+        LinearLayout tab3Layout = (LinearLayout) LayoutInflater.from(getActivity()).inflate(R.layout.tab_titleview, null);
+        TextView title3Tv = tab3Layout.findViewById(R.id.title_tv);
+        TextView subTitle3Tv = tab3Layout.findViewById(R.id.sub_title_tv);
+        title3Tv.setText("天秀");
+        subTitle3Tv.setText(getString(R.string.live));
+        indicatorTabLayout.getTabAt(2).setCustomView(tab3Layout);
     }
 
     @Override
@@ -108,35 +110,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener{
         super.initData();
     }
 
-    @Override
-    public void onClick(View view) {
-        switch(view.getId()){
-            case R.id.login_btn:
-                login();
-                break;
-            case R.id.live_btn:
-                if (AuthUtils.getInstance(getActivity()).loginState() != LOGGED
-                        || Utils.isBlank(AuthUtils.getInstance(getActivity()).getApiToken())){
-                    login();
-                    return;
-                }
 
-                if (AuthUtils.getInstance(getActivity()).getRole() != 2) {
-                    Intent registerAnchorIntent = new Intent(getActivity(), AnchorRegisterActivity.class);
-                    startActivity(registerAnchorIntent);
-                    return;
-                }
-
-                Intent broadcastIntent = new Intent(getActivity(), BroadcastActivity.class);
-                broadcastIntent.putExtra(IS_FULL_SCREEN, true);
-                startActivity(broadcastIntent);
-                break;
-        }
-    }
-
-    private void login(){
-        Intent intent = new Intent(getContext(), LoginActivity.class);
-        getContext().startActivity(intent);
+    public int getCurrentPagerIndex(){
+        return viewPager.getCurrentItem();
     }
 
 }
