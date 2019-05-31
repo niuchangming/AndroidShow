@@ -51,9 +51,6 @@ public class ShowApplication extends Application implements Thread.UncaughtExcep
         SmartRefreshLayout.setDefaultRefreshHeaderCreator(new DefaultRefreshHeaderCreator() {
             @Override
             public RefreshHeader createRefreshHeader(Context context, RefreshLayout layout) {
-                //全局设置主题颜色
-//                layout.setPrimaryColorsId(R.color.colorPrimary, android.R.color.white);
-                //.setTimeFormat(new DynamicTimeFormat("更新于 %s"));//指定为经典Header，默认是 贝塞尔雷达Header
                 return new MaterialHeader(context);
             }
         });
@@ -61,7 +58,6 @@ public class ShowApplication extends Application implements Thread.UncaughtExcep
         SmartRefreshLayout.setDefaultRefreshFooterCreator(new DefaultRefreshFooterCreator() {
             @Override
             public RefreshFooter createRefreshFooter(Context context, RefreshLayout layout) {
-                //指定为经典Footer，默认是 BallPulseFooter
                 return new ClassicsFooter(context).setDrawableSize(20);
             }
         });

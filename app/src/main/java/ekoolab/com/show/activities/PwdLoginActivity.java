@@ -155,8 +155,9 @@ public class PwdLoginActivity extends BaseActivity implements View.OnClickListen
                 mobileLogin();
                 break;
             case R.id.forget_pwd_btn:
-                Intent pwdLoginIntent = new Intent(this, PwdLoginActivity.class);
-                this.startActivity(pwdLoginIntent);
+                ForgetPasswordDialog forgetPasswordDialog = new ForgetPasswordDialog(this);
+                forgetPasswordDialog.backgroundColor(getResources().getColor(R.color.colorPink));
+                forgetPasswordDialog.show();
                 break;
             case R.id.register_btn:
                 RegisterDialog dialog = new RegisterDialog(this);

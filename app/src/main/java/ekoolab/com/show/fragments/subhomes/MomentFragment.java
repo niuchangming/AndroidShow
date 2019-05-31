@@ -221,7 +221,6 @@ public class MomentFragment extends BaseFragment implements OnRefreshLoadMoreLis
         params.gravity = Gravity.RIGHT | Gravity.TOP;
         WindowManager wm = (WindowManager) getActivity().getSystemService(WINDOW_SERVICE);
         wm.addView(imagePreview, params);
-
     }
 
     private void initRefreshLayout() {

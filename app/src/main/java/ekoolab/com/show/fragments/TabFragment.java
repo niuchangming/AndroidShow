@@ -24,7 +24,6 @@ public class TabFragment extends BaseFragment implements View.OnClickListener {
     private TabButton tabZSC;
     private TabButton tabChat;
     private TabButton tabProfile;
-    private ImageButton cameraBtn;
 
     private int mContainerId;
     private TabButton mCurrentNavButton;
@@ -46,7 +45,6 @@ public class TabFragment extends BaseFragment implements View.OnClickListener {
         tabZSC = holder.get(R.id.tab_item_zsc);
         tabChat = holder.get(R.id.tab_item_chat);
         tabProfile = holder.get(R.id.tab_item_profile);
-        cameraBtn = holder.get(R.id.tab_item_camera);
 
         holder.setOnClickListener(this, R.id.tab_item_home);
         holder.setOnClickListener(this, R.id.tab_item_zsc);

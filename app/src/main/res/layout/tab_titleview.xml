@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:textColor="@color/colorBlack"
+        android:textColor="@color/colorBlue"
         android:textSize="@dimen/text_size_16sp"/>
 
     <TextView
@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/text_size_2sp"
-        android:textColor="@color/colorBlack"
+        android:textColor="@color/colorBlue"
         android:gravity="center_horizontal"
         android:singleLine="true"
         android:textSize="@dimen/text_size_10sp"/>

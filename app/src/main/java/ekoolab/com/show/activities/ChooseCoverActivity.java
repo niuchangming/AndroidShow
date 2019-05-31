@@ -154,8 +154,6 @@ public class ChooseCoverActivity extends BaseActivity implements View.OnClickLis
             int curPosition = (int) ((scrollX * 1f / totalFramesWidth) * videoDuration);
             playerView.getPlayer().seekTo(curPosition);
 
-
-            Logger.i("----------> " + curPosition + ", " + playerView.getPlayer().getContentPosition());
             playerView.getPlayer().getCurrentPosition();
 
 

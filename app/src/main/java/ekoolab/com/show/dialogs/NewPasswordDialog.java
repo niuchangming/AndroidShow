@@ -49,7 +49,6 @@ public class NewPasswordDialog extends SimpleDialog implements View.OnClickListe
     }
 
 
-
     public NewPasswordDialog(Context context, int style) {
         super(context, style);
         contentView(R.layout.dialog_new_password);

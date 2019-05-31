@@ -108,9 +108,7 @@ public abstract class BaseFragment extends Fragment {
      */
     protected abstract void initViews(ViewHolder holder, View root);
 
-    protected void initData() {
-
-    }
+    protected void initData() { }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -159,7 +157,6 @@ public abstract class BaseFragment extends Fragment {
 
     public void dealWithBroadcastAction(Context context, Intent intent) {
     }
-
 
     // 处理系统发出的广播
     private BroadcastReceiver broadcastReceiver = null, localBroadcastReceiver = null;

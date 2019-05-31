@@ -164,7 +164,9 @@ public class SMSLoginActivity extends BaseActivity implements View.OnClickListen
                 mobileLogin();
                 break;
             case R.id.forget_pwd_btn:
-
+                Intent pwdLoginIntent = new Intent(this, PwdLoginActivity.class);
+                this.startActivity(pwdLoginIntent);
+                this.finish();
                 break;
             case R.id.register_btn:
                 RegisterDialog dialog = new RegisterDialog(this);

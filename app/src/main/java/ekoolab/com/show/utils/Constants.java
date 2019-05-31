@@ -14,7 +14,7 @@ public class Constants {
     public static final String WECHAT_APP_ID = "wx9e7fcabf7ab1f075"; //"wxeda3982509da49ac";
     public static final String WECHAT_SECRET = "4cea9cbcf1285e419b97f8e555770ed6"; //"715b77b4345364d97659f34cb74a9d7b";
 
-    public static final String HOST = "http://api.ccmsshow.com:8081/api/";
+    public static final String HOST = "http://show-show01.boxfuse.io/api/";
     public static final String LOGIN = HOST + "user/login";
     public static final String LOGOUT = HOST + "user/logout";
     public static final String SIGNUP = HOST + "user/signup";

@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_below="@id/chat_date_tv"
-        app:cardBackgroundColor="@color/colorPurple"
+        app:cardBackgroundColor="@color/colorBlueLight"
         app:cardUseCompatPadding="true"
         app:cardCornerRadius="@dimen/corner_radius_large"
         app:cardElevation="0dp"
